@@ -1,23 +1,20 @@
 package model;
 
-public class Paciente {
+public class Paciente extends Pessoa{
     
-    private String nome;
     private String nomePai;
     private String nomeMae;
     private String endereco;
-    private String cpfPaciente;
     
     public Paciente() {
         // Default constructor
     }
     
     public Paciente(String nome, String nomePai, String nomeMae, String endereco, String cpf){
-        this.nome = nome;
+        super(nome, cpf);
         this.nomePai = nomePai;
         this.nomeMae = nomeMae;
         this.endereco = endereco;
-        this.cpfPaciente = cpf;
     }
     
     public String getNomeMae() {
@@ -42,21 +39,5 @@ public class Paciente {
     
     public void setNomePai(String nomePai) {
         this.nomePai = nomePai;
-    }
-    
-    public String getCpf() {
-        return cpfPaciente;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpfPaciente = cpf;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
     }
 }

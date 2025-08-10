@@ -3,19 +3,20 @@ package dao;
 import java.sql.*;
 import java.util.List;
 
-public class MedicoDAO {
+public class MedicoDAO extends PessoaDAO<model.Medico>{
 
     private Connection connection;
 
     public MedicoDAO(Connection connection) {
-        this.connection = connection;
+        super(connection);
     }
 
+    @Override
     public void add(model.Medico medico) throws SQLException {
-        String sql = "INSERT INTO medicos (cpf_medico, turno) VALUES (?, ?)";
+        String sql = "INSERT INTO medico (cpf_medico, turno) VALUES (?, ?)";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, medico.getCpfMedico());
+            stmt.setString(1, medico.getCpf());
             stmt.setString(2, medico.getTurno());
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -23,8 +24,9 @@ public class MedicoDAO {
         }
     }
 
-    public model.Medico buscarMedico(String cpf) throws SQLException {
-        String sql = "SELECT * FROM medicos WHERE cpf_medico = ?";
+    @Override
+    public model.Medico buscarPorCpf(String cpf) throws SQLException {
+        String sql = "SELECT * FROM medico WHERE cpf_medico = ?";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)){
             ps.setString(1, cpf);
@@ -34,7 +36,7 @@ public class MedicoDAO {
                 model.Medico medico = new model.Medico();
 
                 medico.setNome(rs.getString("nome"));
-                medico.setCpfMedico(rs.getString("cpf_medico"));
+                medico.setCpf(rs.getString("cpf_medico"));
                 medico.setTurno(rs.getString("turno"));
 
                 return medico;
@@ -46,8 +48,9 @@ public class MedicoDAO {
         return null;
     }
 
-    public List<model.Medico> listarMedicos() throws SQLException {
-        String sql = "SELECT * FROM medicos";
+    @Override
+    public List<model.Medico> listarTodos() throws SQLException {
+        String sql = "SELECT * FROM medico";
         List<model.Medico> medicos = new java.util.ArrayList<>();
 
         try(PreparedStatement ps = connection.prepareStatement(sql)){
@@ -57,7 +60,7 @@ public class MedicoDAO {
                 model.Medico medico = new model.Medico();
 
                 medico.setNome(rs.getString("nome"));
-                medico.setCpfMedico(rs.getString("cpf_medico"));
+                medico.setCpf(rs.getString("cpf_medico"));
                 medico.setTurno(rs.getString("turno"));
                 medicos.add(medico);
             }
@@ -68,24 +71,26 @@ public class MedicoDAO {
         return medicos;
     }
 
-     public void atualizarPaciente(String cpf, String nome, String turno) throws SQLException{
-        String sql = "UPDATE medico SET nome = ?, turno = ? WHERE cpf = ? ";
+    @Override
+     public void atualizar(model.Medico medico) throws SQLException{
+        String sql = "UPDATE medico SET nome = ?, turno = ? WHERE cpf_medico = ? ";
 
         try(PreparedStatement ps = connection.prepareStatement(sql)){
-            ps.setString(1, nome);
-            ps.setString(2, turno);
-            ps.setString(3, cpf);
+            ps.setString(1, medico.getNome());
+            ps.setString(2, medico.getTurno());
+            ps.setString(3, medico.getCpf());
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new SQLException("Error updating medico: " + e.getMessage(), e);
         }
     }
 
-    public void deletarPaciente(String cpf) throws SQLException {
-        String sql = "DELETE FROM medico WHERE cpf = ?";
+    @Override
+    public void deletar(String cpfMedico) throws SQLException {
+        String sql = "DELETE FROM medico WHERE cpf_medico = ?";
 
         try(PreparedStatement ps = connection.prepareStatement(sql)){
-            ps.setString(1, cpf);
+            ps.setString(1, cpfMedico);
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new SQLException("Error deleting medico: " + e.getMessage(), e);

@@ -1,16 +1,18 @@
 package dao;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
-public class PacienteDAO {
+public class PacienteDAO extends PessoaDAO<model.Paciente> {
 
     private Connection connection;
 
     public PacienteDAO(Connection connection) {
-        this.connection = connection;
+        super(connection);
     }
 
+    @Override
     public void add(model.Paciente paciente) throws SQLException {
         String sql = "INSERT INTO paciente (nome, nomePai, nomeMae, endereco, cpf) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -25,10 +27,10 @@ public class PacienteDAO {
         }
     }
 
-    public List<model.Paciente> listarPacientes() throws SQLException {
+    @Override
+    public List<model.Paciente> listarTodos() throws SQLException {
+        List<model.Paciente> pacientes = new ArrayList<>();
         String sql = "SELECT * FROM paciente";
-
-        List<model.Paciente> pacientes = new java.util.ArrayList<>();
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
@@ -49,7 +51,8 @@ public class PacienteDAO {
         return pacientes;
     }
 
-    public model.Paciente buscarPaciente(String cpf) throws SQLException {
+    @Override
+    public model.Paciente buscarPorCpf(String cpf) throws SQLException {
         String sql = "Select * FROM paciente WHERE cpf_paciente = ?";
 
         try(PreparedStatement ps = connection.prepareStatement(sql)){
@@ -74,22 +77,24 @@ public class PacienteDAO {
         return null;
     }
 
-    public void atualizarPaciente(String cpf, String nome, String endereco, String nomePai, String nomeMae) throws SQLException{
+    @Override
+    public void atualizar(model.Paciente paciente) throws SQLException{
         String sql = "UPDATE paciente SET nome = ?, endereco = ?, nomePai = ?, nomeMae = ? WHERE cpf = ? ";
 
         try(PreparedStatement ps = connection.prepareStatement(sql)){
-            ps.setString(1, nome);
-            ps.setString(2, endereco);
-            ps.setString(3, nomePai);
-            ps.setString(4, nomeMae);
-            ps.setString(5, cpf);
+            ps.setString(1, paciente.getNome());
+            ps.setString(2, paciente.getEndereco());
+            ps.setString(3, paciente.getNomePai());
+            ps.setString(4, paciente.getNomeMae());
+            ps.setString(5, paciente.getCpf());
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new SQLException("Error updating paciente: " + e.getMessage(), e);
         }
     }
 
-    public void deletarPaciente(String cpf) throws SQLException {
+    @Override
+    public void deletar(String cpf) throws SQLException {
         String sql = "DELETE FROM paciente WHERE cpf = ?";
 
         try(PreparedStatement ps = connection.prepareStatement(sql)){
