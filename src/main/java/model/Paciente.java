@@ -6,8 +6,7 @@ public class Paciente {
     private String nomePai;
     private String nomeMae;
     private String endereco;
-    private String cpf;
-    private int id;
+    private String cpfPaciente;
     
     public Paciente() {
         // Default constructor
@@ -18,15 +17,7 @@ public class Paciente {
         this.nomePai = nomePai;
         this.nomeMae = nomeMae;
         this.endereco = endereco;
-        this.cpf = cpf;
-    }
-    
-    public int getId() {
-        return id;
-    }
-    
-    public void setId(int id) {
-        this.id = id;
+        this.cpfPaciente = cpf;
     }
     
     public String getNomeMae() {
@@ -54,11 +45,11 @@ public class Paciente {
     }
     
     public String getCpf() {
-        return cpf;
+        return cpfPaciente;
     }
 
     public void setCpf(String cpf) {
-        this.cpf = cpf;
+        this.cpfPaciente = cpf;
     }
 
     public String getNome() {

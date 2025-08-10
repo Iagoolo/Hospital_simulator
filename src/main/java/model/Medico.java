@@ -2,24 +2,24 @@ package model;
 
 public class Medico {
     
-    private String cpf_medico;
+    private String cpfMedico;
     private String turno;
 
     public Medico() {
         // Default constructor
     }   
 
-    public Medico(String cpf_medico, String turno) {
-        this.cpf_medico = cpf_medico;
+    public Medico(String cpfMedico, String turno) {
+        this.cpfMedico = cpfMedico;
         this.turno = turno;
     }
     
     public String getCpfMedico() {
-        return cpf_medico;
+        return cpfMedico;
     }
 
-    public void setCpfMedico(String cpf_medico) {
-        this.cpf_medico = cpf_medico;
+    public void setCpfMedico(String cpfMedico) {
+        this.cpfMedico = cpfMedico;
     }
 
     public String getTurno() {
