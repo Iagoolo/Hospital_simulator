@@ -20,6 +20,8 @@ public class PacienteDAO {
             stmt.setString(4, paciente.getEndereco());
             stmt.setString(5, paciente.getCpf());
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new SQLException("Error adding paciente: " + e.getMessage(), e);
         }
     }
 
@@ -40,6 +42,8 @@ public class PacienteDAO {
                 paciente.setCpf(rs.getString("cpf"));
                 pacientes.add(paciente);
             }
+        } catch (SQLException e) {
+            throw new SQLException("Error listing pacientes: " + e.getMessage(), e);
         }
 
         return pacientes;
@@ -63,6 +67,8 @@ public class PacienteDAO {
     
                 return paciente;
             }
+        } catch (SQLException e) {
+            throw new SQLException("Error searching paciente: " + e.getMessage(), e);
         }
 
         return null;
@@ -78,6 +84,8 @@ public class PacienteDAO {
             ps.setString(4, nomeMae);
             ps.setString(5, cpf);
             ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new SQLException("Error updating paciente: " + e.getMessage(), e);
         }
     }
 
@@ -87,6 +95,8 @@ public class PacienteDAO {
         try(PreparedStatement ps = connection.prepareStatement(sql)){
             ps.setString(1, cpf);
             ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new SQLException("Error deleting paciente: " + e.getMessage(), e);
         }
     }
 }
