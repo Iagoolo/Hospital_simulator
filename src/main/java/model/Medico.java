@@ -7,9 +7,8 @@ public class Medico extends Pessoa {
     public Medico() {
         // Default constructor
     }   
-    
-    public Medico(String nome, String cpf, String turno) {
-        super(nome, cpf);
+    public Medico(String nome, String cpf, String nomePai, String nomeMae, String endereco, String turno, int idade) {
+        super(nome, cpf, nomePai, nomeMae, endereco, idade);
         this.turno = turno;
     }
 

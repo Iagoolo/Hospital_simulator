@@ -6,31 +6,49 @@ import java.util.List;
 
 public class PacienteDAO extends PessoaDAO<model.Paciente> {
 
-    private Connection connection;
-
     public PacienteDAO(Connection connection) {
         super(connection);
     }
 
     @Override
     public void add(model.Paciente paciente) throws SQLException {
-        String sql = "INSERT INTO paciente (nome, nomePai, nomeMae, endereco, cpf) VALUES (?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, paciente.getNome());
-            stmt.setString(2, paciente.getNomePai());
-            stmt.setString(3, paciente.getNomeMae());
-            stmt.setString(4, paciente.getEndereco());
-            stmt.setString(5, paciente.getCpf());
-            stmt.executeUpdate();
+        String sqlPessoa = "INSERT INTO pessoa (nome, nome_pai, nome_mae, endereco, CPF, idade) VALUES (?, ?, ?, ?, ?, ?)";
+        String sqlPaciente = "INSERT INTO paciente (cpf_paciente) VALUES (?)";
+
+        try{
+            connection.setAutoCommit(false);
+
+            try (PreparedStatement psPessoa = connection.prepareStatement(sqlPessoa)) {
+                psPessoa.setString(1, paciente.getNome());
+                psPessoa.setString(2, paciente.getNomePai());
+                psPessoa.setString(3, paciente.getNomeMae());
+                psPessoa.setString(4, paciente.getEndereco());
+                psPessoa.setString(5, paciente.getCpf());
+                psPessoa.setInt(6, paciente.getIdade());
+                psPessoa.executeUpdate();
+            }
+
+            try (PreparedStatement psPaciente = connection.prepareStatement(sqlPaciente)) {
+                psPaciente.setString(1, paciente.getCpf());
+                psPaciente.executeUpdate();
+            }
+
+            connection.commit();
         } catch (SQLException e) {
+            connection.rollback();
             throw new SQLException("Error adding paciente: " + e.getMessage(), e);
+        } finally {
+            connection.setAutoCommit(true);
         }
     }
 
     @Override
     public List<model.Paciente> listarTodos() throws SQLException {
         List<model.Paciente> pacientes = new ArrayList<>();
-        String sql = "SELECT * FROM paciente";
+        String sql = """
+                SELECT * FROM paciente
+                INNER JOIN pessoa ON paciente.cpf_paciente = pessoa.cpf
+                """;
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
@@ -53,7 +71,11 @@ public class PacienteDAO extends PessoaDAO<model.Paciente> {
 
     @Override
     public model.Paciente buscarPorCpf(String cpf) throws SQLException {
-        String sql = "Select * FROM paciente WHERE cpf_paciente = ?";
+        String sql = """
+                SELECT * FROM paciente
+                INNER JOIN pessoa ON paciente.cpf_paciente = pessoa.cpf
+                WHERE cpf_paciente = ?
+                """;
 
         try(PreparedStatement ps = connection.prepareStatement(sql)){
             ps.setString(1, cpf);
@@ -63,8 +85,8 @@ public class PacienteDAO extends PessoaDAO<model.Paciente> {
                 model.Paciente paciente = new model.Paciente();
 
                 paciente.setNome(rs.getString("nome"));
-                paciente.setNomePai(rs.getString("nomePai"));
-                paciente.setNomeMae(rs.getString("nomeMae"));
+                paciente.setNomePai(rs.getString("nome_pai"));
+                paciente.setNomeMae(rs.getString("nome_mae"));
                 paciente.setEndereco(rs.getString("endereco"));
                 paciente.setCpf(rs.getString("cpf"));
     
@@ -95,11 +117,15 @@ public class PacienteDAO extends PessoaDAO<model.Paciente> {
 
     @Override
     public void deletar(String cpf) throws SQLException {
-        String sql = "DELETE FROM paciente WHERE cpf = ?";
+        String sql = "DELETE FROM paciente WHERE cpf_paciente = ?";
 
         try(PreparedStatement ps = connection.prepareStatement(sql)){
             ps.setString(1, cpf);
-            ps.executeUpdate();
+            int linhasAfetadas = ps.executeUpdate();
+
+            if (linhasAfetadas == 0) {
+                throw new SQLException("Paciente não encontrado");
+            }
         } catch (SQLException e) {
             throw new SQLException("Error deleting paciente: " + e.getMessage(), e);
         }

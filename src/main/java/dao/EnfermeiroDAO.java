@@ -2,40 +2,71 @@ package dao;
 
 import java.sql.*;
 import java.util.List;
+import model.Enfermeiro;
 
-public class EnfermeiroDAO extends PessoaDAO<model.Enfermeiro> {
-
-    private Connection connection;
+public class EnfermeiroDAO extends PessoaDAO<Enfermeiro> {
 
     public EnfermeiroDAO(Connection connection){
         super(connection);
     }
 
     @Override
-    public void add(model.Enfermeiro enfermeiro) throws SQLException{
-        String sql = "INSERT INTO enfermeiro (cpf_enfermeiro) VALUES (?)";
+    public void add(Enfermeiro enfermeiro) throws SQLException{
+        String sqlPessoa = "INSERT INTO Pessoa (CPF, Nome, Endereco, Idade, Nome_pai, Nome_mae) VALUES (?, ?, ?, ?, ?, ?)";
+        String sqlEnfermeiro = "INSERT INTO enfermeiro (cpf_enfermeiro) VALUES (?)";
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql)){
-            stmt.setString(1, enfermeiro.getCpf());
-            stmt.executeUpdate();
+        try {
+            connection.setAutoCommit(false);
+
+            try (PreparedStatement psPessoa = connection.prepareStatement(sqlPessoa)) {
+                psPessoa.setString(1, enfermeiro.getCpf());
+                psPessoa.setString(2, enfermeiro.getNome());
+                psPessoa.setString(3, enfermeiro.getEndereco());
+                psPessoa.setInt(4, enfermeiro.getIdade());
+                psPessoa.setString(5, enfermeiro.getNomePai());
+                psPessoa.setString(6, enfermeiro.getNomeMae());
+                psPessoa.executeUpdate();
+            }
+
+            try (PreparedStatement psEnfermeiro = connection.prepareStatement(sqlEnfermeiro)) {
+                psEnfermeiro.setString(1, enfermeiro.getCpf());
+                psEnfermeiro.executeUpdate();
+            }
+
+            connection.commit();
         } catch (SQLException e) {
+            connection.rollback();
             throw new SQLException("Error adding enfermeiro: " + e.getMessage(), e);
+        } finally {
+            connection.setAutoCommit(true);
         }
     }
 
     @Override
-    public model.Enfermeiro buscarPorCpf (String cpfEnfermeiro) throws SQLException{
-        String sql = "SELECT * FROM enfermeiro WHERE cpf_enfermeiro = ?";
+    public Enfermeiro buscarPorCpf (String cpfEnfermeiro) throws SQLException{
+        String sql = """
+            SELECT * 
+            FROM
+                enfermeiro 
+            INNER JOIN
+                pessoa ON enfermeiro.cpf_enfermeiro = pessoa.cpf
+            WHERE cpf_enfermeiro = ?
+        """;
 
         try (PreparedStatement ps = connection.prepareStatement(sql)){
             ps.setString(1, cpfEnfermeiro);
 
             ResultSet rs = ps.executeQuery();
             if (rs.next()){
-                model.Enfermeiro enfermeiro = new model.Enfermeiro();
+                Enfermeiro enfermeiro = new Enfermeiro();
 
                 enfermeiro.setCpf(rs.getString("cpf_enfermeiro"));
                 enfermeiro.setNome(rs.getString("nome"));
+                enfermeiro.setEndereco(rs.getString("endereco"));
+                enfermeiro.setIdade(rs.getInt("idade"));
+                enfermeiro.setNomePai(rs.getString("nome_pai"));
+                enfermeiro.setNomeMae(rs.getString("nome_mae"));
+
                 return enfermeiro;
             }
         } catch (SQLException e){
@@ -46,15 +77,18 @@ public class EnfermeiroDAO extends PessoaDAO<model.Enfermeiro> {
     }
 
     @Override
-    public List<model.Enfermeiro> listarTodos() throws SQLException{
-        String sql = "SELECT * FROM enfermeiro";
-        List<model.Enfermeiro> enfermeiros = new java.util.ArrayList<>();
+    public List<Enfermeiro> listarTodos() throws SQLException{
+        String sql = """
+                SELECT * FROM enfermeiro
+                INNER JOIN pessoa ON enfermeiro.cpf_enfermeiro = pessoa.cpf
+                """;
+        List<Enfermeiro> enfermeiros = new java.util.ArrayList<>();
 
         try (PreparedStatement ps = connection.prepareStatement(sql)){
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()){
-                model.Enfermeiro enfermeiro = new model.Enfermeiro();
+                Enfermeiro enfermeiro = new Enfermeiro();
 
                 enfermeiro.setCpf(rs.getString("cpf_enfermeiro"));
                 enfermeiro.setNome(rs.getString("nome"));
@@ -73,14 +107,18 @@ public class EnfermeiroDAO extends PessoaDAO<model.Enfermeiro> {
 
         try (PreparedStatement ps = connection.prepareStatement(sql)){
             ps.setString(1, cpf);
-            ps.executeUpdate();
+            int linhasAfetadas = ps.executeUpdate();
+
+            if (linhasAfetadas == 0) {
+                throw new SQLException("Enfermeiro não encontrado");
+            }
         } catch (SQLException e){
             throw new SQLException("Error delete enfermeiro: " + e.getMessage());
         }
     }
 
     @Override
-    public void atualizar(model.Enfermeiro enfermeiro) throws SQLException{
+    public void atualizar(Enfermeiro enfermeiro) throws SQLException{
         String sql = "UPDATE enfermeiro SET nome = ? WHERE cpf_enfermeiro = ?";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)){

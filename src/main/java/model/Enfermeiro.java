@@ -5,8 +5,8 @@ public class Enfermeiro extends Pessoa {
     public Enfermeiro() {
         // Default constructor
     }
-    
-    public Enfermeiro(String cpfEnfermeiro, String nome) {
-        super(nome, cpfEnfermeiro);
+
+    public Enfermeiro(String cpfEnfermeiro, String nome, String nomePai, String nomeMae, String endereco, int idade) {
+        super(nome, cpfEnfermeiro, nomePai, nomeMae, endereco, idade);
     }
 }
