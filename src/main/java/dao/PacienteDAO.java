@@ -14,6 +14,7 @@ public class PacienteDAO extends PessoaDAO<model.Paciente> {
     public void add(model.Paciente paciente) throws SQLException {
         String sqlPessoa = "INSERT INTO pessoa (nome, nome_pai, nome_mae, endereco, CPF, idade) VALUES (?, ?, ?, ?, ?, ?)";
         String sqlPaciente = "INSERT INTO paciente (cpf_paciente) VALUES (?)";
+        String sqlSintoma = "INSERT INTO paciente_sintomas (cpf_paciente, sintoma) VALUES (?, ?)";
 
         try{
             connection.setAutoCommit(false);
@@ -33,6 +34,14 @@ public class PacienteDAO extends PessoaDAO<model.Paciente> {
                 psPaciente.executeUpdate();
             }
 
+            try (PreparedStatement psSintoma = connection.prepareStatement(sqlSintoma)) {
+                for (String sintoma : paciente.getSintomas()) {
+                    psSintoma.setString(1, paciente.getCpf());
+                    psSintoma.setString(2, sintoma);
+                    psSintoma.executeUpdate();
+                }
+            }
+
             connection.commit();
         } catch (SQLException e) {
             connection.rollback();
@@ -48,6 +57,7 @@ public class PacienteDAO extends PessoaDAO<model.Paciente> {
         String sql = """
                 SELECT * FROM paciente
                 INNER JOIN pessoa ON paciente.cpf_paciente = pessoa.cpf
+                LEFT JOIN Paciente_sintomas ON paciente.cpf_paciente = Paciente_sintomas.cpf_paciente
                 """;
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -60,6 +70,12 @@ public class PacienteDAO extends PessoaDAO<model.Paciente> {
                 paciente.setNomeMae(rs.getString("nomeMae"));
                 paciente.setEndereco(rs.getString("endereco"));
                 paciente.setCpf(rs.getString("cpf"));
+
+                String sintoma = rs.getString("sintoma");
+                if (sintoma != null) {
+                    paciente.getSintomas().add(sintoma);
+                }
+
                 pacientes.add(paciente);
             }
         } catch (SQLException e) {
@@ -74,6 +90,7 @@ public class PacienteDAO extends PessoaDAO<model.Paciente> {
         String sql = """
                 SELECT * FROM paciente
                 INNER JOIN pessoa ON paciente.cpf_paciente = pessoa.cpf
+                LEFT JOIN paciente_sintomas ON paciente.cpf_paciente = paciente_sintomas.cpf_paciente
                 WHERE cpf_paciente = ?
                 """;
 
@@ -81,7 +98,7 @@ public class PacienteDAO extends PessoaDAO<model.Paciente> {
             ps.setString(1, cpf);
 
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
+            while (rs.next()) {
                 model.Paciente paciente = new model.Paciente();
 
                 paciente.setNome(rs.getString("nome"));
@@ -89,7 +106,12 @@ public class PacienteDAO extends PessoaDAO<model.Paciente> {
                 paciente.setNomeMae(rs.getString("nome_mae"));
                 paciente.setEndereco(rs.getString("endereco"));
                 paciente.setCpf(rs.getString("cpf"));
-    
+
+                String sintoma = rs.getString("sintoma");
+                if (sintoma != null) {
+                    paciente.getSintomas().add(sintoma);
+                }
+
                 return paciente;
             }
         } catch (SQLException e) {

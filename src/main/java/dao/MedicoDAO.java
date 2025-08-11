@@ -14,6 +14,7 @@ public class MedicoDAO extends PessoaDAO<Medico>{
     public void add(Medico medico) throws SQLException {
         String sqlPessoa = "INSERT INTO Pessoa (CPF, Nome, Endereco, Idade, Nome_pai, Nome_mae) VALUES (?, ?, ?, ?, ?, ?)";
         String sqlMedico = "INSERT INTO Medico (CPF_medico, Turno) VALUES (?, ?)";
+        String sqlEspec = "INSERT INTO Medico_Especializacao (CPF_medico, Especializacao) VALUES (?, ?)";
 
         try {
             connection.setAutoCommit(false); 
@@ -34,6 +35,14 @@ public class MedicoDAO extends PessoaDAO<Medico>{
                 psMedico.executeUpdate();
             }
 
+            try (PreparedStatement psEspec = connection.prepareStatement(sqlEspec)) {
+                for (String especializacao : medico.getEspecialidades()) {
+                    psEspec.setString(1, medico.getCpf());
+                    psEspec.setString(2, especializacao);
+                    psEspec.executeUpdate();
+                }
+            }
+
             connection.commit();
 
         } catch (SQLException e) {
@@ -45,38 +54,46 @@ public class MedicoDAO extends PessoaDAO<Medico>{
     }
 
     @Override
-    public model.Medico buscarPorCpf(String cpf) throws SQLException {
+    public Medico buscarPorCpf(String cpf) throws SQLException {
         String sql = """
                 SELECT * 
                 FROM
                     medico
                 INNER JOIN
                     pessoa ON medico.cpf_medico = pessoa.cpf
+                INNER JOIN
+                    medico_especializacao ON medico.cpf_medico = medico_especializacao.cpf_medico
                 WHERE cpf_medico = ?
         """;
         
+        Medico medico = null;
         try (PreparedStatement ps = connection.prepareStatement(sql)){
             ps.setString(1, cpf);
 
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                Medico medico = new Medico();
 
-                medico.setNome(rs.getString("nome"));
-                medico.setCpf(rs.getString("cpf_medico"));
-                medico.setTurno(rs.getString("turno"));
-                medico.setIdade(rs.getInt("idade"));
-                medico.setNomePai(rs.getString("nome_pai"));
-                medico.setNomeMae(rs.getString("nome_mae"));
-                medico.setEndereco(rs.getString("endereco"));
+           ResultSet rs = ps.executeQuery();
+           while (rs.next()){
+               if (medico == null) {
+                   medico = new Medico();
+                   medico.setNome(rs.getString("nome"));
+                   medico.setCpf(rs.getString("cpf_medico"));
+                   medico.setTurno(rs.getString("turno"));
+                   medico.setIdade(rs.getInt("idade"));
+                   medico.setNomePai(rs.getString("nome_pai"));
+                   medico.setNomeMae(rs.getString("nome_mae"));
+                   medico.setEndereco(rs.getString("endereco"));
+               }
 
-                return medico;
-            }
+               String esp = rs.getString("especializacao");
+               if (esp != null) {
+                   medico.addEspecialidade(esp);
+               }
+           }
         } catch (SQLException e) {
             throw new SQLException("Error searching medico: " + e.getMessage(), e);
         }
 
-        return null;
+        return medico;
     }
 
     @Override
@@ -84,6 +101,7 @@ public class MedicoDAO extends PessoaDAO<Medico>{
         String sql = """
                 SELECT * FROM medico
                 INNER JOIN pessoa ON medico.cpf_medico = pessoa.cpf
+                LEFT JOIN medico_especializacao ON medico.cpf_medico = medico_especializacao.cpf_medico
                 """;
         List<Medico> medicos = new java.util.ArrayList<>();
 
@@ -101,6 +119,10 @@ public class MedicoDAO extends PessoaDAO<Medico>{
                 medico.setNomeMae(rs.getString("nome_mae"));
                 medico.setEndereco(rs.getString("endereco"));
 
+                String esp = rs.getString("especializacao");
+                if (esp != null) {
+                    medico.addEspecialidade(esp);
+                }
                 medicos.add(medico);
             }
         } catch (SQLException e) {
