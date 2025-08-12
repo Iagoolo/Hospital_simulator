@@ -91,7 +91,7 @@ public class PacienteDAO extends PessoaDAO<model.Paciente> {
                 SELECT * FROM paciente
                 INNER JOIN pessoa ON paciente.cpf_paciente = pessoa.cpf
                 LEFT JOIN paciente_sintomas ON paciente.cpf_paciente = paciente_sintomas.cpf_paciente
-                WHERE cpf_paciente = ?
+                WHERE paciente.cpf_paciente = ?
                 """;
 
         try(PreparedStatement ps = connection.prepareStatement(sql)){
@@ -105,9 +105,9 @@ public class PacienteDAO extends PessoaDAO<model.Paciente> {
                 paciente.setNomePai(rs.getString("nome_pai"));
                 paciente.setNomeMae(rs.getString("nome_mae"));
                 paciente.setEndereco(rs.getString("endereco"));
-                paciente.setCpf(rs.getString("cpf"));
+                paciente.setCpf(rs.getString("cpf_paciente"));
 
-                String sintoma = rs.getString("sintoma");
+                String sintoma = rs.getString("sintomas");
                 if (sintoma != null) {
                     paciente.getSintomas().add(sintoma);
                 }

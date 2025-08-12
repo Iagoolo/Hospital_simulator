@@ -61,9 +61,9 @@ public class MedicoDAO extends PessoaDAO<Medico>{
                     medico
                 INNER JOIN
                     pessoa ON medico.cpf_medico = pessoa.cpf
-                INNER JOIN
+                LEFT JOIN
                     medico_especializacao ON medico.cpf_medico = medico_especializacao.cpf_medico
-                WHERE cpf_medico = ?
+                WHERE medico.cpf_medico = ?
         """;
         
         Medico medico = null;

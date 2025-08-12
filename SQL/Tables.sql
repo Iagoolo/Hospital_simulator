@@ -72,7 +72,7 @@ CREATE TABLE Consulta (
     id_consulta SERIAL PRIMARY KEY,
     data_consulta DATE NOT NULL,
     hora_consulta TIME NOT NULL,
-    Sala VARCHAR(50),
+    Sala INT,
     Observacao TEXT,
     Diagnostico TEXT,
     CPF_paciente VARCHAR(11) NOT NULL,
