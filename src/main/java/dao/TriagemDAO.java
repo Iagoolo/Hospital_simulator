@@ -17,7 +17,7 @@ public class TriagemDAO {
         this.connection = connection;
     }
 
-    public void add(Triagem triagem) throws SQLException{
+    public void addTriagem(Triagem triagem) throws SQLException{
         String sql = "INSERT INTO triagem (prioridade, data_triagem, hora_triagem, temperatura, peso, cpf_paciente, cpf_enfermeiro) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)){

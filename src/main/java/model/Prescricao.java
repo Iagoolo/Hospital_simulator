@@ -38,6 +38,10 @@ public class Prescricao {
         return itens;
     }
 
+    public void setItens(List<ItemPrescricao> itens) {
+        this.itens = itens;
+    }
+
     public void addItem(ItemPrescricao item) {
         this.itens.add(item);
     }
