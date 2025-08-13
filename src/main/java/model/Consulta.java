@@ -14,6 +14,7 @@ public class Consulta {
     private String diagnostico;
     private String cpfPaciente;
     private String cpfMedico;
+    private Prescricao prescricao;
 
     public Consulta() {
         // Default constructor
@@ -101,5 +102,13 @@ public class Consulta {
 
     public void setCpfMedico(String cpfMedico) {
         this.cpfMedico = cpfMedico;
+    }
+
+    public Prescricao getPrescricao() {
+        return prescricao;
+    }
+
+    public void setPrescricao(Prescricao prescricao) {
+        this.prescricao = prescricao;
     }
 }

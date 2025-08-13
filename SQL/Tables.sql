@@ -96,13 +96,18 @@ CREATE TABLE Medicamentos (
 CREATE TABLE Prescricao (
     id_prescricao SERIAL PRIMARY KEY,
     id_consulta INT NOT NULL,
-    id_medicamento INT NOT NULL,
-    Dosagem VARCHAR(100),
-    Frequencia VARCHAR(100),
-    Duracao VARCHAR(100),
-    Instrucoes TEXT,
     CONSTRAINT fk_presc_consulta FOREIGN KEY (id_consulta) REFERENCES Consulta(id_consulta),
     CONSTRAINT fk_presc_medicamento FOREIGN KEY (id_medicamento) REFERENCES Medicamentos(id_medicamento)
+);
+
+CREATE TABLE item_prescricao (
+    id_item SERIAL PRIMARY KEY,
+    id_prescricao INT REFERENCES prescricao(id_prescricao),
+    nome_medicamento VARCHAR(100) NOT NULL,
+    dosagem VARCHAR(50),
+    frequencia VARCHAR(50),
+    duracao VARCHAR(50),
+    instrucoes TEXT
 );
 
 CREATE TABLE Exames (
