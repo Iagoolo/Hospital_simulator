@@ -74,7 +74,7 @@ public class Teste {
             triagem.setPeso(70.0);
             triagem.setCpfPaciente("12345678901");
             triagem.setCpfEnfermeiro("98765432100");
-            triagemDAO.add(triagem);
+            triagemDAO.addTriagem(triagem);
 
             Triagem t = triagemDAO.buscarTriagem(triagem.getIdTriagem());
             System.out.println("Triagem encontrada: " + t.getPrioridade());

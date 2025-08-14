@@ -3,22 +3,22 @@ package model;
 public class ItemPrescricao {
     private int idItem;
     private int idPrescricao;
-    private String nomeMedicamento;
+    private int idMedicamento;
     private String dosagem;
     private String frequencia;
     private String duracao;
-    private String instrucoes;
+    private String observacoes;
 
     public ItemPrescricao() {}
 
-    public ItemPrescricao(int idItem, int idPrescricao, String nomeMedicamento, String dosagem, String frequencia, String duracao, String instrucoes) {
+    public ItemPrescricao(int idItem, int idPrescricao, int idMedicamento, String dosagem, String frequencia, String duracao, String observacoes) {
         this.idItem = idItem;
         this.idPrescricao = idPrescricao;
-        this.nomeMedicamento = nomeMedicamento;
+        this.idMedicamento = idMedicamento;
         this.dosagem = dosagem;
         this.frequencia = frequencia;
         this.duracao = duracao;
-        this.instrucoes = instrucoes;
+        this.observacoes = observacoes;
     }
 
     public int getIdItem() {
@@ -61,19 +61,19 @@ public class ItemPrescricao {
         this.duracao = duracao;
     }
 
-    public String getInstrucoes() {
-        return instrucoes;
+    public String getObservacoes() {
+        return observacoes;
     }
 
-    public void setInstrucoes(String instrucoes) {
-        this.instrucoes = instrucoes;
+    public void setObservacoes(String observacoes) {
+        this.observacoes = observacoes;
     }
 
-    public String getNomeMedicamento() {
-        return nomeMedicamento;
+    public int getIdMedicamento() {
+        return idMedicamento;
     }
 
-    public void setNomeMedicamento(String nomeMedicamento) {
-        this.nomeMedicamento = nomeMedicamento;
+    public void setIdMedicamento(int idMedicamento) {
+        this.idMedicamento = idMedicamento;
     }
 }

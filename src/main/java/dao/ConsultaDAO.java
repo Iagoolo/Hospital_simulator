@@ -77,12 +77,12 @@ public class ConsultaDAO {
                 prescricao.setIdConsulta(consulta.getIdConsulta());
             }
 
-            String nomeMed = rs.getString("nome_medicamento");
-            if (nomeMed != null) {
+            int idMedicamento = rs.getInt("id_medicamento");
+            if (idMedicamento > 0) {
                 prescricao.addItem(new ItemPrescricao(
                     rs.getInt("id_item"),
+                    rs.getInt("id_prescricao"),
                     rs.getInt("id_medicamento"),
-                    nomeMed,
                     rs.getString("dosagem"),
                     rs.getString("frequencia"),
                     rs.getString("duracao"),

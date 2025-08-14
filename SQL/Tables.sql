@@ -83,7 +83,13 @@ CREATE TABLE Consulta (
     CONSTRAINT fk_consulta_triagem FOREIGN KEY (id_triagem) REFERENCES Triagem(id_triagem)
 );
 
--- Catálogo de todos os medicamentos disponíveis
+CREATE TABLE Prescricao (
+    id_prescricao SERIAL PRIMARY KEY,
+    id_consulta INT NOT NULL,
+    CONSTRAINT fk_presc_consulta FOREIGN KEY (id_consulta) REFERENCES Consulta(id_consulta),
+    CONSTRAINT fk_presc_medicamento FOREIGN KEY (id_medicamento) REFERENCES Medicamentos(id_medicamento)
+);
+
 CREATE TABLE Medicamentos (
     id_medicamento SERIAL PRIMARY KEY,
     Nome VARCHAR(100) NOT NULL,
@@ -92,22 +98,16 @@ CREATE TABLE Medicamentos (
     Via_administracao VARCHAR(50)
 );
 
--- Tabela que liga Consulta e Medicamentos, contendo os detalhes da prescrição.
-CREATE TABLE Prescricao (
-    id_prescricao SERIAL PRIMARY KEY,
-    id_consulta INT NOT NULL,
-    CONSTRAINT fk_presc_consulta FOREIGN KEY (id_consulta) REFERENCES Consulta(id_consulta),
-    CONSTRAINT fk_presc_medicamento FOREIGN KEY (id_medicamento) REFERENCES Medicamentos(id_medicamento)
-);
-
-CREATE TABLE item_prescricao (
+CREATE TABLE Prescricao_Item (
     id_item SERIAL PRIMARY KEY,
-    id_prescricao INT REFERENCES prescricao(id_prescricao),
-    nome_medicamento VARCHAR(100) NOT NULL,
+    id_prescricao INT NOT NULL,
+    id_medicamento INT NOT NULL,
     dosagem VARCHAR(50),
     frequencia VARCHAR(50),
     duracao VARCHAR(50),
-    instrucoes TEXT
+    observacoes TEXT,
+    FOREIGN KEY (id_prescricao) REFERENCES Prescricao(id_prescricao) ON DELETE CASCADE,
+    FOREIGN KEY (id_medicamento) REFERENCES Medicamentos(id_medicamento)
 );
 
 CREATE TABLE Exames (
