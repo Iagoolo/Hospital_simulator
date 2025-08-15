@@ -46,15 +46,14 @@ CREATE TABLE Paciente_Sintomas (
 -- Histórico médico é uma relação 1:1 com Paciente
 CREATE TABLE Historico_Medico (
     id_historico SERIAL PRIMARY KEY,
-    CPF_paciente VARCHAR(11) NOT NULL UNIQUE,
-    Alergias TEXT,
-    Historico_exames TEXT,
-    Historico_familiar TEXT,
-    Consultas_realizadas TEXT,
-    Vacinas TEXT,
-    CONSTRAINT fk_hist_med_paciente FOREIGN KEY (CPF_paciente) REFERENCES Paciente(CPF_paciente)
+    CPF_paciente VARCHAR(11) NOT NULL,
+    observacoes TEXT,
+    ultima_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(20) DEFAULT 'Ativo',
+    CONSTRAINT fk_historico_paciente FOREIGN KEY (CPF_paciente) REFERENCES Paciente(CPF)
 );
 
+-- Tabela para triagem de pacientes
 CREATE TABLE Triagem (
     id_triagem SERIAL PRIMARY KEY,
     Prioridade VARCHAR(50) NOT NULL,
@@ -68,6 +67,7 @@ CREATE TABLE Triagem (
     CONSTRAINT fk_triagem_paciente FOREIGN KEY (CPF_paciente) REFERENCES Paciente(CPF_paciente)
 );
 
+-- Tabela para consultas médicas
 CREATE TABLE Consulta (
     id_consulta SERIAL PRIMARY KEY,
     data_consulta DATE NOT NULL,
@@ -83,6 +83,7 @@ CREATE TABLE Consulta (
     CONSTRAINT fk_consulta_triagem FOREIGN KEY (id_triagem) REFERENCES Triagem(id_triagem)
 );
 
+-- Tabela para prescrições médicas
 CREATE TABLE Prescricao (
     id_prescricao SERIAL PRIMARY KEY,
     id_consulta INT NOT NULL,
@@ -90,6 +91,7 @@ CREATE TABLE Prescricao (
     CONSTRAINT fk_presc_medicamento FOREIGN KEY (id_medicamento) REFERENCES Medicamentos(id_medicamento)
 );
 
+-- Tabela para medicamentos
 CREATE TABLE Medicamentos (
     id_medicamento SERIAL PRIMARY KEY,
     Nome VARCHAR(100) NOT NULL,
@@ -98,6 +100,7 @@ CREATE TABLE Medicamentos (
     Via_administracao VARCHAR(50)
 );
 
+-- Tabela para itens de prescrição
 CREATE TABLE Prescricao_Item (
     id_item SERIAL PRIMARY KEY,
     id_prescricao INT NOT NULL,
@@ -110,16 +113,19 @@ CREATE TABLE Prescricao_Item (
     FOREIGN KEY (id_medicamento) REFERENCES Medicamentos(id_medicamento)
 );
 
+-- Tabela para exames
 CREATE TABLE Exames (
     id_exame SERIAL PRIMARY KEY,
     id_consulta INT NOT NULL,
     Tipo VARCHAR(100) NOT NULL,
+    Solicitado_em DATE NOT NULL DEFAULT CURRENT_DATE,
     Resultado TEXT,
-    Data DATE,
+    Data_resultado DATE,
+    Status VARCHAR(50) DEFAULT 'Pendente',
     CONSTRAINT fk_exames_consulta FOREIGN KEY (id_consulta) REFERENCES Consulta(id_consulta)
 );
 
--- Tabela de Salas. Uma sala existe independentemente de uma chamada.
+-- Tabela para salas
 CREATE TABLE Sala (
     id_sala SERIAL PRIMARY KEY,
     Numero VARCHAR(10) NOT NULL,
@@ -128,6 +134,7 @@ CREATE TABLE Sala (
     Tipo_sala VARCHAR(50) 
 );
 
+-- Tabela para chamadas
 CREATE TABLE Chamada (
     id_chamada SERIAL PRIMARY KEY,
     Senha VARCHAR(10) NOT NULL,

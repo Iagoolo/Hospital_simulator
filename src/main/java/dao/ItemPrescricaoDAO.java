@@ -2,6 +2,7 @@ package dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +62,7 @@ public class ItemPrescricaoDAO {
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, idPrescricao);
             ps.setInt(2, idMedicamento);
-            var rs = ps.executeQuery();
+            ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 item = new ItemPrescricao(
                     rs.getInt("id_item"),
