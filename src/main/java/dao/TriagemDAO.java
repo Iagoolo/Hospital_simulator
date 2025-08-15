@@ -20,7 +20,7 @@ public class TriagemDAO {
     public void addTriagem(Triagem triagem) throws SQLException{
         String sql = "INSERT INTO triagem (prioridade, data_triagem, hora_triagem, temperatura, peso, cpf_paciente, cpf_enfermeiro) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)){
+        try (PreparedStatement ps = connection.prepareStatement(sql)){
             ps.setString(1, triagem.getPrioridade());
             ps.setDate(2, java.sql.Date.valueOf(triagem.getDataTriagem()));
             ps.setTime(3, java.sql.Time.valueOf(triagem.getHoraTriagem()));
@@ -30,11 +30,6 @@ public class TriagemDAO {
             ps.setString(7, triagem.getCpfEnfermeiro());
 
             ps.executeUpdate();
-
-            ResultSet rs = ps.getGeneratedKeys();
-            if (rs.next()) {
-                triagem.setIdTriagem(rs.getInt(1));
-            }
         }
     }
 

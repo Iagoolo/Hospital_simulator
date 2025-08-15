@@ -128,9 +128,7 @@ CREATE TABLE Exames (
 -- Tabela para salas
 CREATE TABLE Sala (
     id_sala SERIAL PRIMARY KEY,
-    Numero VARCHAR(10) NOT NULL,
     Andar INT,
-    Corredor VARCHAR(10),
     Tipo_sala VARCHAR(50) 
 );
 
