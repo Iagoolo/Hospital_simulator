@@ -132,16 +132,16 @@ CREATE TABLE Sala (
     Tipo_sala VARCHAR(50) 
 );
 
--- Tabela para chamadas
-CREATE TABLE Chamada (
-    id_chamada SERIAL PRIMARY KEY,
-    Senha VARCHAR(10) NOT NULL,
-    Hora_chamada TIME NOT NULL,
-    Status VARCHAR(20) DEFAULT 'Aguardando',
+-- Tabela para atendimentos
+CREATE TABLE Atendimento (
+    id_atendimento SERIAL PRIMARY KEY,
+    senha VARCHAR(10) NOT NULL,
+    hora_atendimento TIME NOT NULL,
+    status VARCHAR(20) DEFAULT 'Aguardando',
     id_consulta INT,
     id_triagem INT,
     id_sala INT NOT NULL,
-    CONSTRAINT fk_chamada_consulta FOREIGN KEY (id_consulta) REFERENCES Consulta(id_consulta),
-    CONSTRAINT fk_chamada_triagem FOREIGN KEY (id_triagem) REFERENCES Triagem(id_triagem),
-    CONSTRAINT fk_chamada_sala FOREIGN KEY (id_sala) REFERENCES Sala(id_sala)
+    CONSTRAINT fk_atendimento_consulta FOREIGN KEY (id_consulta) REFERENCES Consulta(id_consulta),
+    CONSTRAINT fk_atendimento_triagem FOREIGN KEY (id_triagem) REFERENCES Triagem(id_triagem),
+    CONSTRAINT fk_atendimento_sala FOREIGN KEY (id_sala) REFERENCES Sala(id_sala)
 );

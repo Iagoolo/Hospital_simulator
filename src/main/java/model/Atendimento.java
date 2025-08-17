@@ -2,36 +2,38 @@ package model;
 
 import java.sql.Time;
 
-public class Chamada {
+public class Atendimento {
     
-    private int idChamada;
-    private String senha;
+    private int idAtendimento;
     private int idConsulta;
     private int idTriagem;
     private int idSala;
-    private Time horaChamada;
+    private String cpfPaciente;
+    private Time horaAtendimento;
     private String status;
+    private String senha;
 
-    public Chamada(){
+    public Atendimento(){
         // Construtor padrão
     }
 
-    public Chamada(int idChamada, String senha, int idConsulta, int idTriagem, int idSala, Time horaChamada, String status){
-        this.idChamada = idChamada;
+    public Atendimento(int idAtendimento, String senha, int idConsulta, int idTriagem, int idSala, Time horaAtendimento, String status, String cpfPaciente){
+        this.idAtendimento = idAtendimento;
         this.senha = senha;
         this.idConsulta = idConsulta;
         this.idTriagem = idTriagem;
         this.idSala = idSala;
-        this.horaChamada = horaChamada;
+        this.horaAtendimento = horaAtendimento;
         this.status = status;
+        this.cpfPaciente = cpfPaciente;
     }
     
-    public int getIdChamada() {
-        return idChamada;
+    public int getIdAtendimento() {
+        return idAtendimento;
     }
 
-    public void setIdChamada(int idChamada) {
-        this.idChamada = idChamada;
+    public void setIdAtendimento(int idAtendimento) {
+        this.idAtendimento = idAtendimento;
     }
 
     public String getSenha() {
@@ -66,12 +68,12 @@ public class Chamada {
         this.idSala = idSala;
     }
 
-    public Time getHoraChamada() {
-        return horaChamada;
+    public Time getHoraAtendimento() {
+        return horaAtendimento;
     }
 
-    public void setHoraChamada(Time horaChamada) {
-        this.horaChamada = horaChamada;
+    public void setHoraAtendimento(Time horaAtendimento) {
+        this.horaAtendimento = horaAtendimento;
     }
 
     public String getStatus() {
@@ -82,4 +84,11 @@ public class Chamada {
         this.status = status;
     }
 
+    public String getCpfPaciente() {
+        return cpfPaciente;
+    }
+
+    public void setCpfPaciente(String cpfPaciente) {
+        this.cpfPaciente = cpfPaciente;
+    }
 }
