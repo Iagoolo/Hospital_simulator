@@ -1,6 +1,8 @@
 package model;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HistoricoMedico {
     
@@ -8,18 +10,20 @@ public class HistoricoMedico {
     private String cpfPaciente;
     private String observacoes;
     private Date ultimaAtualizacao;
-    private String status;
+    private String statusHistorico;
+    private List<Exames> exames;
 
     public HistoricoMedico(){
         // Construtor padrão
     }
 
-    public HistoricoMedico (int idHistorico, String cpfPaciente, String observacoes, Date ultimaAtualizacao, String status){
+    public HistoricoMedico (int idHistorico, String cpfPaciente, String observacoes, Date ultimaAtualizacao, String statusHistorico, List<Exames> exames){
         this.idHistorico = idHistorico;
         this.cpfPaciente = cpfPaciente;
         this.observacoes = observacoes;
         this.ultimaAtualizacao = ultimaAtualizacao;
-        this.status = status;
+        this.statusHistorico = statusHistorico;
+        this.exames = exames;
     }
 
     public int getIdHistorico() {
@@ -54,11 +58,27 @@ public class HistoricoMedico {
         this.ultimaAtualizacao = ultimaAtualizacao;
     }
 
-    public String getStatus() {
-        return status;
+    public String getStatusHistorico() {
+        return statusHistorico;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setStatusHistorico(String statusHistorico) {
+        this.statusHistorico = statusHistorico;
+    }
+
+    public List<Exames> getExames() {
+        return exames;
+    }
+
+    public void setExames(List<Exames> exames) {
+        this.exames = exames;
+    }
+
+    public void addExame(Exames exame) {
+        if (this.exames == null) {
+            this.exames = new ArrayList<>();
+        }
+        
+        this.exames.add(exame);
     }
 }

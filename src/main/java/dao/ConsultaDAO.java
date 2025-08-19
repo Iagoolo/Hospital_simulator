@@ -40,10 +40,10 @@ public class ConsultaDAO {
 
     public Consulta buscarConsulta(int idConsulta) throws SQLException {
     String sql = """
-        SELECT c.*, p.id_prescricao, ip.id_item, ip.nome_medicamento, ip.dosagem, ip.frequencia, ip.duracao, ip.instrucoes
+        SELECT c.*, p.id_prescricao, ip.id_item, ip.id_medicamento, ip.dosagem, ip.frequencia, ip.duracao, ip.observacoes
         FROM consulta c
         LEFT JOIN prescricao p ON c.id_consulta = p.id_consulta
-        LEFT JOIN item_prescricao ip ON p.id_prescricao = ip.id_prescricao
+        LEFT JOIN prescricao_item ip ON p.id_prescricao = ip.id_prescricao
         WHERE c.id_consulta = ?
     """;
 

@@ -49,7 +49,7 @@ CREATE TABLE Historico_Medico (
     CPF_paciente VARCHAR(11) NOT NULL,
     observacoes TEXT,
     ultima_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    status VARCHAR(20) DEFAULT 'Ativo',
+    status_historico VARCHAR(20) DEFAULT 'Ativo',
     CONSTRAINT fk_historico_paciente FOREIGN KEY (CPF_paciente) REFERENCES Paciente(CPF)
 );
 
@@ -117,6 +117,7 @@ CREATE TABLE Prescricao_Item (
 CREATE TABLE Exames (
     id_exame SERIAL PRIMARY KEY,
     id_consulta INT NOT NULL,
+    id_historico INT NOT NULL,
     Tipo VARCHAR(100) NOT NULL,
     Solicitado_em DATE NOT NULL DEFAULT CURRENT_DATE,
     Resultado TEXT,
@@ -140,7 +141,7 @@ CREATE TABLE Atendimento (
     status VARCHAR(20) DEFAULT 'Aguardando',
     id_consulta INT,
     id_triagem INT,
-    id_sala INT NOT NULL,
+    id_sala INT,
     CONSTRAINT fk_atendimento_consulta FOREIGN KEY (id_consulta) REFERENCES Consulta(id_consulta),
     CONSTRAINT fk_atendimento_triagem FOREIGN KEY (id_triagem) REFERENCES Triagem(id_triagem),
     CONSTRAINT fk_atendimento_sala FOREIGN KEY (id_sala) REFERENCES Sala(id_sala)

@@ -19,20 +19,21 @@ public class ExamesDAO {
     }
 
     public void addExame(Exames exame) throws SQLException{
-        String sql = "INSERT INTO exames (id_consulta, tipo, solicitado_em, resultado, data_resultado, status) VALUES(?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO exames (id_consulta, id_historico, tipo, solicitado_em, resultado, data_resultado, status) VALUES(?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)){
             ps.setInt(1, exame.getIdConsulta());
-            ps.setString(2, exame.getTipo());
-            ps.setDate(3, new java.sql.Date(exame.getSolicitadoEm().getTime()));
-            ps.setString(4, exame.getResultado());
+            ps.setInt(2, exame.getIdHistorico());
+            ps.setString(3, exame.getTipo());
+            ps.setDate(4, new java.sql.Date(exame.getSolicitadoEm().getTime()));
+            ps.setString(5, exame.getResultado());
             if (exame.getDataResultado() != null){
-                ps.setDate(5, new java.sql.Date(exame.getDataResultado().getTime()));
+                ps.setDate(6, new java.sql.Date(exame.getDataResultado().getTime()));
             } else {
-                ps.setNull(5, Types.DATE);
+                ps.setNull(6, Types.DATE);
             }
 
-            ps.setString(6, exame.getResultado());
+            ps.setString(7, exame.getStatus());
             ps.executeUpdate();
         }
     }
@@ -53,7 +54,8 @@ public class ExamesDAO {
                     rs.getDate("solicitado_em"),
                     rs.getString("resultado"),
                     rs.getDate("data_resultado"),
-                    rs.getString("status")
+                    rs.getString("status"),
+                    rs.getInt("id_historico")
                 );
                 exames.add(exame);
             }
@@ -78,7 +80,8 @@ public class ExamesDAO {
                     rs.getDate("solicitado_em"),
                     rs.getString("resultado"),
                     rs.getDate("data_resultado"),
-                    rs.getString("status")
+                    rs.getString("status"),
+                    rs.getInt("id_historico")
                 );
             }
         }

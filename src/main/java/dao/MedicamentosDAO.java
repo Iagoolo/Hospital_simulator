@@ -2,6 +2,7 @@ package dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,12 +19,17 @@ public class MedicamentosDAO {
     public void addMedicamento(Medicamento medicamento) throws SQLException{
         String sql = "INSERT INTO medicamentos (nome, formula, forma, via_administracao) VALUES (?, ?, ?, ?)";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)){
+        try (PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)){
             ps.setString(1, medicamento.getNome());
             ps.setString(2, medicamento.getFormula());
             ps.setString(3, medicamento.getForma());
             ps.setString(4, medicamento.getViaAdministracao());
             ps.executeUpdate();
+
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                medicamento.setIdMedicamento(rs.getInt(1));
+            }
         }
     }
 

@@ -16,7 +16,7 @@ public class AtendimentoDAO {
     }
 
     public void addAtendimento(Atendimento atendimento) throws SQLException{
-        String sql = "INSERT INTO Atendimento (senha, hota_atendimento, status, cpf_paciente) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Atendimento (senha, hora_atendimento, status, cpf_paciente) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)){
             ps.setString(1, atendimento.getSenha());

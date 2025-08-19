@@ -20,10 +20,15 @@ public class SalaDAO {
     public void addSala(Sala sala) throws SQLException {
         String sql = "INSERT INTO sala (andar, tipo_sala) VALUES (?, ?)";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)){
+        try (PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)){
             ps.setInt(1, sala.getAndar());
             ps.setString(2, sala.getTipoSala());
             ps.executeUpdate();
+
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                sala.setIdSala(rs.getInt(1));
+            }
         }
     }
 

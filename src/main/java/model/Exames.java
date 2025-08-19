@@ -6,6 +6,7 @@ public class Exames {
     
     private int idExames;
     private int idConsulta;
+    private int idHistorico;
     private String tipo;
     private Date solicitadoEm;
     private String resultado;
@@ -15,8 +16,8 @@ public class Exames {
     public Exames(){
         // Construtor padrão
     }
-    
-    public Exames (int idExame, int idConsulta, String tipo, Date solicitacaoEm, String resultado, Date dataResultado, String status){
+
+    public Exames (int idExame, int idConsulta, String tipo, Date solicitacaoEm, String resultado, Date dataResultado, String status, int idHistorico){
         this.idExames = idExame;
         this.idConsulta = idConsulta;
         this.tipo = tipo;
@@ -24,6 +25,7 @@ public class Exames {
         this.resultado = resultado;
         this.dataResultado = dataResultado;
         this.status = status;
+        this.idHistorico = idHistorico;
     }
 
      public int getIdExames() {
@@ -80,5 +82,13 @@ public class Exames {
 
     public void setStatus(String status) {
         this.status = status;
-    }    
+    }
+
+    public int getIdHistorico() {
+        return idHistorico;
+    }
+
+    public void setIdHistorico(int idHistorico) {
+        this.idHistorico = idHistorico;
+    }
 }
