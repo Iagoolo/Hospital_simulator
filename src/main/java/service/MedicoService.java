@@ -56,6 +56,8 @@ public class MedicoService {
             connection.setAutoCommit(false);
             medicoDAO.deletar(cpfMedico);
             connection.commit();
+
+            System.out.println("Médico deletado com sucesso!");
         } catch(SQLException e){
             connection.rollback();
             throw new SQLException("Erro ao deletar médico.", e);
