@@ -39,8 +39,10 @@ public class MedicoDAO extends PessoaDAO<Medico>{
             for (String especializacao : medico.getEspecialidades()) {
                 psEspec.setString(1, medico.getCpf());
                 psEspec.setString(2, especializacao);
-                psEspec.executeUpdate();
+                psEspec.addBatch();
             }
+
+            psEspec.executeBatch();
         }
     }
 
@@ -64,13 +66,12 @@ public class MedicoDAO extends PessoaDAO<Medico>{
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()){
-                String medicoCpf = rs.getString("CPF_medico");
 
-                Medico medico = medicoMap.get(medicoCpf);
+                Medico medico = medicoMap.get(cpf);
 
                 if (medico == null){
                     medico = new Medico();
-                    medico.setCpf(medicoCpf);
+                    medico.setCpf(cpf);
                     medico.setNome(rs.getString("Nome"));
                     medico.setEndereco(rs.getString("Endereco"));
                     medico.setIdade(rs.getInt("Idade"));
@@ -78,7 +79,7 @@ public class MedicoDAO extends PessoaDAO<Medico>{
                     medico.setNomeMae(rs.getString("Nome_mae"));
                     medico.setTurno(rs.getString("turno"));
 
-                    medicoMap.put(medicoCpf, medico);
+                    medicoMap.put(cpf, medico);
                 }
 
                 String especializacao = rs.getString("especializacao");

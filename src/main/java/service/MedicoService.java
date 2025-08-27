@@ -39,6 +39,7 @@ public class MedicoService {
 
     public void atualizarMedico(Medico medico) throws SQLException{
         MedicoDAO medicoDAO = new MedicoDAO(connection);
+        
         try {
             connection.setAutoCommit(false);
             medicoDAO.atualizar(medico);

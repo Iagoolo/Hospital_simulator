@@ -23,4 +23,8 @@ public class Paciente extends Pessoa{
     public void setSintomas(List<String> sintomas) {
         this.sintomas = sintomas;
     }
+
+    public void addSintomas(String sintoma){
+        sintomas.add(sintoma);
+    }
 }

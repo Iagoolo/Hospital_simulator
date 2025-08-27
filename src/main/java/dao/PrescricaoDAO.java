@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 
 import model.ItemPrescricao;
 import model.Prescricao;
@@ -17,130 +16,93 @@ public class PrescricaoDAO {
         this.connection = connection;
     }
 
-    public void addPrescricao(Prescricao prescricao) throws SQLException {
+    public void add(Prescricao prescricao) throws SQLException {
         String sqlPrescricao = "INSERT INTO prescricao (id_consulta) VALUES (?)";
-        String sqlItem = "INSERT INTO prescricao_item (id_prescricao, id_medicamento, dosagem, frequencia, duracao, observacoes) VALUES (?, ?, ?, ?, ?, ?)";
-
-        try {
-            connection.setAutoCommit(false);
-
-            try (PreparedStatement ps = connection.prepareStatement(sqlPrescricao, PreparedStatement.RETURN_GENERATED_KEYS)) {
-                ps.setInt(1, prescricao.getIdConsulta());
-                ps.executeUpdate();
-
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    if (rs.next()) {
-                        int idPrescricao = rs.getInt(1);
-                        prescricao.setIdPrescricao(idPrescricao);
-
-                        if (prescricao.getItens() != null && !prescricao.getItens().isEmpty()) {
-                            try (PreparedStatement psItem = connection.prepareStatement(sqlItem)) {
-                                for (ItemPrescricao item : prescricao.getItens()) {
-                                    psItem.setInt(1, idPrescricao);
-                                    psItem.setInt(2, item.getIdMedicamento());
-                                    psItem.setString(3, item.getDosagem());
-                                    psItem.setString(4, item.getFrequencia());
-                                    psItem.setString(5, item.getDuracao());
-                                    psItem.setString(6, item.getObservacoes());
-                                    psItem.addBatch();
-                                }
-                                psItem.executeBatch();
+        try (PreparedStatement ps = connection.prepareStatement(sqlPrescricao, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            ps.setInt(1, prescricao.getIdConsulta());
+            ps.executeUpdate();
+            
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    int idPrescricao = rs.getInt(1);
+                    prescricao.setIdPrescricao(idPrescricao);
+                    
+                    if (prescricao.getItens() != null && !prescricao.getItens().isEmpty()) {
+                        String sqlItem = "INSERT INTO prescricao_item (id_prescricao, id_medicamento, dosagem, frequencia, duracao, observacoes) VALUES (?, ?, ?, ?, ?, ?)";
+                        try (PreparedStatement psItem = connection.prepareStatement(sqlItem)) {
+                            for (ItemPrescricao item : prescricao.getItens()) {
+                                psItem.setInt(1, idPrescricao);
+                                psItem.setInt(2, item.getIdMedicamento());
+                                psItem.setString(3, item.getDosagem());
+                                psItem.setString(4, item.getFrequencia());
+                                psItem.setString(5, item.getDuracao());
+                                psItem.setString(6, item.getObservacoes());
+                                psItem.addBatch();
                             }
-                        } else {
-                            throw new SQLException("A prescrição deve conter pelo menos um item.");
+                            psItem.executeBatch();
                         }
+                    } else {
+                        throw new SQLException("A prescrição deve conter pelo menos um item.");
                     }
                 }
             }
-
-            connection.commit();
-        } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException rollbackEx) {
-                rollbackEx.printStackTrace();
-            }
-            e.printStackTrace();
-        } finally {
-            try {
-                connection.setAutoCommit(true);
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
         }
     }
 
-    public List<ItemPrescricao> getItensByPrescricaoId(int idPrescricao) throws SQLException {
-        String sql = "SELECT * FROM prescricao_item WHERE id_prescricao = ?";
-
-        List<ItemPrescricao> itens = new java.util.ArrayList<>();
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, idPrescricao);
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                ItemPrescricao item = new ItemPrescricao(
-                    rs.getInt("id_item"),
-                    rs.getInt("id_prescricao"),
-                    rs.getInt("id_medicamento"),
-                    rs.getString("dosagem"),
-                    rs.getString("frequencia"),
-                    rs.getString("duracao"),
-                    rs.getString("observacoes")
-                );
-                itens.add(item);
-            }
-        }
-
-        return itens;
-    }
-
-    public Prescricao getPrescricaosByConsulta(int id_consulta) throws SQLException{
-        String sql = "SELECT * FROM prescricao WHERE id_consulta = ?";
+    public Prescricao getPrescricaosByConsulta(int id_consulta) throws SQLException {
+        String sql = """
+            SELECT 
+                p.id_prescricao, p.id_consulta, pi.*
+            FROM 
+                prescricao p
+            LEFT JOIN 
+                prescricao_item pi ON p.id_prescricao = pi.id_prescricao
+            WHERE p.id_consulta = ?
+        """;
 
         Prescricao prescricao = null;
-        try (PreparedStatement ps = connection.prepareStatement(sql)){
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id_consulta);
             ResultSet rs = ps.executeQuery();
 
-            if (rs.next()) {
-                prescricao = new Prescricao(
-                    rs.getInt("id_prescricao"),
-                    rs.getInt("id_consulta")
-                );
+            while (rs.next()) {
+                if (prescricao == null) {
+                    prescricao = new Prescricao(
+                        rs.getInt("id_prescricao"),
+                        rs.getInt("id_consulta")
+                    );
+                }
 
-                prescricao.setItens(getItensByPrescricaoId(prescricao.getIdPrescricao()));
+                int idItem = rs.getInt("id_item");
+                if (idItem > 0) {
+                    ItemPrescricao item = new ItemPrescricao(
+                        idItem,
+                        rs.getInt("id_prescricao"),
+                        rs.getInt("id_medicamento"),
+                        rs.getString("dosagem"),
+                        rs.getString("frequencia"),
+                        rs.getString("duracao"),
+                        rs.getString("observacoes")
+                    );
+                    prescricao.addItem(item);
+                }
             }
         }
-
         return prescricao;
     }
 
-    public void deletePrescricao(int idPrescricao) throws SQLException {
+    public void delete(int idPrescricao) throws SQLException {
+        
         String sqlItem = "DELETE FROM item_prescricao WHERE id_prescricao = ?";
+        try (PreparedStatement psItem = connection.prepareStatement(sqlItem)) {
+            psItem.setInt(1, idPrescricao);
+            psItem.executeUpdate();
+        }
+        
         String sqlPrescricao = "DELETE FROM prescricao WHERE id_prescricao = ?";
-
-        try {
-            connection.setAutoCommit(false);
-
-            try (PreparedStatement psItem = connection.prepareStatement(sqlItem)) {
-                psItem.setInt(1, idPrescricao);
-                psItem.executeUpdate();
-            }
-
-            try (PreparedStatement psPrescricao = connection.prepareStatement(sqlPrescricao)) {
-                psPrescricao.setInt(1, idPrescricao);
-                psPrescricao.executeUpdate();
-            }
-
-            connection.commit();
-        } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException rollbackEx) {
-                rollbackEx.printStackTrace();
-            }
-            e.printStackTrace();
+        try (PreparedStatement psPrescricao = connection.prepareStatement(sqlPrescricao)) {
+            psPrescricao.setInt(1, idPrescricao);
+            psPrescricao.executeUpdate();
         }
     }
 }
