@@ -12,7 +12,7 @@ import model.HistoricoMedico;
 
 public class HistoricoMedicoDAO {
     
-    private Connection connection;
+    private final Connection connection;
 
     public HistoricoMedicoDAO (Connection connection){
         this.connection = connection;

@@ -10,7 +10,7 @@ import model.ItemPrescricao;
 import model.Prescricao;
 
 public class ConsultaDAO {
-    private Connection connection;
+    private final Connection connection;
 
     public ConsultaDAO(Connection connection) {
         this.connection = connection;

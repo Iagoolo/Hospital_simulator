@@ -11,7 +11,7 @@ import model.Triagem;
 
 public class TriagemDAO {
     
-    private Connection connection;
+    private final Connection connection;
 
     public TriagemDAO(Connection connection) {
         this.connection = connection;

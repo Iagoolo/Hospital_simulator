@@ -9,7 +9,7 @@ import model.Atendimento;
 
 public class AtendimentoDAO {
     
-    private Connection connection;
+    private final Connection connection;
 
     public AtendimentoDAO (Connection connection){
         this.connection = connection;

@@ -6,7 +6,7 @@ import java.util.List;
 
 public abstract class PessoaDAO<T> {
     
-    protected Connection connection;
+    protected final Connection connection;
 
     public PessoaDAO (Connection connection){
         this.connection = connection;

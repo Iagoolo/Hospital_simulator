@@ -11,7 +11,7 @@ import model.Prescricao;
 
 public class PrescricaoDAO {
     
-    private Connection connection;
+    private final Connection connection;
 
     public PrescricaoDAO(Connection connection) {
         this.connection = connection;

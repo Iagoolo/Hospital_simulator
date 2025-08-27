@@ -12,7 +12,7 @@ import model.Exames;
 
 public class ExamesDAO {
     
-    private Connection connection;
+    private final Connection connection;
 
     public ExamesDAO (Connection connection){
         this.connection = connection;

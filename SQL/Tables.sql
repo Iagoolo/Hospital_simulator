@@ -46,7 +46,7 @@ CREATE TABLE Paciente_Sintomas (
 -- Histórico médico é uma relação 1:1 com Paciente
 CREATE TABLE Historico_Medico (
     id_historico SERIAL PRIMARY KEY,
-    CPF_paciente VARCHAR(11) NOT NULL,
+    CPF_paciente VARCHAR(11) NOT NULL UNIQUE,
     observacoes TEXT,
     ultima_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status_historico VARCHAR(20) DEFAULT 'Ativo',
@@ -88,7 +88,6 @@ CREATE TABLE Prescricao (
     id_prescricao SERIAL PRIMARY KEY,
     id_consulta INT NOT NULL,
     CONSTRAINT fk_presc_consulta FOREIGN KEY (id_consulta) REFERENCES Consulta(id_consulta),
-    CONSTRAINT fk_presc_medicamento FOREIGN KEY (id_medicamento) REFERENCES Medicamentos(id_medicamento)
 );
 
 -- Tabela para medicamentos

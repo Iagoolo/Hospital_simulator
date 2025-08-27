@@ -10,7 +10,7 @@ import java.util.List;
 import model.Medicamento;
 
 public class MedicamentosDAO {
-    private Connection connection;
+    private final Connection connection;
 
     public MedicamentosDAO(Connection connection) {
         this.connection = connection;

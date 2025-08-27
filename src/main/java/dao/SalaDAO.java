@@ -11,7 +11,7 @@ import model.Sala;
 
 public class SalaDAO {
     
-    private Connection connection;
+    private final Connection connection;
 
     public SalaDAO (Connection connection){
         this.connection = connection;
