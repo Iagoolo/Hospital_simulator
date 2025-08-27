@@ -7,9 +7,9 @@ import java.sql.DriverManager;
 
 public class ConnectionFactory {
 
-    private static final String URL = "jdbc:postgresql://localhost:5432/hospital_simulator";
-    private static final String USER = "postgres";
-    private static final String PASSWORD = "naoesquece";
+    private static final String URL = "jdbc:postgresql://localhost:5432/";
+    private static final String USER = "";
+    private static final String PASSWORD = "";
 
     public Connection createConnection(){
         try {
