@@ -17,7 +17,7 @@ public class TriagemDAO {
         this.connection = connection;
     }
 
-    public void addTriagem(Triagem triagem) throws SQLException{
+    public void add(Triagem triagem) throws SQLException{
         String sql = "INSERT INTO triagem (prioridade, data_triagem, hora_triagem, temperatura, peso, cpf_paciente, cpf_enfermeiro) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)){
@@ -88,7 +88,7 @@ public class TriagemDAO {
         return triagens;
     }
 
-    public void atualizarTriagem(Triagem triagem) throws SQLException {
+    public void atualizar(Triagem triagem) throws SQLException {
         String sql = "UPDATE triagem SET prioridade = ?, data_triagem = ?, hora_triagem = ?, temperatura = ?, peso = ?, cpf_paciente = ?, cpf_enfermeiro = ? WHERE id_triagem = ?";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -102,6 +102,37 @@ public class TriagemDAO {
             ps.setInt(8, triagem.getIdTriagem());
 
             ps.executeUpdate();
+        }
+    }
+
+    public void deletar(int id) throws SQLException{
+        String sql = "DELETE FROM triagem WHERE id_triagem = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)){
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        }
+    }
+
+    public boolean isTriagemEmUso(int id) throws SQLException{
+        String sql = """
+                    SELECT 1 
+                    FROM 
+                        atendimento 
+                    WHERE id_triagem = ? 
+                    UNION ALL 
+                    SELECT 1 
+                    FROM 
+                        consulta 
+                    WHERE id_triagem = ? LIMIT 1
+                    """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.setInt(2, id);
+            ps.setInt(3, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next(); 
+            }
         }
     }
 }

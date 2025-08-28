@@ -16,7 +16,7 @@ public class ConsultaDAO {
         this.connection = connection;
     }
 
-    public void addConsulta(Consulta consulta) throws SQLException{
+    public void add(Consulta consulta) throws SQLException{
         String sql = "INSERT INTO consulta (id_triagem, sala, data_consulta, hora_consulta, observacao, diagnostico, cpf_paciente, cpf_medico) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
@@ -40,12 +40,16 @@ public class ConsultaDAO {
 
     public Consulta buscarConsulta(int idConsulta) throws SQLException {
     String sql = """
-        SELECT c.*, p.id_prescricao, ip.id_item, ip.id_medicamento, ip.dosagem, ip.frequencia, ip.duracao, ip.observacoes
-        FROM consulta c
-        LEFT JOIN prescricao p ON c.id_consulta = p.id_consulta
-        LEFT JOIN prescricao_item ip ON p.id_prescricao = ip.id_prescricao
+        SELECT 
+            c.*, p.id_prescricao, ip.id_item, ip.id_medicamento, ip.dosagem, ip.frequencia, ip.duracao, ip.observacoes
+        FROM 
+            consulta c
+        LEFT JOIN 
+            prescricao p ON c.id_consulta = p.id_consulta
+        LEFT JOIN 
+            prescricao_item ip ON p.id_prescricao = ip.id_prescricao
         WHERE c.id_consulta = ?
-    """;
+        """;
 
     try (PreparedStatement ps = connection.prepareStatement(sql)) {
         ps.setInt(1, idConsulta);
@@ -86,7 +90,7 @@ public class ConsultaDAO {
                     rs.getString("dosagem"),
                     rs.getString("frequencia"),
                     rs.getString("duracao"),
-                    rs.getString("instrucoes")
+                    rs.getString("observacoes")
                 ));
             }
         }
@@ -118,7 +122,7 @@ public class ConsultaDAO {
         }
     }
 
-    public void deletarConsulta(int idConsulta) throws SQLException {
+    public void deletar(int idConsulta) throws SQLException {
         String sql = "DELETE FROM consulta WHERE id_consulta = ?";
         
         try (PreparedStatement ps = connection.prepareStatement(sql)) {

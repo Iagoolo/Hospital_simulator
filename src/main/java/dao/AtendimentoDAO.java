@@ -15,15 +15,21 @@ public class AtendimentoDAO {
         this.connection = connection;
     }
 
-    public void addAtendimento(Atendimento atendimento) throws SQLException{
+    public void add(Atendimento atendimento) throws SQLException{
         String sql = "INSERT INTO Atendimento (senha, hora_atendimento, status, cpf_paciente) VALUES (?, ?, ?, ?)";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)){
+        try (PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)){
             ps.setString(1, atendimento.getSenha());
             ps.setTime(2, atendimento.getHoraAtendimento());
             ps.setString(3, atendimento.getStatus());
-            ps.setObject(4, atendimento.getCpfPaciente());
+            ps.setString(4, atendimento.getCpfPaciente());
             ps.executeUpdate();
+
+            try (ResultSet rs = ps.getGeneratedKeys()){
+                if (rs.next()){
+                    atendimento.setIdAtendimento(rs.getInt(1));
+                }
+            }
         }
     }
 

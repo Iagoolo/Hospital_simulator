@@ -87,7 +87,7 @@ CREATE TABLE Consulta (
 CREATE TABLE Prescricao (
     id_prescricao SERIAL PRIMARY KEY,
     id_consulta INT NOT NULL,
-    CONSTRAINT fk_presc_consulta FOREIGN KEY (id_consulta) REFERENCES Consulta(id_consulta),
+    CONSTRAINT fk_presc_consulta FOREIGN KEY (id_consulta) REFERENCES Consulta(id_consulta) ON DELETE CASCADE
 );
 
 -- Tabela para medicamentos
@@ -122,7 +122,7 @@ CREATE TABLE Exames (
     Resultado TEXT,
     Data_resultado DATE,
     Status VARCHAR(50) DEFAULT 'Pendente',
-    CONSTRAINT fk_exames_consulta FOREIGN KEY (id_consulta) REFERENCES Consulta(id_consulta)
+    CONSTRAINT fk_exames_consulta FOREIGN KEY (id_consulta) REFERENCES Consulta(id_consulta) ON DELETE CASCADE
 );
 
 -- Tabela para salas
@@ -141,7 +141,7 @@ CREATE TABLE Atendimento (
     id_consulta INT,
     id_triagem INT,
     id_sala INT,
-    CONSTRAINT fk_atendimento_consulta FOREIGN KEY (id_consulta) REFERENCES Consulta(id_consulta),
+    CONSTRAINT fk_atendimento_consulta FOREIGN KEY (id_consulta) REFERENCES Consulta(id_consulta) ON DELETE CASCADE,
     CONSTRAINT fk_atendimento_triagem FOREIGN KEY (id_triagem) REFERENCES Triagem(id_triagem),
     CONSTRAINT fk_atendimento_sala FOREIGN KEY (id_sala) REFERENCES Sala(id_sala)
 );

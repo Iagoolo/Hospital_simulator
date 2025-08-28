@@ -17,7 +17,7 @@ public class SalaDAO {
         this.connection = connection;
     }
 
-    public void addSala(Sala sala) throws SQLException {
+    public void add(Sala sala) throws SQLException {
         String sql = "INSERT INTO sala (andar, tipo_sala) VALUES (?, ?)";
 
         try (PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)){
@@ -32,7 +32,7 @@ public class SalaDAO {
         }
     }
 
-    public void deletarSala(int idSala) throws SQLException{
+    public void deletar(int idSala) throws SQLException{
         String sql = "DELETE FROM sala WHERE id_sala = ?";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)){
@@ -41,7 +41,7 @@ public class SalaDAO {
         }
     }
 
-    public void atualizarSala(Sala sala) throws SQLException{
+    public void atualizar(Sala sala) throws SQLException{
         String sql = "UPDATE sala SET andar = ?, tipo_sala = ? WHERE id_sala = ?";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)){
@@ -53,7 +53,7 @@ public class SalaDAO {
         }
     }
 
-    public List<Sala> listarAllSalas() throws SQLException{
+    public List<Sala> listar() throws SQLException{
         String sql = "SELECT * FROM sala";
 
         List<Sala> salas = new ArrayList<>();
@@ -90,5 +90,16 @@ public class SalaDAO {
         }
 
         return sala;
+    }
+
+    public boolean isSalaEmUso(int idSala) throws SQLException {
+        String sql = "SELECT 1 FROM consulta WHERE id_sala = ? UNION ALL SELECT 1 FROM atendimento WHERE id_sala = ? LIMIT 1";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, idSala);
+            ps.setInt(2, idSala);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next(); 
+            }
+        }
     }
 }
