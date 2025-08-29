@@ -17,10 +17,10 @@ public class ItemPrescricaoDAO {
         this.connection = connection;
     }
 
-    public void addItemPrescricao(ItemPrescricao item) throws SQLException {
+    public void add(ItemPrescricao item) throws SQLException {
         String sql = "INSERT INTO prescricao_item (id_prescricao, id_medicamento, dosagem, frequencia, duracao, observacoes) VALUES (?, ?, ?, ?, ?, ?)";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, item.getIdPrescricao());
             ps.setInt(2, item.getIdMedicamento());
             ps.setString(3, item.getDosagem());
@@ -28,11 +28,16 @@ public class ItemPrescricaoDAO {
             ps.setString(5, item.getDuracao());
             ps.setString(6, item.getObservacoes());
             ps.executeUpdate();
+
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()){
+                item.setIdItem(rs.getInt(1));
+            }
         }
     }
 
-    public void updateItemPrescricao(ItemPrescricao item) throws SQLException {
-        String sql = "UPDATE prescricao_item SET dosagem = ?, frequencia = ?, duracao = ?, observacoes = ? WHERE id_prescricao = ? AND id_medicamento = ?";
+    public void update(ItemPrescricao item) throws SQLException {
+        String sql = "UPDATE prescricao_item SET dosagem = ?, frequencia = ?, duracao = ?, observacoes = ?, id_prescricao = ?, id_medicamento = ? WHERE id_item = ?";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, item.getDosagem());
@@ -41,27 +46,26 @@ public class ItemPrescricaoDAO {
             ps.setString(4, item.getObservacoes());
             ps.setInt(5, item.getIdPrescricao());
             ps.setInt(6, item.getIdMedicamento());
+            ps.setInt(7, item.getIdItem());
             ps.executeUpdate();
         }
     }
 
-    public void deleteItemPrescricao(int idPrescricao, int idMedicamento) throws SQLException {
-        String sql = "DELETE FROM prescricao_item WHERE id_prescricao = ? AND id_medicamento = ?";
+    public void delete(int idItem) throws SQLException {
+        String sql = "DELETE FROM prescricao_item WHERE id_item = ?";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, idPrescricao);
-            ps.setInt(2, idMedicamento);
+            ps.setInt(1, idItem);
             ps.executeUpdate();
         }
     }
 
-    public ItemPrescricao getItemPrescricao(int idPrescricao, int idMedicamento) throws SQLException {
-        String sql = "SELECT * FROM prescricao_item WHERE id_prescricao = ? AND id_medicamento = ?";
+    public ItemPrescricao buscar(int idItem) throws SQLException {
+        String sql = "SELECT * FROM prescricao_item WHERE id_item = ?";
         ItemPrescricao item = null;
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, idPrescricao);
-            ps.setInt(2, idMedicamento);
+            ps.setInt(1, idItem);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 item = new ItemPrescricao(
@@ -78,7 +82,7 @@ public class ItemPrescricaoDAO {
         return item;
     }
 
-    public List<ItemPrescricao> getAllItemsPrescricao(int idPrescricao) throws SQLException {
+    public List<ItemPrescricao> listar(int idPrescricao) throws SQLException {
         String sql = "SELECT * FROM prescricao_item WHERE id_prescricao = ?";
         List<ItemPrescricao> items = new ArrayList<>();
 

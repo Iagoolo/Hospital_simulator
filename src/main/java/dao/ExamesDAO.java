@@ -18,10 +18,10 @@ public class ExamesDAO {
         this.connection = connection;
     }
 
-    public void addExame(Exames exame) throws SQLException{
+    public void add(Exames exame) throws SQLException{
         String sql = "INSERT INTO exames (id_consulta, id_historico, tipo, solicitado_em, resultado, data_resultado, status) VALUES(?, ?, ?, ?, ?, ?, ?)";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)){
+        try (PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)){
             ps.setInt(1, exame.getIdConsulta());
             ps.setInt(2, exame.getIdHistorico());
             ps.setString(3, exame.getTipo());
@@ -35,10 +35,15 @@ public class ExamesDAO {
 
             ps.setString(7, exame.getStatus());
             ps.executeUpdate();
+
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()){
+                exame.setIdExames(rs.getInt(1));
+            }
         }
     }
 
-    public List<Exames> listarAllExames(int idConsulta) throws SQLException{
+    public List<Exames> listar(int idConsulta) throws SQLException{
         String sql = "SELECT * FROM exames WHERE id_consulta = ?";
 
         List<Exames> exames = new ArrayList<>();
@@ -64,7 +69,7 @@ public class ExamesDAO {
         return exames;
     }
 
-    public Exames buscarExame(int idExame) throws SQLException{
+    public Exames buscar(int idExame) throws SQLException{
         String sql = "SELECT * FROM exames WHERE id_exame = ?";
 
         Exames exame = null;
@@ -94,6 +99,23 @@ public class ExamesDAO {
 
         try (PreparedStatement ps = connection.prepareStatement(sql)){
             ps.setInt(1, idExame);
+            ps.executeUpdate();
+        }
+    }
+
+    public void update(Exames exame) throws SQLException{
+        String sql = "UPDATE exames SET Resultado = ?, Status = ?, data_resultado = ? WHERE id_exame = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)){
+            ps.setString(1, exame.getResultado());
+            ps.setString(2, exame.getStatus());
+            if (exame.getDataResultado() != null) {
+                ps.setDate(3, new java.sql.Date(exame.getDataResultado().getTime()));
+            } else {
+                ps.setNull(3, Types.DATE);
+            }
+            ps.setInt(4, exame.getIdExames());
+
             ps.executeUpdate();
         }
     }

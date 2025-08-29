@@ -4,8 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import model.Exames;
 import model.HistoricoMedico;
@@ -18,7 +16,7 @@ public class HistoricoMedicoDAO {
         this.connection = connection;
     }
 
-    public void addHistorico (HistoricoMedico historico) throws SQLException{
+    public void add(HistoricoMedico historico) throws SQLException{
         String sql = "INSERT INTO historico_medico (cpf_paciente, observacoes, status_historico) VALUES (?, ?, ?)";
 
         try (PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)){
@@ -34,89 +32,56 @@ public class HistoricoMedicoDAO {
         }
     }
 
-    public List<HistoricoMedico> listarAllHistoricos(String cpfPaciente) throws SQLException{
-        String sql = """
-                        SELECT * 
-                        FROM historico_medico
-                        LEFT JOIN exames ON historico_medico.id_historico = exames.id_historico
-                        WHERE cpf_paciente = ?
-                     """;
+    public void deletar(String cpfPaciente) throws SQLException{
+        String sql = "DELETE FROM historico_medico WHERE CPF_paciente = ?";
 
-        List<HistoricoMedico> historicos = new ArrayList<>();
         try (PreparedStatement ps = connection.prepareStatement(sql)){
             ps.setString(1, cpfPaciente);
-            ResultSet rs =  ps.executeQuery();
-
-            while (rs.next()) {
-                HistoricoMedico historico = new HistoricoMedico(
-                    rs.getInt("id_historico"),
-                    rs.getString("cpf_paciente"),
-                    rs.getString("observacoes"),
-                    rs.getDate("ultima_atualizacao"),
-                    rs.getString("status_historico"),
-                    new ArrayList<>()
-                );
-
-                int idExame = rs.getInt("id_exame");
-                if (idExame != 0){
-                    Exames exame = new Exames(
-                        idExame,
-                        rs.getInt("id_consulta"),
-                        rs.getString("tipo"),
-                        rs.getDate("solicitado_em"),
-                        rs.getString("resultado"),
-                        rs.getDate("data_resultado"),
-                        rs.getString("status"),
-                        rs.getInt("id_historico")
-                    );
-                    historico.getExames().add(exame);
-                }
-                historicos.add(historico);
-            }
-
+            ps.executeUpdate();
         }
-
-        return historicos;
     }
 
     public HistoricoMedico buscarHistoricoPorPaciente(String cpfPaciente) throws SQLException {
         String sql = """
-                        SELECT * 
-                        FROM historico_medico
-                        LEFT JOIN exames ON historico_medico.id_historico = exames.id_historico
-                        WHERE cpf_paciente = ?
-                     """;
+                SELECT hm.*, e.*
+                FROM historico_medico hm
+                LEFT JOIN exames e ON hm.id_historico = e.id_historico
+                WHERE hm.cpf_paciente = ?
+                """;
 
         HistoricoMedico historico = null;
-        try(PreparedStatement ps = connection.prepareStatement(sql)){
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, cpfPaciente);
             ResultSet rs = ps.executeQuery();
 
-            while (rs.next()){
+            while (rs.next()) {
                 if (historico == null) {
-                    historico = new HistoricoMedico(
-                        rs.getInt("id_historico"),
-                        rs.getString("cpf_paciente"),
-                        rs.getString("observacoes"),
-                        rs.getDate("ultima_atualizacao"),
-                        rs.getString("status"),
-                        new ArrayList<>()
-                    );
+                    historico = new HistoricoMedico();
+                    historico.setIdHistorico(rs.getInt("id_historico"));
+                    historico.setCpfPaciente(rs.getString("cpf_paciente"));
+                    historico.setObservacoes(rs.getString("observacoes"));
+                    historico.setStatusHistorico(rs.getString("status_historico"));
+                    java.sql.Timestamp ts = rs.getTimestamp("ultima_atualizacao");
+                    if (ts != null) {
+                        historico.setUltimaAtualizacao(new java.sql.Date(ts.getTime()));
+                    }
                 }
 
                 int idExame = rs.getInt("id_exame");
-                if (idExame != 0){
-                    Exames exame = new Exames(
-                        idExame,
-                        rs.getInt("id_consulta"),
-                        rs.getString("tipo"),
-                        rs.getDate("solicitado_em"),
-                        rs.getString("resultado"),
-                        rs.getDate("data_resultado"),
-                        rs.getString("status"),
-                        rs.getInt("id_historico")
-                    );
-                    historico.getExames().add(exame);
+                if (idExame > 0) {
+                    
+                    Exames exame = new Exames();
+                    exame.setIdExames(idExame);
+                    exame.setIdConsulta(rs.getInt("id_consulta"));
+                    exame.setIdHistorico(rs.getInt("id_historico"));
+                    exame.setTipo(rs.getString("Tipo"));
+                    exame.setResultado(rs.getString("Resultado"));
+                    exame.setStatus(rs.getString("Status"));
+                    exame.setSolicitadoEm(rs.getDate("Solicitado_em"));
+                    exame.setDataResultado(rs.getDate("Data_resultado"));
+
+                    historico.addExame(exame);
                 }
             }
         }

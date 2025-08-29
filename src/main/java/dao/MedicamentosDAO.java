@@ -16,7 +16,7 @@ public class MedicamentosDAO {
         this.connection = connection;
     }
 
-    public void addMedicamento(Medicamento medicamento) throws SQLException{
+    public void add(Medicamento medicamento) throws SQLException{
         String sql = "INSERT INTO medicamentos (nome, formula, forma, via_administracao) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)){
@@ -33,7 +33,7 @@ public class MedicamentosDAO {
         }
     }
 
-    public void deletarMedicamento(int idMedicamento) throws SQLException{
+    public void deletar(int idMedicamento) throws SQLException{
         String sql = "DELETE FROM medicamentos WHERE id_medicamento = ?";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)){
@@ -42,7 +42,17 @@ public class MedicamentosDAO {
         }
     }
 
-    public void updateMedicamento(Medicamento medicamento) throws SQLException{
+    public boolean isMedicamentoEmUso(int idMedicamento) throws SQLException {
+        String sql = "SELECT 1 FROM prescricao_item WHERE id_medicamento = ? LIMIT 1";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, idMedicamento);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    public void update(Medicamento medicamento) throws SQLException{
         String sql = "UPDATE medicamentos SET nome = ?, formula = ?, forma = ?, via_administracao = ? WHERE id_medicamento = ?";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)){
@@ -55,7 +65,7 @@ public class MedicamentosDAO {
         }   
     }
 
-    public Medicamento buscarMedicamento (int idMedicamento) throws SQLException {
+    public Medicamento buscar(int idMedicamento) throws SQLException {
         String sql = "SELECT * FROM medicamentos WHERE id_medicamento = ?";
         Medicamento medicamento = null;
 
@@ -75,7 +85,7 @@ public class MedicamentosDAO {
         return medicamento;
     }
 
-    public List<Medicamento> buscarAllMedicamentos() throws SQLException {
+    public List<Medicamento> listar() throws SQLException {
         String sql = "SELECT * FROM medicamentos";
         List<Medicamento> medicamentos = new ArrayList<>();
 
