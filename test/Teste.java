@@ -29,9 +29,9 @@ import com.hospital.model.Triagem;
 
 public class Teste {
     public static void main(String[] args) {
-        String url = "jdbc:postgresql://localhost:5432/hospital_simulator";
-        String user = "postgres";
-        String password = "naoesquece";
+        String url = "jdbc:postgresql://localhost:5432/";
+        String user = "";
+        String password = "";
 
         try (Connection conn = DriverManager.getConnection(url, user, password)) {
             PacienteDAO pacienteDAO = new PacienteDAO(conn);

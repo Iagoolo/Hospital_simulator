@@ -79,7 +79,7 @@ public class PacienteDAO extends PessoaDAO<Paciente> {
                 }
 
 
-                String sintoma = rs.getString("Paciente_Sintomas");
+                String sintoma = rs.getString("sintomas");
                 if (sintoma != null) {
                     paciente.addSintomas(sintoma);
                 }
@@ -122,7 +122,7 @@ public class PacienteDAO extends PessoaDAO<Paciente> {
                     pacienteMap.put(cpf, paciente);
                 }
 
-                String sintoma = rs.getString("Paciente_Sintomas");
+                String sintoma = rs.getString("sintomas");
                 if (sintoma != null) {
                     paciente.addSintomas(sintoma);;
                 }
@@ -135,7 +135,7 @@ public class PacienteDAO extends PessoaDAO<Paciente> {
     @Override
     public void atualizar(Paciente paciente) throws SQLException{
         
-        String sqlPessoa = "UPDATE Pessoa SET nome = ?, endereco = ?, nomePai = ?, nomeMae = ? WHERE cpf = ? ";
+        String sqlPessoa = "UPDATE Pessoa SET nome = ?, endereco = ?, Nome_pai = ?, Nome_mae = ? WHERE cpf = ? ";
         try (PreparedStatement ps = connection.prepareStatement(sqlPessoa)){
             ps.setString(1, paciente.getNome());
             ps.setString(2, paciente.getEndereco());
@@ -178,7 +178,7 @@ public class PacienteDAO extends PessoaDAO<Paciente> {
             ps.executeUpdate();
         }
 
-        String sqlPessoa = "DELETE FROM Pessoa WHERE = ?";
+        String sqlPessoa = "DELETE FROM Pessoa WHERE CPF = ?";
         try (PreparedStatement ps = connection.prepareStatement(sqlPessoa)){
             ps.setString(1, cpf);
 
