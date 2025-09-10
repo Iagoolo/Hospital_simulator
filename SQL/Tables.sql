@@ -50,7 +50,7 @@ CREATE TABLE Historico_Medico (
     observacoes TEXT,
     ultima_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status_historico VARCHAR(20) DEFAULT 'Ativo',
-    CONSTRAINT fk_historico_paciente FOREIGN KEY (CPF_paciente) REFERENCES Paciente(CPF)
+    CONSTRAINT fk_historico_paciente FOREIGN KEY (CPF_paciente) REFERENCES Paciente(CPF_paciente)
 );
 
 -- Tabela para triagem de pacientes

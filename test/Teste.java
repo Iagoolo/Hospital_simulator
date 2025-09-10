@@ -1,37 +1,37 @@
 package test;
 
-import dao.AtendimentoDAO;
-import dao.ConsultaDAO;
-import dao.EnfermeiroDAO;
-import dao.MedicamentosDAO;
-import dao.MedicoDAO;
-import dao.PacienteDAO;
-import dao.PrescricaoDAO;
-import dao.SalaDAO;
-import model.Atendimento;
-import model.Consulta;
-import model.Enfermeiro;
-import model.HistoricoMedico;
-import model.ItemPrescricao;
-import model.Medicamento;
-import model.Medico;
-import model.Paciente;
-import model.Prescricao;
-import model.Sala;
-import model.Triagem;
-import dao.HistoricoMedicoDAO;
-import dao.TriagemDAO;
-import dao.ExamesDAO;
-import model.Exames;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 
+import com.hospital.dao.AtendimentoDAO;
+import com.hospital.dao.ConsultaDAO;
+import com.hospital.dao.EnfermeiroDAO;
+import com.hospital.dao.ExamesDAO;
+import com.hospital.dao.HistoricoMedicoDAO;
+import com.hospital.dao.MedicamentosDAO;
+import com.hospital.dao.MedicoDAO;
+import com.hospital.dao.PacienteDAO;
+import com.hospital.dao.PrescricaoDAO;
+import com.hospital.dao.SalaDAO;
+import com.hospital.dao.TriagemDAO;
+import com.hospital.model.Atendimento;
+import com.hospital.model.Consulta;
+import com.hospital.model.Enfermeiro;
+import com.hospital.model.Exames;
+import com.hospital.model.HistoricoMedico;
+import com.hospital.model.ItemPrescricao;
+import com.hospital.model.Medicamento;
+import com.hospital.model.Medico;
+import com.hospital.model.Paciente;
+import com.hospital.model.Prescricao;
+import com.hospital.model.Sala;
+import com.hospital.model.Triagem;
+
 public class Teste {
     public static void main(String[] args) {
-        String url = "jdbc:postgresql://localhost:5432/";
-        String user = "";
-        String password = "";
+        String url = "jdbc:postgresql://localhost:5432/hospital_simulator";
+        String user = "postgres";
+        String password = "naoesquece";
 
         try (Connection conn = DriverManager.getConnection(url, user, password)) {
             PacienteDAO pacienteDAO = new PacienteDAO(conn);
@@ -91,7 +91,7 @@ public class Teste {
             triagem.setPeso(70.0);
             triagem.setCpfPaciente("12345678903");
             triagem.setCpfEnfermeiro("98765432100");
-            triagemDAO.addTriagem(triagem);
+            triagemDAO.add(triagem);
 
             for (Triagem t : triagemDAO.listarTriagens()) {
                 System.out.println("Triagem encontrada: " + t.getPrioridade() + " " + t.getIdTriagem());
@@ -103,13 +103,13 @@ public class Teste {
             atendimento.setSenha("123456");
             atendimento.setCpfPaciente(paciente.getCpf());
             AtendimentoDAO atendimentoDAO = new AtendimentoDAO(conn);
-            atendimentoDAO.addAtendimento(atendimento);
+            atendimentoDAO.add(atendimento);
 
             Sala sala = new Sala();
             sala.setTipoSala("Consultório");
             sala.setAndar(1);
             SalaDAO salaDAO = new SalaDAO(conn);
-            salaDAO.addSala(sala);
+            salaDAO.add(sala);
             atendimento.setIdSala(sala.getIdSala());
             System.out.println(atendimento.getIdSala());
 
@@ -123,7 +123,7 @@ public class Teste {
             consulta.setDiagnostico("Saudável");
             consulta.setCpfPaciente("12345678903");
             consulta.setCpfMedico("12312312312");
-            consultaDAO.addConsulta(consulta);
+            consultaDAO.add(consulta);
 
             Consulta c = consultaDAO.buscarConsulta(consulta.getIdConsulta());
             System.out.println("Consulta encontrada: " + c.getObservacao());
@@ -135,7 +135,7 @@ public class Teste {
             medicamento.setFormula("C4H5NO2");
             medicamento.setViaAdministracao("Oral");
             MedicamentosDAO medicamentosDAO = new MedicamentosDAO(conn);
-            medicamentosDAO.addMedicamento(medicamento);
+            medicamentosDAO.add(medicamento);
 
             Prescricao prescricao = new Prescricao();
             prescricao.setIdConsulta(c.getIdConsulta());
@@ -149,7 +149,7 @@ public class Teste {
             prescricao.addItem(item);
 
             PrescricaoDAO prescricaoDAO = new PrescricaoDAO(conn);
-            prescricaoDAO.addPrescricao(prescricao);
+            prescricaoDAO.add(prescricao);
             consultaDAO.atualizarConsulta(c);
             System.out.println("Consulta atualizada: " + c.getIdConsulta() + " " + c.getPrescricao().getIdPrescricao());
 
@@ -171,7 +171,7 @@ public class Teste {
             historico.setStatusHistorico("Ativo");
             historico.setUltimaAtualizacao(new java.sql.Date(System.currentTimeMillis()));
             HistoricoMedicoDAO historicoDAO = new HistoricoMedicoDAO(conn);
-            historicoDAO.addHistorico(historico);
+            historicoDAO.add(historico);
             System.out.println("Histórico adicionado: " + historico.getCpfPaciente());
             
 
@@ -182,13 +182,11 @@ public class Teste {
             exame.setResultado("Normal");
             exame.setIdHistorico(historico.getIdHistorico());
             ExamesDAO examesDAO = new ExamesDAO(conn);
-            examesDAO.addExame(exame);
+            examesDAO.add(exame);
 
             historico.addExame(exame);
 
-            for (HistoricoMedico h : historicoDAO.listarAllHistoricos("12345678903")) {
-                System.out.println("Histórico encontrado: " + h.getCpfPaciente() + " " + h.getObservacoes());
-            }
+           historicoDAO.buscarHistoricoPorPaciente("12345678903");
 
             HistoricoMedico historico2 = historicoDAO.buscarHistoricoPorPaciente("12345678903");
             System.out.println("Histórico encontrado: " + historico2.getCpfPaciente() + " " + historico2.getObservacoes());

@@ -1,0 +1,8 @@
+db.properties
+/bin/
+/out/
+/target/
+*.class
+*.log
+.idea/
+.vscode/
