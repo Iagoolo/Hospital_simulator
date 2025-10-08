@@ -1,63 +1,32 @@
 package com.hospital;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Scanner;
-
-import com.hospital.model.Paciente;
-import com.hospital.service.AtendimentoService;
-import com.hospital.service.ConsultaService;
-import com.hospital.service.EnfermeiroService;
-import com.hospital.service.ExamesService;
-import com.hospital.service.HistoricoMedicoService;
-import com.hospital.service.ItemPrescricaoService;
-import com.hospital.service.MedicamentosService;
 import com.hospital.service.MedicoService;
 import com.hospital.service.PacienteService;
-import com.hospital.service.PrescricaoService;
-import com.hospital.service.SalaService;
-import com.hospital.service.TriagemService;
+import com.hospital.ui.MedicoUI;
 import com.hospital.ui.PacienteUI;
 import com.hospital.utils.ConnectionFactory;
 import com.hospital.utils.ConsoleUtil;
 
 public class simuladorHospital {
 
-    private Connection connection;
     private Scanner scanner;
-
-    private AtendimentoService atendimentoService;
-    private ConsultaService consultaService;
-    private EnfermeiroService enfermeiroService;
-    private ExamesService examesService;
-    private HistoricoMedicoService historicoMedicoService;
-    private ItemPrescricaoService itemPrescricaoService;
-    private MedicamentosService medicamentosService;
     private MedicoService medicoService;
     private PacienteService pacienteService;
-    private PrescricaoService prescricaoService;
-    private SalaService salaService;
-    private TriagemService triagemService;
 
     private PacienteUI pacienteUI;
+    private MedicoUI medicoUI;
 
     public simuladorHospital(Connection connection){
-        this.connection = connection;
         this.scanner = new Scanner(System.in);
-        this.atendimentoService = new AtendimentoService(connection);
-        this.consultaService = new ConsultaService(connection);
-        this.enfermeiroService = new EnfermeiroService(connection);
-        this.examesService = new ExamesService(connection);
-        this.historicoMedicoService = new HistoricoMedicoService(connection);
-        this.itemPrescricaoService = new ItemPrescricaoService(connection);
-        this.medicamentosService = new MedicamentosService(connection);
+        
         this.medicoService = new MedicoService(connection);
         this.pacienteService = new PacienteService(connection);
-        this.prescricaoService = new PrescricaoService(connection);
-        this.salaService = new SalaService(connection);
-        this.triagemService = new TriagemService(connection);
 
         this.pacienteUI = new PacienteUI(pacienteService, scanner);
+        this.medicoUI = new MedicoUI(medicoService, scanner);
+
     }
     
     public static void main(String[] args) {
@@ -91,7 +60,7 @@ public class simuladorHospital {
                     break;
                 
                 case 2:
-                    System.out.println("Gereciando médicos...");
+                    medicoUI.menuGerenciarMedicos();
 
                     System.out.println("Pressione ENTER para continuar");
                     scanner.nextLine();
