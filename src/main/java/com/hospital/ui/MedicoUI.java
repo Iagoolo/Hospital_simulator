@@ -148,7 +148,7 @@ public class MedicoUI {
             Medico medico = medicoService.buscarMedicoCpf(cpf);
 
             if (medico != null){
-                System.out.println("\nPaciente encontrado!");
+                System.out.println("\nMédico encontrado!");
                 System.out.println("Nome: " + medico.getNome());
                 System.out.println("Idade: " + medico.getIdade());
                 System.out.println("Nome da mãe: " + medico.getNomeMae());
@@ -236,6 +236,11 @@ public class MedicoUI {
         try {
             System.out.print("Digite o CPF do médico: ");
             String cpf = ConsoleUtil.lerString(scanner);
+
+            if (medicoService.buscarMedicoCpf(cpf) == null) {
+                System.out.println("Médico não existente!");
+                return;
+            }
 
             System.out.print("Tem certeza que deseja deletar esse médico? (S/N)");
             System.out.println("Nome do médico: " + medicoService.buscarMedicoCpf(cpf).getNome());

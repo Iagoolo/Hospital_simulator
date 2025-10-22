@@ -237,6 +237,11 @@ public class PacienteUI {
             System.out.print("Digite o CPF do paciente: ");
             String cpf = ConsoleUtil.lerString(scanner);
 
+            if (pacienteService.buscarPacienteCpf(cpf) == null) {
+                System.out.println("Paciente não existente!");
+                return;
+            }
+
             System.out.print("Tem certeza que deseja deletar esse paciente? (S/N)");
             System.out.println("Nome do paciente: " + pacienteService.buscarPacienteCpf(cpf).getNome());
 
