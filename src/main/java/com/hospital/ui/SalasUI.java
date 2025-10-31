@@ -8,79 +8,66 @@ import com.hospital.model.Sala;
 import com.hospital.service.SalaService;
 import com.hospital.utils.ConsoleUtil;
 
-public class SalasUI {
+public class SalasUI extends BaseUI{
     
     private SalaService salaService;
-    private Scanner scanner;
 
     public SalasUI(SalaService salaService, Scanner scanner){
+        super(scanner);
         this.salaService = salaService;
-        this.scanner = scanner;
+    }
+    
+    @Override
+    protected String obterTituloMenu(){
+        return "Gerenciador de Salas";
     }
 
-    public void menuGerenciarMedicos(){
-        boolean execute = true;
-        while (execute){
-            System.out.println("\n-------Gerenciador de Salas--------");
-            System.out.println("1. Cadastrar Nova Sala");
-            System.out.println("2. Listar Todas as Salas");
-            System.out.println("3. Buscar Salas");
-            System.out.println("4. Deletar Sala");
-            System.out.println("5. Atualizar Sala");
-            System.out.println("0. Voltar ao Menu Principal");
+    @Override
+    protected void imprimirOpcoes(){
+        System.out.println("\n-------Gerenciador de Salas--------");
+        System.out.println("1. Cadastrar Nova Sala");
+        System.out.println("2. Listar Todas as Salas");
+        System.out.println("3. Buscar Salas");
+        System.out.println("4. Deletar Sala");
+        System.out.println("5. Atualizar Sala");
+        System.out.println("0. Voltar ao Menu Principal");
+    }
 
-            int opcao = ConsoleUtil.lerInt(scanner);
+    protected boolean processarOpcao(int opcao){
+        switch (opcao) {
+            case 0:
+                return false;
 
-            switch (opcao) {
-                case 0:
-                    System.out.println("Voltando ao menu principal...");
-                    execute = false;
-
-                    break;
-
-                case 1:
-                    cadastrarMedico();
-                    System.out.println("\nPressione ENTER para continuar");
-                    scanner.nextLine();
-                    break;
+            case 1:
+                cadastrarSala();
+                return true;
                 
-                case 2:
-                    listarTodosMedicos();
-                    System.out.println("\nPressione ENTER para continuar");
-                    scanner.nextLine();
-                    break;
+            case 2:
+                listarTodasSalas();
+                return true;
                 
-                case 3:
-                    buscarMedico();
-                    System.out.println("\nPressione ENTER para continuar");
-                    scanner.nextLine();
-                    break;
+            case 3:
+                buscarSala();
+                return true;
+            
+            case 4:
+                deletarSala();
+                return true;
                 
-                case 4:
-                    deletarMedico();
-                    System.out.println("\nPressione ENTER para continuar");
-                    scanner.nextLine();
-                    break;
-                
-                case 5:
-                    atualizarMedico();
-                    System.out.println("\nPressione ENTER para continuar");
-                    scanner.nextLine();
-                    break;
+            case 5:
+                atualizarSala();
+                return true;
 
-                default:
-                    break;
-            }
+            default:
+                return true;
         }
     }
+    
 
-    public void cadastrarMedico(){
+    public void cadastrarSala(){
         System.out.println("\n -----Cadastro de Nova Sala--------");
 
         try{
-            System.out.println("Id da sala (Apenas números)");
-            int idSala  = ConsoleUtil.lerInt(scanner);
-
             System.out.println("Andar da sala:");
             int andar = ConsoleUtil.lerInt(scanner);
 
@@ -89,7 +76,6 @@ public class SalasUI {
 
             Sala sala = new Sala();
             sala.setAndar(andar);
-            sala.setIdSala(idSala);
             sala.setTipoSala(tipoSala);
 
             salaService.cadastrarSala(sala);
@@ -148,7 +134,7 @@ public class SalasUI {
     }
 
     public void atualizarSala(){
-        System.out.println("\n---- Atualizar Saça -----");
+        System.out.println("\n---- Atualizar Sala -----");
         try{
             System.out.print("Digite o ID da sala a ser atualizada: ");
             int idSala = ConsoleUtil.lerInt(scanner);
@@ -193,15 +179,19 @@ public class SalasUI {
 
             String confirmacao = ConsoleUtil.lerString(scanner);
 
-            if (confirmacao.equalsIgnoreCase("S")){
-                medicoService.deletarMedico(cpf);
-                System.out.println("Médico deletado com sucesso!");
-            } else {
-                System.out.println("\nOperação Cancelada!");
+            try{
+                if (confirmacao.equalsIgnoreCase("S")){
+                    salaService.deletarSala(idSala);
+                    System.out.println("Sala deletada com sucesso!");
+                } else {
+                    System.out.println("\nOperação Cancelada!");
+                }
+            } catch(Exception ep){
+                System.err.println(ep);
             }
 
         } catch (SQLException e){
-            System.err.println("[ERRO] Não foi possível deletar médico: " + e.getMessage());
+            System.err.println("[ERRO] Não foi possível deletar sala: " + e.getMessage());
         }
     }
 }

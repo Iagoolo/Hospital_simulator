@@ -8,71 +8,59 @@ import com.hospital.model.Medico;
 import com.hospital.service.MedicoService;
 import com.hospital.utils.ConsoleUtil;
 
-public class MedicoUI {
+public class MedicoUI extends BaseUI {
     
     private MedicoService medicoService;
-    private Scanner scanner;
 
     public MedicoUI(MedicoService medicoService, Scanner scanner){
+        super(scanner);
         this.medicoService = medicoService;
-        this.scanner = scanner;
     }
 
-    public void menuGerenciarMedicos(){
-        boolean execute = true;
-        while (execute){
-            System.out.println("\n-------Gerenciador de Médicos--------");
-            System.out.println("1. Cadastrar Novo Médico");
-            System.out.println("2. Listar Todos os Médicos");
-            System.out.println("3. Buscar Médicos");
-            System.out.println("4. Deletar Médico");
-            System.out.println("5. Atualizar Médico");
-            System.out.println("0. Voltar ao Menu Principal");
+    @Override
+    public void imprimirOpcoes(){
+        System.out.println("1. Cadastrar Novo Médico");
+        System.out.println("2. Listar Todos os Médicos");
+        System.out.println("3. Buscar Médicos");
+        System.out.println("4. Deletar Médico");
+        System.out.println("5. Atualizar Médico");
+        System.out.println("0. Voltar ao Menu Principal");
+    }
 
-            int opcao = ConsoleUtil.lerInt(scanner);
+    @Override
+    public String obterTituloMenu(){
+        return "Gerenciador de Médicos";
+    }
 
-            switch (opcao) {
-                case 0:
-                    System.out.println("Voltando ao menu principal...");
-                    execute = false;
+    @Override
+    public boolean processarOpcao(int opcao){
+        switch (opcao) {
+            case 0:
+                return false;
+            
+            case 1:
+                cadastrarMedico();
+                return true;
+        
+            case 2:
+                listarTodosMedicos();
+                return true;
 
-                    break;
+            case 3:
+                buscarMedico();
+                return true;
 
-                case 1:
-                    cadastrarMedico();
-                    System.out.println("\nPressione ENTER para continuar");
-                    scanner.nextLine();
-                    break;
-                
-                case 2:
-                    listarTodosMedicos();
-                    System.out.println("\nPressione ENTER para continuar");
-                    scanner.nextLine();
-                    break;
-                
-                case 3:
-                    buscarMedico();
-                    System.out.println("\nPressione ENTER para continuar");
-                    scanner.nextLine();
-                    break;
-                
-                case 4:
-                    deletarMedico();
-                    System.out.println("\nPressione ENTER para continuar");
-                    scanner.nextLine();
-                    break;
-                
-                case 5:
-                    atualizarMedico();
-                    System.out.println("\nPressione ENTER para continuar");
-                    scanner.nextLine();
-                    break;
+            case 4:
+                deletarMedico();
+                return true;
+            case 5:
+                atualizarMedico();
+                return true;
 
-                default:
-                    break;
-            }
+            default:
+                return true;
         }
-    }
+    }  
 
     public void cadastrarMedico(){
         System.out.println("\n -----Cadastro de Novo Médico--------");

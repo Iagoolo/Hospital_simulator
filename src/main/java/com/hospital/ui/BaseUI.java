@@ -1,0 +1,43 @@
+package com.hospital.ui;
+
+import java.util.Scanner;
+
+public abstract class BaseUI {
+    
+    protected Scanner scanner;
+
+    public BaseUI(Scanner scanner) {
+        this.scanner = scanner;
+    }
+
+    public final void exibirMenu(){
+        boolean executando = true;
+
+        while(executando){
+            System.out.println("\n---- " + obterTituloMenu() + " ----\n");
+            imprimirOpcoes();
+            int opcao = scanner.nextInt();
+            executando = processarOpcao(opcao);
+
+            if (executando) {
+                pausar();
+            }
+        }
+
+        System.out.println("Voltando ao menu anterior...");
+    }
+
+    protected abstract String obterTituloMenu();
+    protected abstract void imprimirOpcoes();
+    protected abstract boolean processarOpcao(int opcao);
+
+    protected void pausar(){
+        System.out.println("\nPressione ENTER para continuar");
+        scanner.nextLine();
+    }
+
+    protected boolean confirmar(){
+        System.out.println("Tem certeza que deseja realizar essa ação? (S/N)");
+        return scanner.nextLine().equalsIgnoreCase("S");
+    }
+}

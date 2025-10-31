@@ -8,69 +8,59 @@ import com.hospital.model.Enfermeiro;
 import com.hospital.service.EnfermeiroService;
 import com.hospital.utils.ConsoleUtil;
 
-public class EnfermeirosUI {
+public class EnfermeirosUI extends BaseUI{
     
     private EnfermeiroService enfermeiroService;
-    private Scanner scanner;
 
     public EnfermeirosUI(EnfermeiroService enfermeiroService, Scanner scanner){
+        super(scanner);
         this.enfermeiroService = enfermeiroService;
-        this.scanner = scanner;
     }
 
-    public void menuGerenciarEnfermeiros(){
-        boolean execute = true;
-        while (execute){
-            System.out.println("\n-------Gerenciador de Enfermeiros--------");
-            System.out.println("1. Cadastrar Novo Enfermeiro");
-            System.out.println("2. Listar Todos os Enfermeiros");
-            System.out.println("3. Buscar Enfermeiro");
-            System.out.println("4. Deletar Enfermeiro");
-            System.out.println("5. Atualizar Enfermeiro");
-            System.out.println("0. Voltar ao Menu Principal");
+    @Override
+    protected String obterTituloMenu(){
+        return "Gerenciador de Enfermeiros";
+    }
 
-            int opcao = ConsoleUtil.lerInt(scanner);
+    @Override
+    protected void imprimirOpcoes(){
+        System.out.println("\n-------Gerenciador de Enfermeiros--------");
+        System.out.println("1. Cadastrar Novo Enfermeiro");
+        System.out.println("2. Listar Todos os Enfermeiros");
+        System.out.println("3. Buscar Enfermeiro");
+        System.out.println("4. Deletar Enfermeiro");
+        System.out.println("5. Atualizar Enfermeiro");
+        System.out.println("0. Voltar ao Menu Principal");
+    }
 
-            switch (opcao) {
-                case 0:
-                    System.out.println("Voltando ao menu principal...");
-                    execute = false;
+    @Override
+    protected boolean processarOpcao(int opcao){
+        switch (opcao) {
+            case 0:
+                return false;
 
-                    break;
-
-                case 1:
-                    cadastrarEnfermeiro();
-                    System.out.println("\nPressione ENTER para continuar");
-                    scanner.nextLine();
-                    break;
+            case 1:
+                cadastrarEnfermeiro();
+                return true;
                 
-                case 2:
-                    listarTodosEnfermeiros();
-                    System.out.println("\nPressione ENTER para continuar");
-                    scanner.nextLine();
-                    break;
+            case 2:
+                listarTodosEnfermeiros();
+                return true;
                 
-                case 3:
-                    buscarEnfermeiro();
-                    System.out.println("\nPressione ENTER para continuar");
-                    scanner.nextLine();
-                    break;
+            case 3:
+                buscarEnfermeiro();
+                return true;
                 
-                case 4:
-                    deletarEnfermeiro();
-                    System.out.println("\nPressione ENTER para continuar");
-                    scanner.nextLine();
-                    break;
+            case 4:
+                deletarEnfermeiro();
+                return true;
                 
-                case 5:
-                    atualizarEnfermeiro();
-                    System.out.println("\nPressione ENTER para continuar");
-                    scanner.nextLine();
-                    break;
+            case 5:
+                atualizarEnfermeiro();
+                return true;
 
-                default:
-                    break;
-            }
+            default:
+                return false;
         }
     }
 

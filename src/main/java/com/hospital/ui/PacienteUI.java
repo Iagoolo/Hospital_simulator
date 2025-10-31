@@ -8,70 +8,60 @@ import com.hospital.model.Paciente;
 import com.hospital.service.PacienteService;
 import com.hospital.utils.ConsoleUtil;
 
-public class PacienteUI {
+public class PacienteUI extends BaseUI{
     
     private PacienteService pacienteService;
-    private Scanner scanner;
 
     public PacienteUI(PacienteService pacienteService, Scanner scanner){
+        super(scanner);
         this.pacienteService = pacienteService;
-        this.scanner = scanner;
     }
 
-    public void menuGerenciarPacientes(){
-        boolean execute = true;
-        while (execute){
-            System.out.println("\n-------Gerenciador de pacientes--------");
-            System.out.println("1. Cadastrar Novo Paciente");
-            System.out.println("2. Listar Todos os Pacientes");
-            System.out.println("3. Buscar Paciente");
-            System.out.println("4. Deletar Paciente");
-            System.out.println("5. Atualizar Paciente");
-            System.out.println("0. Voltar ao Menu Principal");
+    @Override
+    protected String obterTituloMenu(){
+        return "Gerenciador de pacientes";
+    }
 
-            int opcao = ConsoleUtil.lerInt(scanner);
+    @Override
+    protected void imprimirOpcoes(){
+        System.out.println("\n-------Gerenciador de pacientes--------");
+        System.out.println("1. Cadastrar Novo Paciente");
+        System.out.println("2. Listar Todos os Pacientes");
+        System.out.println("3. Buscar Paciente");
+        System.out.println("4. Deletar Paciente");
+        System.out.println("5. Atualizar Paciente");
+        System.out.println("0. Voltar ao Menu Principal");
+    }
 
-            switch (opcao) {
-                case 0:
-                    System.out.println("Voltando ao menu principal...");
-                    execute = false;
-
-                    break;
-
-                case 1:
-                    cadastrarPaciente();
-                    System.out.println("\nPressione ENTER para continuar");
-                    scanner.nextLine();
-                    break;
+    @Override
+    protected boolean processarOpcao(int opcao){
+        switch (opcao) {
+            case 0:
+                return false;
+            
+            case 1:
+                cadastrarPaciente();
+                return true;
+            
+            case 2:
+                listarTodosPacientes();
+                return true;
                 
-                case 2:
-                    listarTodosPacientes();
-                    System.out.println("\nPressione ENTER para continuar");
-                    scanner.nextLine();
-                    break;
+            case 3:
+                buscarPaciente();
+                return true;
                 
-                case 3:
-                    buscarPaciente();
-                    System.out.println("\nPressione ENTER para continuar");
-                    scanner.nextLine();
-                    break;
-                
-                case 4:
-                    deletarPaciente();
-                    System.out.println("\nPressione ENTER para continuar");
-                    scanner.nextLine();
-                    break;
-                
-                case 5:
-                    atualizarPaciente();
-                    System.out.println("\nPressione ENTER para continuar");
-                    scanner.nextLine();
-                    break;
+            case 4:
+                deletarPaciente();
+                return true;
+            
+            case 5:
+                atualizarPaciente();
+                return true;
 
-                default:
-                    break;
+            default:
+                return true;
             }
-        }
     }
 
     public void cadastrarPaciente(){

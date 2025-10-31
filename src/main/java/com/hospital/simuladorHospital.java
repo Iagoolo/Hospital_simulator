@@ -6,9 +6,11 @@ import java.util.Scanner;
 import com.hospital.service.EnfermeiroService;
 import com.hospital.service.MedicoService;
 import com.hospital.service.PacienteService;
+import com.hospital.service.SalaService;
 import com.hospital.ui.EnfermeirosUI;
 import com.hospital.ui.MedicoUI;
 import com.hospital.ui.PacienteUI;
+import com.hospital.ui.SalasUI;
 import com.hospital.utils.ConnectionFactory;
 import com.hospital.utils.ConsoleUtil;
 
@@ -18,10 +20,12 @@ public class simuladorHospital {
     private MedicoService medicoService;
     private PacienteService pacienteService;
     private EnfermeiroService enfermeiroService;
+    private SalaService salaService;
 
     private PacienteUI pacienteUI;
     private MedicoUI medicoUI;
     private EnfermeirosUI enfermeirosUI;
+    private SalasUI salasUI;
 
     public simuladorHospital(Connection connection){
         this.scanner = new Scanner(System.in);
@@ -29,10 +33,12 @@ public class simuladorHospital {
         this.medicoService = new MedicoService(connection);
         this.pacienteService = new PacienteService(connection);
         this.enfermeiroService = new EnfermeiroService(connection);
+        this.salaService = new SalaService(connection);
 
         this.pacienteUI = new PacienteUI(pacienteService, scanner);
         this.medicoUI = new MedicoUI(medicoService, scanner);
         this.enfermeirosUI = new EnfermeirosUI(enfermeiroService, scanner);
+        this.salasUI = new SalasUI(salaService, scanner);
     }
     
     public static void main(String[] args) {
@@ -59,28 +65,28 @@ public class simuladorHospital {
                     break;
                 
                 case 1:
-                   pacienteUI.menuGerenciarPacientes();
+                    pacienteUI.exibirMenu();;
 
                     System.out.println("Pressione ENTER para continuar");
                     scanner.nextLine();
                     break;
                 
                 case 2:
-                    medicoUI.menuGerenciarMedicos();
+                    medicoUI.exibirMenu();
 
                     System.out.println("Pressione ENTER para continuar");
                     scanner.nextLine();
                     break;
 
                 case 3: 
-                    enfermeirosUI.menuGerenciarEnfermeiros();
+                    enfermeirosUI.exibirMenu();
 
                     System.out.println("Pressione ENTER para continuar");
                     scanner.nextLine();
                     break;
 
                 case 4:
-                    System.out.println("Gerenciando salas...");
+                    salasUI.exibirMenu();
 
                     System.out.println("Pressione ENTER para continuar");
                     scanner.nextLine();
