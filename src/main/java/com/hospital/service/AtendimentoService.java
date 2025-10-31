@@ -31,18 +31,22 @@ public class AtendimentoService {
             throw new SQLException("Erro ao realizar atendimento: " + e.getMessage());
         }
     }
-
-    public void atualizarAtendimentos(int idAtendimento, int idSala, String status) throws SQLException{
+    
+    public void atualizarAtendimento(Atendimento atendimento) throws SQLException {
         AtendimentoDAO atendimentoDAO = new AtendimentoDAO(connection);
 
         try {
             connection.setAutoCommit(false);
-            atendimentoDAO.atualizarSalaEStatus(idAtendimento, idSala, status);
+            
+            atendimentoDAO.atualizar(atendimento); 
+            
             connection.commit();
-        } catch (SQLException e){
-            connection.rollback();
 
-            throw new SQLException("Erro ao realizar atualização de atendimento: " + e.getMessage());
+            System.out.println("Atendimento ID " + atendimento.getIdAtendimento() + " atualizado para status: " + atendimento.getStatus());
+        
+        } catch (SQLException e) {
+            connection.rollback();
+            throw new SQLException("Erro ao atualizar atendimento: " + e.getMessage(), e);
         }
     }
 
@@ -70,6 +74,17 @@ public class AtendimentoService {
             throw new FilaVaziaException("Não há pacientes aguardando na fila de triagem.");
         }
 
+        return proximo;
+    }
+
+    public Atendimento buscarProximoParaConsulta() throws SQLException, Exception {
+        AtendimentoDAO atendimentoDAO = new AtendimentoDAO(connection);
+        Atendimento proximo = atendimentoDAO.buscarProximoParaConsulta();
+
+        if (proximo == null) {
+            throw new Exception("Não há pacientes aguardando na fila de consulta.");
+        }
+        
         return proximo;
     }
 }

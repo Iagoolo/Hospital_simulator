@@ -13,7 +13,7 @@ public class ConsultaService {
         this.connection = connection;
     }
     
-    public void criarConsulta(Consulta consulta) throws SQLException{
+    public Consulta criarConsulta(Consulta consulta) throws SQLException{
         ConsultaDAO consultaDAO = new ConsultaDAO(connection);
         
         try{
@@ -22,6 +22,7 @@ public class ConsultaService {
             connection.commit();
 
             System.out.println("Consulta criada com sucesso!");
+            return consulta;
         } catch (SQLException e){
             connection.rollback();
 

@@ -33,13 +33,17 @@ public class AtendimentoDAO {
         }
     }
 
-    public void atualizarSalaEStatus(int idAtendimento, int idSala, String status) throws SQLException {
-        String sql = "UPDATE atendimento SET id_sala = ?, status = ? WHERE id_atendimento = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, idSala);
-            stmt.setString(2, status);
-            stmt.setInt(3, idAtendimento);
-            stmt.executeUpdate();
+    public void atualizar(Atendimento atendimento) throws SQLException {
+        String sql = "UPDATE atendimento SET status = ?, id_triagem = ?, id_consulta = ?, id_sala = ? WHERE id_atendimento = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, atendimento.getStatus());
+            ps.setObject(2, atendimento.getIdTriagem());
+            ps.setObject(3, atendimento.getIdConsulta());
+            ps.setObject(4, atendimento.getIdSala());
+            ps.setInt(5, atendimento.getIdAtendimento());
+
+            ps.executeUpdate();
         }
     }
 
@@ -67,5 +71,23 @@ public class AtendimentoDAO {
             }
         }
         return null;
+    }
+
+    public Atendimento buscarProximoParaConsulta() throws SQLException {
+        String sql = "SELECT * FROM atendimento WHERE status = 'Aguardando Consulta' ORDER BY hora_atendimento ASC LIMIT 1";
+        
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                Atendimento atendimento = new Atendimento();
+                atendimento.setIdAtendimento(rs.getInt("id_atendimento"));
+                atendimento.setCpfPaciente(rs.getString("cpf_paciente"));
+                atendimento.setStatus(rs.getString("status"));
+                atendimento.setIdTriagem(rs.getInt("id_triagem"));
+                return atendimento;
+            }
+        }
+        return null; 
     }
 }
