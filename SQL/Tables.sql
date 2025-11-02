@@ -135,13 +135,16 @@ CREATE TABLE Sala (
 -- Tabela para atendimentos
 CREATE TABLE Atendimento (
     id_atendimento SERIAL PRIMARY KEY,
+    cpf_paciente VARCHAR(11) NOT NULL,
     senha VARCHAR(10) NOT NULL,
     hora_atendimento TIME NOT NULL,
     status VARCHAR(20) DEFAULT 'Aguardando',
     id_consulta INT,
     id_triagem INT,
     id_sala INT,
+    
     CONSTRAINT fk_atendimento_consulta FOREIGN KEY (id_consulta) REFERENCES Consulta(id_consulta) ON DELETE CASCADE,
     CONSTRAINT fk_atendimento_triagem FOREIGN KEY (id_triagem) REFERENCES Triagem(id_triagem),
-    CONSTRAINT fk_atendimento_sala FOREIGN KEY (id_sala) REFERENCES Sala(id_sala)
+    CONSTRAINT fk_atendimento_sala FOREIGN KEY (id_sala) REFERENCES Sala(id_sala),
+    CONSTRAINT fk_atendimento_paciente FOREIGN KEY (cpf_paciente) REFERENCES Paciente(cpf_paciente)
 );

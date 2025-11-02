@@ -87,4 +87,12 @@ public class AtendimentoService {
         
         return proximo;
     }
+
+    public Atendimento buscarAtendimentoPorId(int idAtendimento) throws SQLException, Exception {
+        Atendimento atendimento = new AtendimentoDAO(connection).buscarPorId(idAtendimento);
+        if (atendimento == null) {
+            throw new Exception("Atendimento com ID " + idAtendimento + " não encontrado.");
+        }
+        return atendimento;
+    }
 }

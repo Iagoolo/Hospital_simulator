@@ -5,9 +5,9 @@ import java.sql.Time;
 public class Atendimento {
     
     private int idAtendimento;
-    private int idConsulta;
-    private int idTriagem;
-    private int idSala;
+    private Integer idConsulta;
+    private Integer idTriagem;
+    private Integer idSala;
     private String cpfPaciente;
     private Time horaAtendimento;
     private String status;
@@ -17,7 +17,7 @@ public class Atendimento {
         // Construtor padrão
     }
 
-    public Atendimento(int idAtendimento, String senha, int idConsulta, int idTriagem, int idSala, Time horaAtendimento, String status, String cpfPaciente){
+    public Atendimento(int idAtendimento, String senha, Integer idConsulta, Integer idTriagem, Integer idSala, Time horaAtendimento, String status, String cpfPaciente){
         this.idAtendimento = idAtendimento;
         this.senha = senha;
         this.idConsulta = idConsulta;
@@ -44,27 +44,27 @@ public class Atendimento {
         this.senha = senha;
     }
 
-    public int getIdConsulta() {
+    public Integer getIdConsulta() {
         return idConsulta;
     }
 
-    public void setIdConsulta(int idConsulta) {
+    public void setIdConsulta(Integer idConsulta) {
         this.idConsulta = idConsulta;
     }
 
-    public int getIdTriagem() {
+    public Integer getIdTriagem() {
         return idTriagem;
     }
 
-    public void setIdTriagem(int idTriagem) {
+    public void setIdTriagem(Integer idTriagem) {
         this.idTriagem = idTriagem;
     }
 
-    public int getIdSala() {
+    public Integer getIdSala() {
         return idSala;
     }
 
-    public void setIdSala(int idSala) {
+    public void setIdSala(Integer idSala) {
         this.idSala = idSala;
     }
 

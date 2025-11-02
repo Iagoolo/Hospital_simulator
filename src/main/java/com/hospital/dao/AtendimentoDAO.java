@@ -57,22 +57,29 @@ public class AtendimentoDAO {
     }
 
     public Atendimento buscarProximoPaciente() throws SQLException {
-        String sql = "SELECT * FROM atendimento WHERE status = 'Aguardando triagem' ORDER BY senha ASC LIMIT 1";
+        String sql = "SELECT * FROM atendimento WHERE status = 'Aguardando Triagem' ORDER BY hora_atendimento ASC LIMIT 1";
+        
         try (PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+            ResultSet rs = ps.executeQuery()) {
 
             if (rs.next()) {
                 Atendimento atendimento = new Atendimento();
+                
                 atendimento.setIdAtendimento(rs.getInt("id_atendimento"));
                 atendimento.setCpfPaciente(rs.getString("cpf_paciente"));
-                atendimento.setSenha(rs.getString("senha"));
                 atendimento.setStatus(rs.getString("status"));
+                atendimento.setSenha(rs.getString("senha"));
+                atendimento.setHoraAtendimento(rs.getTime("hora_atendimento"));
+                
+                atendimento.setIdConsulta((Integer) rs.getObject("id_consulta"));
+                atendimento.setIdTriagem((Integer) rs.getObject("id_triagem"));
+                atendimento.setIdSala((Integer) rs.getObject("id_sala"));
+                
                 return atendimento;
             }
         }
         return null;
     }
-
     public Atendimento buscarProximoParaConsulta() throws SQLException {
         String sql = "SELECT * FROM atendimento WHERE status = 'Aguardando Consulta' ORDER BY hora_atendimento ASC LIMIT 1";
         
@@ -84,10 +91,30 @@ public class AtendimentoDAO {
                 atendimento.setIdAtendimento(rs.getInt("id_atendimento"));
                 atendimento.setCpfPaciente(rs.getString("cpf_paciente"));
                 atendimento.setStatus(rs.getString("status"));
-                atendimento.setIdTriagem(rs.getInt("id_triagem"));
+                atendimento.setIdTriagem((Integer) rs.getObject("id_triagem"));
                 return atendimento;
             }
         }
         return null; 
+    }
+
+    public Atendimento buscarPorId(int idAtendimento) throws SQLException {
+        String sql = "SELECT * FROM atendimento WHERE id_atendimento = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, idAtendimento);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Atendimento atendimento = new Atendimento();
+                    atendimento.setIdAtendimento(rs.getInt("id_atendimento"));
+                    atendimento.setCpfPaciente(rs.getString("cpf_paciente"));
+                    atendimento.setStatus(rs.getString("status"));
+                    atendimento.setIdTriagem((Integer) rs.getObject("id_triagem"));
+                    atendimento.setIdConsulta((Integer) rs.getObject("id_consulta"));
+                    atendimento.setIdSala((Integer) rs.getObject("id_sala"));
+                    return atendimento;
+                }
+            }
+        }
+        return null;
     }
 }

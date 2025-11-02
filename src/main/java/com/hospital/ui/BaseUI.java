@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.Scanner;
 
 import com.hospital.exception.AcaoComExcecao;
+import com.hospital.utils.ConsoleUtil;
 
 public abstract class BaseUI {
     
@@ -19,7 +20,7 @@ public abstract class BaseUI {
         while(executando){
             System.out.println("\n---- " + obterTituloMenu() + " ----\n");
             imprimirOpcoes();
-            int opcao = scanner.nextInt();
+            int opcao = ConsoleUtil.lerInt(scanner);
             executando = processarOpcao(opcao);
 
             if (executando) {
@@ -29,10 +30,6 @@ public abstract class BaseUI {
 
         System.out.println("Voltando ao menu anterior...");
     }
-
-    protected abstract String obterTituloMenu();
-    protected abstract void imprimirOpcoes();
-    protected abstract boolean processarOpcao(int opcao);
 
     protected void pausar(){
         System.out.println("\nPressione ENTER para continuar");
@@ -60,4 +57,8 @@ public abstract class BaseUI {
             }
         }
     }
+
+    protected abstract String obterTituloMenu();
+    protected abstract void imprimirOpcoes();
+    protected abstract boolean processarOpcao(int opcao);
 }

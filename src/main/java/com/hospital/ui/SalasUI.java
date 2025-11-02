@@ -98,7 +98,7 @@ public class SalasUI extends BaseUI{
                 return;
             }
 
-            System.out.printf("%-15s | %-30s | %s%n", "CPF", "Nome", "Endereço" );
+            System.out.printf("%-15s | %-30s | %s%n", "ID", "Andar", "Tipo" );
             System.out.println("-".repeat(70));
 
             for (Sala sala : salas){
@@ -108,7 +108,7 @@ public class SalasUI extends BaseUI{
                     sala.getTipoSala());
             }
         } catch (SQLException e){
-            System.err.println("[ERRO NO BANCO DE DADOS] Não foi possível listar medicos: " + e.getMessage());
+            System.err.println("[ERRO NO BANCO DE DADOS] Não foi possível listar salas: " + e.getMessage());
         }
     }
 
