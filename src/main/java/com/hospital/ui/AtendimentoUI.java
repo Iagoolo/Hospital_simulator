@@ -13,58 +13,17 @@ import com.hospital.utils.ConsoleUtil;
 import com.hospital.model.Atendimento;
 import com.hospital.model.Consulta;
 import com.hospital.model.Triagem;
-import com.hospital.service.AtendimentoService;
-import com.hospital.service.ConsultaService;
-import com.hospital.service.EnfermeiroService;
-import com.hospital.service.ExamesService;
-import com.hospital.service.HistoricoMedicoService;
-import com.hospital.service.MedicamentosService;
-import com.hospital.service.MedicoService;
-import com.hospital.service.PacienteService;
-import com.hospital.service.PrescricaoService;
-import com.hospital.service.SalaService;
-import com.hospital.service.TriagemService;
+import com.hospital.service.ServiceContainer;
 
 public class AtendimentoUI extends BaseUI {
     
-    private PacienteService pacienteService;
-    private TriagemService triagemService;
-    private SalaService salaService;
-    private ConsultaService consultaService;
-    private MedicoService medicoService;
-    private EnfermeiroService enfermeiroService;
-    private AtendimentoService atendimentoService;
-    private ExamesService examesService;
-    private HistoricoMedicoService historicoMedicoService;
-    private MedicamentosService medicamentosService;
-    private PrescricaoService prescricaoService;
+    private ServiceContainer services;
 
-    public AtendimentoUI(Scanner scanner, 
-                         PacienteService pacienteService, 
-                         EnfermeiroService enfermeiroService, 
-                         MedicoService medicoService, 
-                         TriagemService triagemService, 
-                         ConsultaService consultaService, 
-                         AtendimentoService atendimentoService, 
-                         PrescricaoService prescricaoService, 
-                         MedicamentosService medicamentosService, 
-                         ExamesService examesService, 
-                         HistoricoMedicoService historicoMedicoService, 
-                         SalaService salaService) {
+    public AtendimentoUI(Scanner scanner,ServiceContainer services) {
         
         super(scanner); 
         
-        this.pacienteService = pacienteService;
-        this.enfermeiroService = enfermeiroService;
-        this.medicoService = medicoService;
-        this.triagemService = triagemService;
-        this.consultaService = consultaService;
-        this.atendimentoService = atendimentoService;
-        this.prescricaoService = prescricaoService;
-        this.medicamentosService = medicamentosService;
-        this.examesService = examesService;
-        this.historicoMedicoService = historicoMedicoService;
-        this.salaService = salaService;
+        this.services = services;
     }
 
     @Override
@@ -118,7 +77,7 @@ public class AtendimentoUI extends BaseUI {
         String cpf = ConsoleUtil.lerString(scanner);
 
         executarAcao(() -> { 
-            if (pacienteService.buscarPacienteCpf(cpf) == null) {
+            if (services.pacienteService.buscarPacienteCpf(cpf) == null) {
                 throw new Exception("Paciente não cadastrado. Cadastre-o primeiro."); 
             }
 
@@ -129,7 +88,7 @@ public class AtendimentoUI extends BaseUI {
             atendimento.setHoraAtendimento(java.sql.Time.valueOf(java.time.LocalTime.now()));
             atendimento.setSenha("P-" + (int)(Math.random() * 1000));
 
-            atendimentoService.realizarAtendimento(atendimento);
+            services.atendimentoService.realizarAtendimento(atendimento);
 
         }, "Ficha de atendimento aberta com sucesso!", "Erro ao registrar chegada");
     }
@@ -138,13 +97,13 @@ public class AtendimentoUI extends BaseUI {
         System.out.println("\n--- 2. Realizar Próxima Triagem ---");
 
         executarAcao(() -> {
-            Atendimento atendimento = atendimentoService.buscarProximoPaciente();
+            Atendimento atendimento = services.atendimentoService.buscarProximoPaciente();
             System.out.println("Chamando paciente: " + atendimento.getCpfPaciente());
 
             System.out.print("Digite o CPF do enfermeiro: ");
             String cpfEnfermeiro = ConsoleUtil.lerString(scanner);
         
-            if(enfermeiroService.buscarEnfermeiroCpf(cpfEnfermeiro) == null) {
+            if(services.enfermeiroService.buscarEnfermeiroCpf(cpfEnfermeiro) == null) {
                  throw new Exception("Enfermeiro não encontrado.");
             }
 
@@ -166,12 +125,12 @@ public class AtendimentoUI extends BaseUI {
             triagem.setDataTriagem(java.time.LocalDate.now());
             triagem.setHoraTriagem(java.time.LocalTime.now());
 
-            Triagem triagemSalva = triagemService.realizarTriagem(triagem);
+            Triagem triagemSalva = services.triagemService.realizarTriagem(triagem);
 
             atendimento.setStatus("Aguardando Consulta");
             atendimento.setIdTriagem(triagemSalva.getIdTriagem()); 
             
-            atendimentoService.atualizarAtendimento(atendimento);
+            services.atendimentoService.atualizarAtendimento(atendimento);
 
         }, "Triagem realizada com sucesso. Paciente aguardando consulta.", "Erro ao realizar triagem");
     }
@@ -180,20 +139,20 @@ public class AtendimentoUI extends BaseUI {
         System.out.println("\n--- 3. Iniciar Consulta ---");
 
         executarAcao(() -> {
-            Atendimento atendimento = atendimentoService.buscarProximoParaConsulta();
+            Atendimento atendimento = services.atendimentoService.buscarProximoParaConsulta();
             System.out.println("Chamando paciente: " + atendimento.getCpfPaciente());
 
             System.out.print("Digite o CPF do médico: ");
             String cpfMedico = ConsoleUtil.lerString(scanner);
         
-            if(medicoService.buscarMedicoCpf(cpfMedico) == null) {
+            if(services.medicoService.buscarMedicoCpf(cpfMedico) == null) {
                  throw new Exception("Medico não encontrado.");
             }
 
             System.out.print("Digite o número da sala: ");
             int idSala = ConsoleUtil.lerInt(scanner);
         
-            if(salaService.buscarSala(idSala) == null) {
+            if(services.salaService.buscarSala(idSala) == null) {
                  throw new Exception("Sala não encontrada.");
             }
             
@@ -205,12 +164,12 @@ public class AtendimentoUI extends BaseUI {
             consulta.setHoraConsulta(java.time.LocalTime.now());
             consulta.setSala(idSala);
 
-            Consulta consultaSalva = consultaService.criarConsulta(consulta);;
+            Consulta consultaSalva = services.consultaService.criarConsulta(consulta);;
 
             atendimento.setStatus("Em Consulta");
             atendimento.setIdConsulta(consultaSalva.getIdConsulta());
             
-            atendimentoService.atualizarAtendimento(atendimento);
+            services.atendimentoService.atualizarAtendimento(atendimento);
 
         }, "Paciente em consulta", "Erro ao realizar consulta");
     }
@@ -222,7 +181,7 @@ public class AtendimentoUI extends BaseUI {
             System.out.print("Digite o ID da Consulta para registrar o Pós-Consulta: ");
             int idConsulta = ConsoleUtil.lerInt(scanner);
 
-            Consulta consulta = consultaService.procurarConsultaId(idConsulta);
+            Consulta consulta = services.consultaService.procurarConsultaId(idConsulta);
             if (consulta == null) {
                 System.out.println("Consulta não encontrada.");
                 return;
@@ -238,7 +197,7 @@ public class AtendimentoUI extends BaseUI {
             consulta.setObservacao(observacoes);
 
             executarAcao(() -> {
-                consultaService.atualizarConsulta(consulta);
+                services.consultaService.atualizarConsulta(consulta);
             }, "Diagnóstico salvo com sucesso.", "Erro ao salvar diagnóstico");
 
             boolean concluido = false;
@@ -285,7 +244,7 @@ public class AtendimentoUI extends BaseUI {
                     break;
                 }
                 
-                Medicamento med = medicamentosService.buscarMedicamento(idMedicamento);
+                Medicamento med = services.medicamentosService.buscarMedicamento(idMedicamento);
                 if (med == null) {
                     System.out.println("Medicamento com ID " + idMedicamento + " não encontrado.");
                     continue;
@@ -308,7 +267,7 @@ public class AtendimentoUI extends BaseUI {
                 return;
             }
 
-            prescricaoService.criarPrescricao(novaPrescricao);
+            services.prescricaoService.criarPrescricao(novaPrescricao);
 
         }, "Prescrição salva com sucesso!", "Erro ao salvar prescrição");
     }
@@ -318,14 +277,14 @@ public class AtendimentoUI extends BaseUI {
 
         executarAcao(() -> {
 
-            HistoricoMedico historico = historicoMedicoService.buscarHistorico(consulta.getCpfPaciente());
+            HistoricoMedico historico = services.historicoMedicoService.buscarHistorico(consulta.getCpfPaciente());
             if (historico == null) {
                 System.out.println("Criando novo histórico médico para o paciente...");
                 HistoricoMedico novoHistorico = new HistoricoMedico();
                 novoHistorico.setCpfPaciente(consulta.getCpfPaciente());
                 novoHistorico.setStatusHistorico("Ativo");
                 novoHistorico.setObservacoes("Histórico criado em " + LocalDate.now());
-                historico = historicoMedicoService.cadastrarHistorico(novoHistorico);
+                historico = services.historicoMedicoService.cadastrarHistorico(novoHistorico);
             }
 
             System.out.print("Tipo do Exame (ex: Raio-X de Tórax, Hemograma Completo): ");
@@ -338,7 +297,7 @@ public class AtendimentoUI extends BaseUI {
             novoExame.setSolicitadoEm(java.sql.Date.valueOf(LocalDate.now()));
             novoExame.setStatus("Pendente");
 
-            examesService.cadastrarExame(novoExame);
+            services.examesService.cadastrarExame(novoExame);
 
         }, "Exame solicitado com sucesso!", "Erro ao solicitar exame");
     }
@@ -350,7 +309,7 @@ public class AtendimentoUI extends BaseUI {
         int idAtendimento = ConsoleUtil.lerInt(scanner);
 
         executarAcao(() -> {
-            Atendimento atendimento = atendimentoService.buscarAtendimentoPorId(idAtendimento);
+            Atendimento atendimento = services.atendimentoService.buscarAtendimentoPorId(idAtendimento);
 
             if (atendimento.getStatus().equals("Finalizado")) {
                 throw new Exception("Este atendimento já foi finalizado.");
@@ -359,7 +318,7 @@ public class AtendimentoUI extends BaseUI {
                 throw new Exception("Este atendimento não pode ser finalizado pois não possui uma consulta registrada.");
             }
 
-            Consulta consulta = consultaService.procurarConsultaId(atendimento.getIdConsulta());
+            Consulta consulta = services.consultaService.procurarConsultaId(atendimento.getIdConsulta());
             if (consulta == null) {
                 throw new Exception("Erro: Consulta associada ao atendimento não encontrada.");
             }
@@ -367,7 +326,7 @@ public class AtendimentoUI extends BaseUI {
                 throw new Exception("Consulta com ID " + consulta.getIdConsulta() + " ainda não possui um diagnóstico. Registre-o primeiro.");
             }
 
-            HistoricoMedico historico = historicoMedicoService.buscarHistorico(consulta.getCpfPaciente());
+            HistoricoMedico historico = services.historicoMedicoService.buscarHistorico(consulta.getCpfPaciente());
             boolean historicoNovo = false;
             if (historico == null) {
                 historico = new HistoricoMedico();
@@ -384,7 +343,7 @@ public class AtendimentoUI extends BaseUI {
                 "\nObservações: %s" +
                 "\n-------------------------------------",
                 consulta.getDataConsulta(),
-                medicoService.buscarMedicoCpf(consulta.getCpfMedico()).getNome(),
+                services.medicoService.buscarMedicoCpf(consulta.getCpfMedico()).getNome(),
                 consulta.getCpfMedico(),
                 consulta.getDiagnostico(),
                 consulta.getObservacao()
@@ -392,12 +351,12 @@ public class AtendimentoUI extends BaseUI {
 
             historico.setObservacoes(historico.getObservacoes() + novoRegistroHistorico);
 
-            atendimentoService.finalizarAtendimento(idAtendimento);
+            services.atendimentoService.finalizarAtendimento(idAtendimento);
             
             if (historicoNovo) {
-                historicoMedicoService.cadastrarHistorico(historico);
+                services.historicoMedicoService.cadastrarHistorico(historico);
             } else {
-                historicoMedicoService.atualizarHistorico(historico.getIdHistorico(), historico.getObservacoes());
+                services.historicoMedicoService.atualizarHistorico(historico.getIdHistorico(), historico.getObservacoes());
             }
 
         }, "Atendimento finalizado e histórico atualizado com sucesso!", "Erro ao finalizar atendimento");
