@@ -2,6 +2,7 @@ package com.hospital.service;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 import com.hospital.dao.ConsultaDAO;
 import com.hospital.model.Consulta;
@@ -49,6 +50,11 @@ public class ConsultaService {
     public Consulta procurarConsultaId(int idConsulta) throws SQLException{
         ConsultaDAO consultaDAO = new ConsultaDAO(connection);
         return consultaDAO.buscarConsulta(idConsulta);
+    }
+
+    public List<Consulta> listarConsultasPendentes() throws SQLException {
+        ConsultaDAO consultaDAO = new ConsultaDAO(connection);
+        return consultaDAO.listarConsultasSemDiagnostico();
     }
 
     public void atualizarConsulta(Consulta consulta) throws SQLException{

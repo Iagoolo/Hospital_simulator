@@ -24,7 +24,6 @@ public class EnfermeirosUI extends BaseUI{
 
     @Override
     protected void imprimirOpcoes(){
-        System.out.println("\n-------Gerenciador de Enfermeiros--------");
         System.out.println("1. Cadastrar Novo Enfermeiro");
         System.out.println("2. Listar Todos os Enfermeiros");
         System.out.println("3. Buscar Enfermeiro");

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import com.hospital.model.Consulta;
 import com.hospital.model.ItemPrescricao;
@@ -39,71 +40,91 @@ public class ConsultaDAO {
     }
 
     public Consulta buscarConsulta(int idConsulta) throws SQLException {
-    String sql = """
-        SELECT 
-            c.*, p.id_prescricao, ip.id_item, ip.id_medicamento, ip.dosagem, ip.frequencia, ip.duracao, ip.observacoes
-        FROM 
-            consulta c
-        LEFT JOIN 
-            prescricao p ON c.id_consulta = p.id_consulta
-        LEFT JOIN 
-            prescricao_item ip ON p.id_prescricao = ip.id_prescricao
-        WHERE c.id_consulta = ?
-        """;
+        String sql = """
+            SELECT 
+                c.*, p.id_prescricao, ip.id_item, ip.id_medicamento, ip.dosagem, ip.frequencia, ip.duracao, ip.observacoes
+            FROM 
+                consulta c
+            LEFT JOIN 
+                prescricao p ON c.id_consulta = p.id_consulta
+            LEFT JOIN 
+                prescricao_item ip ON p.id_prescricao = ip.id_prescricao
+            WHERE c.id_consulta = ?
+            """;
 
-    try (PreparedStatement ps = connection.prepareStatement(sql)) {
-        ps.setInt(1, idConsulta);
-        ResultSet rs = ps.executeQuery();
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, idConsulta);
+            ResultSet rs = ps.executeQuery();
 
-        Consulta consulta = null;
-        Prescricao prescricao = null;
+            Consulta consulta = null;
+            Prescricao prescricao = null;
 
-        while (rs.next()) {
-            
-            if (consulta == null) {
-                consulta = new Consulta(
-                    rs.getInt("id_consulta"),
-                    rs.getInt("id_triagem"),
-                    rs.getInt("sala"),
-                    rs.getDate("data_consulta").toLocalDate(),
-                    rs.getTime("hora_consulta").toLocalTime(),
-                    rs.getString("observacao"),
-                    rs.getString("diagnostico"),
-                    rs.getString("cpf_paciente"),
-                    rs.getString("cpf_medico")
-                );
+            while (rs.next()) {
+                
+                if (consulta == null) {
+                    consulta = new Consulta(
+                        rs.getInt("id_consulta"),
+                        rs.getInt("id_triagem"),
+                        rs.getInt("sala"),
+                        rs.getDate("data_consulta").toLocalDate(),
+                        rs.getTime("hora_consulta").toLocalTime(),
+                        rs.getString("observacao"),
+                        rs.getString("diagnostico"),
+                        rs.getString("cpf_paciente"),
+                        rs.getString("cpf_medico")
+                    );
+                }
+
+                int idPrescricao = rs.getInt("id_prescricao");
+                if (idPrescricao > 0 && prescricao == null) {
+                    prescricao = new Prescricao();
+                    prescricao.setIdPrescricao(idPrescricao);
+                    prescricao.setIdConsulta(consulta.getIdConsulta());
+                }
+
+                int idMedicamento = rs.getInt("id_medicamento");
+                if (idMedicamento > 0) {
+                    prescricao.addItem(new ItemPrescricao(
+                        rs.getInt("id_item"),
+                        rs.getInt("id_prescricao"),
+                        rs.getInt("id_medicamento"),
+                        rs.getString("dosagem"),
+                        rs.getString("frequencia"),
+                        rs.getString("duracao"),
+                        rs.getString("observacoes")
+                    ));
+                }
             }
 
-            int idPrescricao = rs.getInt("id_prescricao");
-            if (idPrescricao > 0 && prescricao == null) {
-                prescricao = new Prescricao();
-                prescricao.setIdPrescricao(idPrescricao);
-                prescricao.setIdConsulta(consulta.getIdConsulta());
+            if (consulta != null) {
+                consulta.setPrescricao(prescricao);
             }
 
-            int idMedicamento = rs.getInt("id_medicamento");
-            if (idMedicamento > 0) {
-                prescricao.addItem(new ItemPrescricao(
-                    rs.getInt("id_item"),
-                    rs.getInt("id_prescricao"),
-                    rs.getInt("id_medicamento"),
-                    rs.getString("dosagem"),
-                    rs.getString("frequencia"),
-                    rs.getString("duracao"),
-                    rs.getString("observacoes")
-                ));
-            }
+            return consulta;
         }
-
-        if (consulta != null) {
-            consulta.setPrescricao(prescricao);
-        }
-
-        return consulta;
     }
-}
 
+    public List<Consulta> listarConsultasSemDiagnostico() throws SQLException {
+       
+        String sql = "SELECT * FROM consulta WHERE diagnostico IS NULL OR diagnostico = ''";
+        List<Consulta> consultas = new java.util.ArrayList<>();
 
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            
+            while (rs.next()) {
+                Consulta c = new Consulta();
+                c.setIdConsulta(rs.getInt("id_consulta"));
+                c.setCpfPaciente(rs.getString("cpf_paciente"));
+                c.setCpfMedico(rs.getString("cpf_medico"));
+                c.setDataConsulta(rs.getDate("data_consulta").toLocalDate());
+                c.setHoraConsulta(rs.getTime("hora_consulta").toLocalTime());
+                consultas.add(c);
+            }
+        }
+        return consultas;
+    }
+    
     public void atualizarConsulta(Consulta consulta) throws SQLException {
         String sql = "UPDATE consulta SET id_triagem = ?, sala = ?, data_consulta = ?, hora_consulta = ?, observacao = ?, diagnostico = ?, cpf_paciente = ?, cpf_medico = ? WHERE id_consulta = ?";
         

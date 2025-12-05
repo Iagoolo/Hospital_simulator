@@ -24,7 +24,6 @@ public class SalasUI extends BaseUI{
 
     @Override
     protected void imprimirOpcoes(){
-        System.out.println("\n-------Gerenciador de Salas--------");
         System.out.println("1. Cadastrar Nova Sala");
         System.out.println("2. Listar Todas as Salas");
         System.out.println("3. Buscar Salas");

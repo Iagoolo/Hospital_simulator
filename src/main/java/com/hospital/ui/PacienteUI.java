@@ -24,7 +24,6 @@ public class PacienteUI extends BaseUI{
 
     @Override
     protected void imprimirOpcoes(){
-        System.out.println("\n-------Gerenciador de pacientes--------");
         System.out.println("1. Cadastrar Novo Paciente");
         System.out.println("2. Listar Todos os Pacientes");
         System.out.println("3. Buscar Paciente");

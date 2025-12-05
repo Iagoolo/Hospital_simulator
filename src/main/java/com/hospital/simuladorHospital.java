@@ -18,6 +18,8 @@ public class simuladorHospital {
     private EnfermeirosUI enfermeirosUI;
     private SalasUI salasUI;
     private AtendimentoUI atendimentoUI;
+    private TriagemUI triagemUI;
+    private ConsultaUI consultaUI;
 
     public simuladorHospital(Connection connection) {
         this.scanner = new Scanner(System.in);
@@ -27,7 +29,34 @@ public class simuladorHospital {
         this.medicoUI = new MedicoUI(services.medicoService, scanner);
         this.enfermeirosUI = new EnfermeirosUI(services.enfermeiroService, scanner);
         this.salasUI = new SalasUI(services.salaService, scanner);
-        this.atendimentoUI = new AtendimentoUI( scanner, services);
+        this.triagemUI = new TriagemUI(scanner, 
+            services.triagemService, 
+            services.atendimentoService, 
+            services.enfermeiroService
+        );
+        
+        this.consultaUI = new ConsultaUI(
+            scanner,
+            services.consultaService,
+            services.atendimentoService,
+            services.medicoService,
+            services.salaService,
+            services.prescricaoService,
+            services.examesService,
+            services.medicamentosService,
+            services.historicoMedicoService
+        );
+
+        this.atendimentoUI = new AtendimentoUI(
+            scanner, 
+            services.atendimentoService,
+            services.pacienteService,
+            services.consultaService,
+            services.historicoMedicoService,
+            services.medicoService,
+            triagemUI, 
+            consultaUI
+        );
     }
     
     public static void main(String[] args) {
