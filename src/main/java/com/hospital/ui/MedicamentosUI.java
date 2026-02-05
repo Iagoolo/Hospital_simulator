@@ -7,6 +7,7 @@ import com.hospital.model.Medicamento;
 import com.hospital.service.MedicamentosService;
 import com.hospital.utils.ConsoleUtil;
 
+// Classe responsável por gerenciar a interface de medicamentos no simulador hospitalar
 public class MedicamentosUI extends BaseUI {
 
     private MedicamentosService medicamentosService;
