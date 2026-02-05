@@ -70,14 +70,14 @@ CREATE TABLE Triagem (
 -- Tabela para consultas médicas
 CREATE TABLE Consulta (
     id_consulta SERIAL PRIMARY KEY,
+    id_triagem INT,
+    id_sala INT,
     data_consulta DATE NOT NULL,
     hora_consulta TIME NOT NULL,
-    Sala INT,
     Observacao TEXT,
     Diagnostico TEXT,
     CPF_paciente VARCHAR(11) NOT NULL,
     CPF_medico VARCHAR(11) NOT NULL,
-    id_triagem INT,
     CONSTRAINT fk_consulta_paciente FOREIGN KEY (CPF_paciente) REFERENCES Paciente(CPF_paciente),
     CONSTRAINT fk_consulta_medico FOREIGN KEY (CPF_medico) REFERENCES Medico(CPF_medico),
     CONSTRAINT fk_consulta_triagem FOREIGN KEY (id_triagem) REFERENCES Triagem(id_triagem)

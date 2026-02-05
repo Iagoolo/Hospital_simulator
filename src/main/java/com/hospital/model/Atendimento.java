@@ -28,6 +28,7 @@ public class Atendimento {
         this.cpfPaciente = cpfPaciente;
     }
     
+    // Getters e Setters
     public int getIdAtendimento() {
         return idAtendimento;
     }

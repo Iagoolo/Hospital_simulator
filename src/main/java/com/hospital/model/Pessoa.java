@@ -22,6 +22,7 @@ public abstract class Pessoa {
         this.idade = idade;
     }
     
+    // Getters and Setters
     public String getCpf() {
         return cpf;
     }

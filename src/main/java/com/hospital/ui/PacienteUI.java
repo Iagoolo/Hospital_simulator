@@ -63,6 +63,21 @@ public class PacienteUI extends BaseUI{
             }
     }
 
+
+    /**
+     * Cadastra um novo paciente no sistema.
+     * 
+     * Este método solicita ao usuário informações necessárias para o cadastro de um paciente,
+     * incluindo CPF, nome completo, endereço, idade, nome da mãe e nome do pai. Após coletar
+     * essas informações, um objeto Paciente é criado e preenchido com os dados fornecidos.
+     * Em seguida, o método chama o serviço de paciente para realizar o cadastro no banco de dados.
+     * 
+     * O método trata exceções relacionadas ao banco de dados e outras exceções inesperadas,
+     * exibindo mensagens de erro apropriadas ao usuário.
+     * 
+     * @throws SQLException Se ocorrer um erro ao interagir com o banco de dados durante o cadastro.
+     * @throws Exception Se ocorrer um erro inesperado durante a execução do método.
+     */
     public void cadastrarPaciente(){
         System.out.println("\n -----Cadastro de Novo Paciente--------");
 
@@ -103,6 +118,19 @@ public class PacienteUI extends BaseUI{
         }
     }
 
+    /**
+     * Lista todos os pacientes cadastrados no sistema.
+     * 
+     * Este método recupera a lista de pacientes do serviço de pacientes e imprime
+     * suas informações no console. Se não houver pacientes cadastrados, uma mensagem
+     * informando que nenhum paciente está cadastrado será exibida. Em caso de erro
+     * ao acessar o banco de dados, uma mensagem de erro será exibida no console.
+     * 
+     * Exibe as informações dos pacientes em um formato tabular com as colunas:
+     * CPF, Nome e Endereço.
+     * 
+     * @throws SQLException Se ocorrer um erro ao acessar o banco de dados.
+     */
     public void listarTodosPacientes() {
         System.out.println("\n-----Lista de todos os Pacientes cadastrados-----");
         try{
@@ -127,6 +155,19 @@ public class PacienteUI extends BaseUI{
         }
     }
 
+    /**
+     * Busca um paciente pelo CPF fornecido pelo usuário.
+     * 
+     * Este método solicita ao usuário que insira o CPF de um paciente e tenta
+     * localizar o paciente correspondente utilizando o serviço de paciente.
+     * Se o paciente for encontrado, suas informações, como nome, idade,
+     * nome da mãe, nome do pai, endereço e sintomas, são exibidas no console.
+     * Caso contrário, uma mensagem informando que o paciente não foi encontrado
+     * é exibida. Em caso de erro durante a busca, uma mensagem de erro é
+     * exibida com detalhes sobre a exceção.
+     * 
+     * @throws SQLException Se ocorrer um erro ao buscar o paciente no banco de dados.
+     */
     public void buscarPaciente(){
         System.out.println("\n---- Buscar Paciente -----");
 
@@ -158,6 +199,17 @@ public class PacienteUI extends BaseUI{
         }
     }
 
+    /**
+     * Atualiza os dados de um paciente no sistema.
+     * 
+     * Este método solicita ao usuário o CPF do paciente a ser atualizado e, em seguida,
+     * permite que o usuário insira novos dados, como nome, endereço, idade, nome da mãe
+     * e nome do pai. Se o paciente não for encontrado, uma mensagem de erro será exibida.
+     * Os campos que não forem alterados podem ser deixados em branco, e os dados existentes
+     * serão mantidos. O método também lida com exceções relacionadas ao banco de dados.
+     * 
+     * @throws SQLException Se ocorrer um erro ao acessar o banco de dados durante a atualização.
+     */
     public void atualizarPaciente(){
         System.out.println("\n---- Atualizar Paciente -----");
         try{
@@ -220,6 +272,17 @@ public class PacienteUI extends BaseUI{
         }
     }
 
+    /**
+     * Deleta um paciente do sistema com base no CPF fornecido.
+     * 
+     * Este método solicita ao usuário que insira o CPF do paciente que deseja deletar.
+     * Se o paciente não existir, uma mensagem de erro será exibida. Caso contrário,
+     * o usuário será solicitado a confirmar a exclusão do paciente. Se a confirmação
+     * for recebida, o paciente será deletado e uma mensagem de sucesso será exibida.
+     * Se a operação for cancelada, uma mensagem informando o cancelamento será exibida.
+     * 
+     * @throws SQLException Se ocorrer um erro ao acessar o banco de dados durante a operação de exclusão.
+     */
     public void deletarPaciente(){
         System.out.println("\n---- Deletar Paciente -----");
         try {

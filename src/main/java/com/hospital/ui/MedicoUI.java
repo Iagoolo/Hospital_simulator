@@ -62,8 +62,22 @@ public class MedicoUI extends BaseUI {
         }
     }  
 
+    /**
+     * Cadastra um novo médico no sistema.
+     * 
+     * Este método solicita ao usuário informações necessárias para o cadastro de um médico,
+     * incluindo CPF, nome completo, endereço, idade, nome da mãe e nome do pai. 
+     * Após coletar os dados, um objeto Medico é criado e preenchido com as informações fornecidas.
+     * Em seguida, o método chama o serviço de cadastro para persistir os dados no banco de dados.
+     * 
+     * Caso ocorra um erro durante o processo de cadastro, o método captura exceções específicas
+     * relacionadas ao banco de dados e outras exceções inesperadas, exibindo mensagens de erro apropriadas.
+     * 
+     * @throws SQLException Se ocorrer um erro ao interagir com o banco de dados.
+     * @throws Exception Para qualquer outra exceção inesperada que possa ocorrer.
+     */
     public void cadastrarMedico(){
-        System.out.println("\n -----Cadastro de Novo Médico--------");
+        System.out.println("\n -----Cadastrar Novo Médico--------");
 
         try{
             System.out.println("CPF (Apenas números)");
@@ -102,6 +116,24 @@ public class MedicoUI extends BaseUI {
         }
     }
 
+    /**
+     * Lista todos os médicos cadastrados no sistema.
+     * 
+     * Este método recupera a lista de médicos através do serviço de médicos
+     * e imprime suas informações no console. Se não houver médicos cadastrados,
+     * uma mensagem informando que nenhum médico está cadastrado será exibida.
+     * 
+     * Em caso de erro ao acessar o banco de dados, uma mensagem de erro será
+     * exibida no console.
+     * 
+     * Exibe as informações dos médicos no seguinte formato:
+     * 
+     * CPF            | Nome                           | Endereço
+     * ------------------------------------------------------------
+     * <cpf>         | <nome>                         | <endereço>
+     * 
+     * @throws SQLException Se ocorrer um erro ao acessar o banco de dados.
+     */
     public void listarTodosMedicos() {
         System.out.println("\n-----Lista de todos os Médicos cadastrados-----");
         try{
@@ -126,6 +158,19 @@ public class MedicoUI extends BaseUI {
         }
     }
 
+    /**
+     * Busca um médico pelo CPF fornecido pelo usuário.
+     * 
+     * Este método solicita ao usuário que insira o CPF de um médico e tenta 
+     * localizar as informações correspondentes. Se o médico for encontrado, 
+     * exibe detalhes como nome, idade, nome da mãe, nome do pai, endereço 
+     * e especialidades. Caso contrário, informa que o médico não foi encontrado.
+     * 
+     * O método lida com exceções de SQL que podem ocorrer durante a busca 
+     * no banco de dados, exibindo uma mensagem de erro apropriada.
+     * 
+     * @throws SQLException Se ocorrer um erro ao buscar o médico no banco de dados.
+     */
     public void buscarMedico(){
         System.out.println("\n---- Buscar Médicos -----");
 
@@ -157,6 +202,17 @@ public class MedicoUI extends BaseUI {
         }
     }
 
+    /**
+     * Atualiza as informações de um médico no sistema.
+     * 
+     * Este método solicita ao usuário o CPF do médico a ser atualizado e, em seguida, 
+     * permite que o usuário insira novos dados, como nome, endereço, idade, nome da mãe 
+     * e nome do pai. Se o usuário não fornecer novos dados, as informações existentes 
+     * serão mantidas. O método também trata exceções relacionadas ao banco de dados 
+     * e valida a entrada do usuário para a idade.
+     * 
+     * @throws SQLException Se ocorrer um erro ao acessar o banco de dados durante a atualização.
+     */
     public void atualizarMedico(){
         System.out.println("\n---- Atualizar Medico -----");
         try{
@@ -219,6 +275,17 @@ public class MedicoUI extends BaseUI {
         }
     }
 
+    /**
+     * Deleta um médico do sistema com base no CPF fornecido pelo usuário.
+     * 
+     * Este método solicita ao usuário que insira o CPF do médico que deseja deletar.
+     * Se o médico não existir, uma mensagem de erro é exibida. Caso contrário, o nome
+     * do médico é mostrado e o usuário é solicitado a confirmar a operação de deleção.
+     * Se o usuário confirmar, o médico é deletado e uma mensagem de sucesso é exibida.
+     * Se o usuário cancelar, uma mensagem de operação cancelada é exibida.
+     * 
+     * @throws SQLException Se ocorrer um erro ao acessar o banco de dados durante a operação de deleção.
+     */
     public void deletarMedico(){
         System.out.println("\n---- Deletar Médico -----");
         try {

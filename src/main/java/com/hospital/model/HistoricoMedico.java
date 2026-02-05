@@ -26,6 +26,7 @@ public class HistoricoMedico {
         this.exames = exames;
     }
 
+    // Getters and Setters
     public int getIdHistorico() {
         return idHistorico;
     }

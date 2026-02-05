@@ -63,6 +63,21 @@ public class EnfermeirosUI extends BaseUI{
         }
     }
 
+    /**
+     * Cadastra um novo enfermeiro no sistema.
+     * 
+     * Este método solicita ao usuário informações necessárias para o cadastro de um enfermeiro,
+     * incluindo CPF, nome completo, endereço, idade, nome da mãe e nome do pai. As informações
+     * são lidas a partir da entrada do console. Após coletar os dados, um objeto Enfermeiro é
+     * criado e preenchido com as informações fornecidas. O enfermeiro é então cadastrado através
+     * do serviço de enfermeiro.
+     * 
+     * Em caso de erro ao interagir com o banco de dados, uma mensagem de erro específica é exibida.
+     * Para outros tipos de exceções, uma mensagem de erro genérica é apresentada.
+     * 
+     * @throws SQLException Se ocorrer um erro ao acessar o banco de dados durante o cadastro.
+     * @throws Exception Para qualquer outro erro inesperado que possa ocorrer durante a execução.
+     */
     public void cadastrarEnfermeiro(){
         System.out.println("\n -----Cadastro de Novo Enfermeiro--------");
 
@@ -103,6 +118,21 @@ public class EnfermeirosUI extends BaseUI{
         }
     }
 
+    /**
+     * Lista todos os enfermeiros cadastrados no sistema.
+     * 
+     * Este método recupera uma lista de enfermeiros através do serviço de enfermeiro
+     * e imprime suas informações no console. Se não houver enfermeiros cadastrados,
+     * uma mensagem informando que a lista está vazia será exibida. Em caso de erro
+     * ao acessar o banco de dados, uma mensagem de erro será exibida.
+     * 
+     * Exibe as seguintes informações para cada enfermeiro:
+     * - CPF
+     * - Nome
+     * - Endereço
+     * 
+     * @throws SQLException Se ocorrer um erro ao acessar o banco de dados.
+     */
     public void listarTodosEnfermeiros() {
         System.out.println("\n-----Lista de todos os Médicos cadastrados-----");
         try{
@@ -127,6 +157,20 @@ public class EnfermeirosUI extends BaseUI{
         }
     }
 
+    /**
+     * Busca um enfermeiro pelo CPF fornecido pelo usuário.
+     * 
+     * Este método solicita ao usuário que insira o CPF de um enfermeiro e tenta 
+     * localizar o enfermeiro correspondente utilizando o serviço de enfermeiros. 
+     * Se o enfermeiro for encontrado, suas informações (nome, idade, nome da mãe, 
+     * nome do pai e endereço) são exibidas no console. Caso contrário, uma mensagem 
+     * informando que o enfermeiro não foi encontrado é exibida. 
+     * 
+     * Em caso de erro durante a busca (por exemplo, problemas de conexão com o banco 
+     * de dados), uma mensagem de erro é exibida.
+     * 
+     * @throws SQLException Se ocorrer um erro ao acessar os dados do enfermeiro.
+     */
     public void buscarEnfermeiro(){
         System.out.println("\n---- Buscar Enfermeiros -----");
 
@@ -152,6 +196,17 @@ public class EnfermeirosUI extends BaseUI{
         }
     }
 
+    /**
+     * Atualiza as informações de um enfermeiro no sistema.
+     * 
+     * Este método solicita ao usuário o CPF do enfermeiro a ser atualizado e, em seguida, 
+     * permite que o usuário insira novos dados para o enfermeiro, como nome, endereço, 
+     * idade, nome da mãe e nome do pai. Se o usuário não fornecer novos dados, os dados 
+     * existentes serão mantidos. O método também trata exceções relacionadas ao banco de dados 
+     * e exibe mensagens apropriadas em caso de erro.
+     * 
+     * @throws SQLException Se ocorrer um erro ao acessar o banco de dados durante a atualização.
+     */
     public void atualizarEnfermeiro(){
         System.out.println("\n---- Atualizar Enfermeiro -----");
         try{
@@ -214,6 +269,18 @@ public class EnfermeirosUI extends BaseUI{
         }
     }
 
+    /**
+     * Deleta um enfermeiro do sistema com base no CPF fornecido pelo usuário.
+     * 
+     * Este método solicita ao usuário que insira o CPF do enfermeiro que deseja deletar.
+     * Se o enfermeiro não existir, uma mensagem de erro será exibida. Caso contrário,
+     * o método pedirá confirmação do usuário antes de proceder com a exclusão.
+     * Se o usuário confirmar a exclusão, o enfermeiro será removido do sistema e
+     * uma mensagem de sucesso será exibida. Se a operação for cancelada, uma mensagem
+     * informando que a operação foi cancelada será exibida.
+     * 
+     * @throws SQLException Se ocorrer um erro ao tentar deletar o enfermeiro do banco de dados.
+     */
     public void deletarEnfermeiro(){
         System.out.println("\n---- Deletar Enfermeiro -----");
         try {

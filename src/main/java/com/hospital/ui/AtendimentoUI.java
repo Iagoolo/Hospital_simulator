@@ -83,6 +83,30 @@ public class AtendimentoUI extends BaseUI {
         return true;
     }
 
+    /**
+     * Registra a chegada de um paciente no sistema de atendimento hospitalar.
+     * 
+     * Este método solicita ao usuário o CPF do paciente e verifica se o mesmo está cadastrado
+     * no sistema. Caso o paciente não seja encontrado, uma exceção é lançada com mensagem
+     * informativa. Se o paciente existir, um novo registro de atendimento é criado com as
+     * seguintes informações:
+     * <ul>
+     *   <li>CPF do paciente fornecido</li>
+     *   <li>Status inicial: "Aguardando Triagem"</li>
+     *   <li>Hora do atendimento: hora atual do sistema</li>
+     *   <li>Senha de atendimento: gerada aleatoriamente com prefixo "P-"</li>
+     * </ul>
+     * 
+     * O método utiliza a estratégia de execução de ação com tratamento de exceções para
+     * garantir que erros sejam capturados e mensagens apropriadas sejam exibidas ao usuário.
+     * 
+     * @see Atendimento
+     * @see AtendimentoService#realizarAtendimento(Atendimento)
+     * @see PacienteService#buscarPacienteCpf(String)
+     * 
+     * @throws Exception se o paciente com o CPF fornecido não estiver cadastrado no sistema
+     * @throws SQLException se ocorrer erro ao acessar a base de dados durante o registro
+     */
     private void registrarChegada() {
         System.out.println("\n--- 1. Registrar Chegada ---");
         System.out.print("Digite o CPF do paciente: ");
@@ -104,6 +128,43 @@ public class AtendimentoUI extends BaseUI {
         }, "Ficha de atendimento aberta com sucesso!", "Erro ao registrar chegada");
     }
 
+    /**
+     * Finaliza um atendimento e atualiza o histórico médico do paciente.
+     * 
+     * <p>Este método realiza as seguintes operações:</p>
+     * <ul>
+     *   <li>Solicita ao usuário o ID do atendimento a ser finalizado</li>
+     *   <li>Valida se o atendimento existe e seu status atual</li>
+     *   <li>Verifica se existe uma consulta associada ao atendimento</li>
+     *   <li>Confirma se a consulta possui diagnóstico registrado</li>
+     *   <li>Busca ou cria um novo histórico médico para o paciente</li>
+     *   <li>Registra os dados da consulta no histórico (médico, diagnóstico, observações e data)</li>
+     *   <li>Atualiza o status do atendimento para "Finalizado"</li>
+     *   <li>Persiste as alterações no histórico médico no banco de dados</li>
+     * </ul>
+     * 
+     * <p><strong>Validações realizadas:</strong></p>
+     * <ul>
+     *   <li>O atendimento deve existir no sistema</li>
+     *   <li>O atendimento não pode já estar finalizado</li>
+     *   <li>O atendimento deve possuir uma consulta associada</li>
+     *   <li>A consulta deve ter um diagnóstico registrado</li>
+     * </ul>
+     * 
+     * <p><strong>Comportamento:</strong></p>
+     * <p>Se o paciente não possui histórico anterior, um novo será criado.
+     * Caso contrário, o histórico existente será atualizado com os novos dados da consulta.
+     * Todas as operações são envolvidas por tratamento de exceções que exibe mensagens
+     * apropriadas em caso de erro.</p>
+     * 
+     * @see Atendimento
+     * @see Consulta
+     * @see HistoricoMedico
+     * @see AtendimentoService
+     * @see ConsultaService
+     * @see HistoricoMedicoService
+     * @see MedicoService
+     */
     private void finalizarAtendimento() {
         System.out.println("\n--- 5. Finalizar Atendimento e Atualizar Histórico ---");
         

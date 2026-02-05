@@ -17,6 +17,7 @@ public class Medicamento {
         this.viaAdministracao = viaAdministracao;
     }
 
+    // Getters and Setters
     public int getIdMedicamento() {
         return idMedicamento;
     }

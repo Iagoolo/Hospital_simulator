@@ -21,6 +21,7 @@ public class ItemPrescricao {
         this.observacoes = observacoes;
     }
 
+    // Getters and Setters
     public int getIdItem() {
         return idItem;
     }

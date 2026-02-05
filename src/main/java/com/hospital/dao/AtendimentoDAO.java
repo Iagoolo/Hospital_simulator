@@ -7,6 +7,9 @@ import java.sql.SQLException;
 
 import com.hospital.model.Atendimento;
 
+/**
+ * Classe DAO para gerenciar operações de banco de dados relacionadas a atendimentos.
+ */
 public class AtendimentoDAO {
     
     private final Connection connection;
@@ -15,6 +18,11 @@ public class AtendimentoDAO {
         this.connection = connection;
     }
 
+    /**
+     * Adiciona um novo atendimento ao banco de dados.
+     * @param atendimento O objeto Atendimento a ser adicionado.
+     * @throws SQLException Se ocorrer um erro ao acessar o banco de dados.
+     */
     public void add(Atendimento atendimento) throws SQLException{
         String sql = "INSERT INTO Atendimento (senha, hora_atendimento, status, cpf_paciente) VALUES (?, ?, ?, ?)";
 
@@ -33,6 +41,11 @@ public class AtendimentoDAO {
         }
     }
 
+    /**
+     * Atualiza um atendimento existente no banco de dados.
+     * @param atendimento O objeto Atendimento com os dados atualizados.
+     * @throws SQLException Se ocorrer um erro ao acessar o banco de dados.
+     */
     public void atualizar(Atendimento atendimento) throws SQLException {
         String sql = "UPDATE atendimento SET status = ?, id_triagem = ?, id_consulta = ?, id_sala = ? WHERE id_atendimento = ?";
 
@@ -47,6 +60,11 @@ public class AtendimentoDAO {
         }
     }
 
+    /**
+     * Finaliza um atendimento no banco de dados.
+     * @param idAtendimento O ID do atendimento a ser finalizado.
+     * @throws SQLException Se ocorrer um erro ao acessar o banco de dados.
+     */
     public void finalizarAtendimento(int idAtendimento) throws SQLException {
         String sql = "UPDATE atendimento SET status = ? WHERE id_atendimento = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -56,6 +74,11 @@ public class AtendimentoDAO {
         }
     }
 
+    /**
+     * Busca o próximo paciente na fila de atendimento.
+     * @return O objeto Atendimento do próximo paciente ou null se não houver pacientes na fila.
+     * @throws SQLException Se ocorrer um erro ao acessar o banco de dados.
+     */
     public Atendimento buscarProximoPaciente() throws SQLException {
         String sql = "SELECT * FROM atendimento WHERE status = 'Aguardando Triagem' ORDER BY hora_atendimento ASC LIMIT 1";
         
@@ -80,6 +103,12 @@ public class AtendimentoDAO {
         }
         return null;
     }
+
+    /**
+     * Busca o próximo atendimento para consulta.
+     * @return O objeto Atendimento do próximo paciente para consulta ou null se não houver pacientes na fila.
+     * @throws SQLException Se ocorrer um erro ao acessar o banco de dados.
+     */
     public Atendimento buscarProximoParaConsulta() throws SQLException {
         String sql = "SELECT * FROM atendimento WHERE status = 'Aguardando Consulta' ORDER BY hora_atendimento ASC LIMIT 1";
         
@@ -98,6 +127,12 @@ public class AtendimentoDAO {
         return null; 
     }
 
+    /**
+     * Busca um atendimento pelo seu ID.
+     * @param idAtendimento O ID do atendimento a ser buscado.
+     * @return O objeto Atendimento correspondente ao ID ou null se não encontrado.
+     * @throws SQLException Se ocorrer um erro ao acessar o banco de dados.
+     */
     public Atendimento buscarPorId(int idAtendimento) throws SQLException {
         String sql = "SELECT * FROM atendimento WHERE id_atendimento = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {

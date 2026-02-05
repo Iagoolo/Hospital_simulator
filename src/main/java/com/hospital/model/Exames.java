@@ -28,7 +28,8 @@ public class Exames {
         this.idHistorico = idHistorico;
     }
 
-     public int getIdExames() {
+    // Getters and Setters
+    public int getIdExames() {
         return idExames;
     }
 

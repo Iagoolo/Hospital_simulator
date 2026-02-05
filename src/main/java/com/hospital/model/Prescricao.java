@@ -18,6 +18,7 @@ public class Prescricao {
         this.itens = new ArrayList<>();
     }
 
+    // Getters and Setters
     public int getIdPrescricao() {
         return idPrescricao;
     }

@@ -16,6 +16,7 @@ public class Paciente extends Pessoa{
         sintomas = new ArrayList<>();
     }
 
+    // Getters and Setters
     public List<String> getSintomas() {
         return sintomas;
     }

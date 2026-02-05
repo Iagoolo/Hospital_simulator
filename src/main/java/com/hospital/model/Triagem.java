@@ -29,6 +29,7 @@ public class Triagem {
         this.cpfEnfermeiro = cpfEnfermeiro;
     }
 
+    // Getters and Setters
     public int getIdTriagem() {
         return idTriagem;
     }

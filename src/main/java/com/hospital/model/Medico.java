@@ -18,6 +18,7 @@ public class Medico extends Pessoa {
         this.especialidades = new ArrayList<>();
     }
 
+    // Getters and Setters
     public String getTurno() {
         return turno;
     }

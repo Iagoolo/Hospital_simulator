@@ -7,6 +7,7 @@ import java.util.List;
 import com.hospital.dao.SalaDAO;
 import com.hospital.model.Sala;
 
+// Serviço para gerenciar operações relacionadas às salas do hospital
 public class SalaService {
     private Connection connection;
 
@@ -14,6 +15,12 @@ public class SalaService {
         this.connection = connection;
     }
 
+    /**
+     * Cadastra uma nova sala no sistema
+     * @param sala
+     * @return A sala cadastrada
+     * @throws SQLException em caso de erro ao acessar o banco de dados
+     */
     public Sala cadastrarSala (Sala sala) throws SQLException{
         SalaDAO salaDAO =  new SalaDAO(connection);
 
@@ -31,6 +38,12 @@ public class SalaService {
         }
     }
 
+    /**
+     * Deleta uma sala do sistema
+     * @param idSala
+     * @throws SQLException em caso de erro ao acessar o banco de dados
+     * @throws Exception em caso de tentativa de deletar uma sala em uso
+     */
     public void deletarSala (int idSala) throws SQLException, Exception {
         SalaDAO salaDAO = new SalaDAO(connection);
 
@@ -43,7 +56,6 @@ public class SalaService {
             salaDAO.deletar(idSala);
             connection.commit();
 
-            System.out.println("Sala deletada com sucesso!");
         } catch (SQLException e){
             connection.rollback();
 
@@ -51,6 +63,11 @@ public class SalaService {
         }
     }
 
+    /**
+     * Atualiza as informações de uma sala
+     * @param sala
+     * @throws SQLException em caso de erro ao acessar o banco de dados
+     */
     public void atualizarSala(Sala sala) throws SQLException{
         SalaDAO salaDAO = new SalaDAO(connection);
 
@@ -67,11 +84,22 @@ public class SalaService {
         }
     }
 
+    /**
+     * Lista todas as salas cadastradas no sistema
+     * @return Lista de salas
+     * @throws SQLException em caso de erro ao acessar o banco de dados
+     */
     public List<Sala> listarTodasSalas() throws SQLException{
         SalaDAO salaDAO = new SalaDAO(connection);
         return salaDAO.listar();
     }
 
+    /**
+     * Busca uma sala pelo seu ID
+     * @param idSala
+     * @return A sala encontrada
+     * @throws SQLException em caso de erro ao acessar o banco de dados
+     */
     public Sala buscarSala(int idSala) throws SQLException{
         SalaDAO salaDAO = new SalaDAO(connection);
         return salaDAO.buscarSala(idSala);

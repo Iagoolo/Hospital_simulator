@@ -41,6 +41,16 @@ public class ConsultaUI extends BaseUI {
         this.historicoMedicoService = hs; 
     }
 
+    /**
+     * Inicia uma nova consulta para o próximo paciente aguardando atendimento.
+     * Este método busca o próximo atendimento na fila, verifica se o médico e a sala
+     * informados existem, e então cria uma nova consulta associando o paciente, médico,
+     * e sala. Atualiza o status do atendimento para "Em Consulta" e registra a consulta
+     * no sistema.
+     *
+     * @throws Exception se não houver pacientes aguardando consulta, se o médico não for encontrado,
+     *                   ou se a sala não for encontrada.
+     */
     public void iniciarConsulta() {
         System.out.println("\n--- Iniciar Próxima Consulta ---");
         
@@ -82,6 +92,24 @@ public class ConsultaUI extends BaseUI {
         }, "Consulta iniciada! Paciente encaminhado para a sala.", "Erro ao iniciar consulta");
     }
 
+    /**
+     * Registra os detalhes da pós-consulta, incluindo diagnóstico, observações adicionais,
+     * prescrições e exames para uma consulta específica.
+     * 
+     * Este método exibe uma lista de consultas em andamento sem diagnóstico, permitindo que o usuário
+     * selecione uma pelo seu ID. Ele solicita o diagnóstico e observações adicionais, atualiza
+     * o registro da consulta e fornece opções para adicionar prescrições ou solicitar exames.
+     * 
+     * Se não houver consultas pendentes, uma mensagem de aviso é exibida. O método trata
+     * exceções SQL que podem ocorrer durante operações no banco de dados.
+     * 
+     * O usuário pode escolher:
+     * 1. Adicionar uma prescrição de medicamento.
+     * 2. Solicitar um exame.
+     * 0. Concluir o processo de pós-consulta.
+     * 
+     * @throws SQLException se houver um erro ao acessar o banco de dados ao recuperar ou atualizar dados da consulta.
+     */
     public void registrarPosConsulta() {
         System.out.println("\n--- 4. Registrar Pós-Consulta (Diagnóstico/Exames/Prescrições) ---");
         
@@ -154,6 +182,17 @@ public class ConsultaUI extends BaseUI {
         }
     }
 
+    /**
+     * Adiciona uma nova prescrição a uma consulta.
+     * 
+     * Este método solicita ao usuário informações sobre os medicamentos a serem 
+     * adicionados à prescrição, incluindo o ID do medicamento, dosagem, 
+     * frequência e duração. O usuário pode adicionar múltiplos medicamentos 
+     * até que decida parar digitando 0. Se nenhum item for adicionado, a 
+     * prescrição não será salva.
+     * 
+     * @param consulta A consulta à qual a prescrição será associada.
+     */
     private void adicionarPrescricao(Consulta consulta) {
         System.out.println("\n--- Adicionar Prescrição ---");
 
@@ -196,6 +235,18 @@ public class ConsultaUI extends BaseUI {
         }, "Prescrição salva com sucesso!", "Erro ao salvar prescrição");
     }
 
+    /**
+     * Adiciona um exame ao histórico médico do paciente associado à consulta.
+     * 
+     * Este método verifica se já existe um histórico médico para o paciente. 
+     * Se não existir, um novo histórico é criado e cadastrado. Em seguida, 
+     * solicita ao usuário o tipo do exame a ser realizado e cria um objeto 
+     * Exames com as informações necessárias, incluindo o ID da consulta, 
+     * o ID do histórico, o tipo do exame, a data de solicitação e o status 
+     * do exame. Por fim, o exame é cadastrado no sistema.
+     * 
+     * @param consulta A consulta associada ao paciente para o qual o exame está sendo solicitado.
+     */
     private void adicionarExame(Consulta consulta) {
         System.out.println("\n--- Solicitar Exame ---");
 

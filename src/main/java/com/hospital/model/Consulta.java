@@ -32,6 +32,8 @@ public class Consulta {
         this.cpfMedico = cpfMedico;
     }
 
+    // Getters and Setters
+    
     public int getIdConsulta() {
         return idConsulta;
     }

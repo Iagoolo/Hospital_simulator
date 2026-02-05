@@ -11,6 +11,22 @@ public class EnfermeiroDAO extends PessoaDAO<Enfermeiro> {
         super(connection);
     }
 
+    /**
+     * Adiciona um novo enfermeiro ao sistema, persistindo seus dados no banco de dados.
+     * 
+     * Este método realiza a inserção de um enfermeiro em duas etapas:
+     * <ul>
+     *     <li>Primeiro, insere os dados gerais da pessoa (CPF, nome, endereço, idade, nome do pai e mãe) 
+     *         na tabela Pessoa</li>
+     *     <li>Em seguida, insere o registro específico do enfermeiro na tabela enfermeiro, 
+     *         referenciando o CPF da pessoa cadastrada</li>
+     * </ul>
+     * 
+     * @param enfermeiro o objeto {@link Enfermeiro} contendo os dados a serem inseridos no banco de dados
+     * @throws SQLException se ocorrer um erro durante a execução das operações SQL ou acesso ao banco de dados
+     * 
+     * @see Enfermeiro
+     */
     @Override
     public void add(Enfermeiro enfermeiro) throws SQLException{
         
@@ -33,6 +49,21 @@ public class EnfermeiroDAO extends PessoaDAO<Enfermeiro> {
 
     }
 
+    /**
+     * Busca um enfermeiro no banco de dados pelo seu CPF.
+     *
+     * <p>Este método realiza uma consulta SQL que busca um enfermeiro específico
+     * utilizando seu CPF como critério de busca. A consulta faz um INNER JOIN
+     * entre as tabelas 'enfermeiro' e 'pessoa' para recuperar todas as informações
+     * do profissional.</p>
+     *
+     * @param cpfEnfermeiro o CPF do enfermeiro a ser buscado
+     * @return um objeto {@link Enfermeiro} contendo os dados do enfermeiro encontrado,
+     *         ou {@code null} caso nenhum enfermeiro seja encontrado com o CPF informado
+     * @throws SQLException se ocorrer um erro durante a execução da consulta no banco de dados
+     *
+     * @see Enfermeiro
+     */
     @Override
     public Enfermeiro buscarPorCpf (String cpfEnfermeiro) throws SQLException{
         String sql = """
@@ -65,6 +96,21 @@ public class EnfermeiroDAO extends PessoaDAO<Enfermeiro> {
         return null;
     }
 
+    /**
+     * Lista todos os enfermeiros cadastrados no sistema.
+     * 
+     * <p>Este método realiza uma consulta no banco de dados para recuperar
+     * todos os registros de enfermeiros, fazendo uma junção com a tabela
+     * de pessoa para obter os dados completos.</p>
+     * 
+     * @return uma lista contendo todos os enfermeiros cadastrados. A lista
+     *         pode estar vazia caso não existam enfermeiros no banco de dados.
+     * 
+     * @throws SQLException se ocorrer um erro durante a execução da consulta
+     *                      no banco de dados ou ao processar os resultados.
+     * 
+     * @since 1.0
+     */
     @Override
     public List<Enfermeiro> listarTodos() throws SQLException{
         String sql = """

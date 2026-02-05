@@ -24,6 +24,22 @@ public class TriagemUI extends BaseUI {
         this.enfermeiroService = es;
     }
 
+    /**
+     * Realiza o processo de triagem de um paciente no sistema.
+     * Este método busca o próximo paciente aguardando triagem, coleta informações do enfermeiro responsável,
+     * e registra os dados da triagem, incluindo peso, temperatura e prioridade.
+     * 
+     * O método executa as seguintes etapas:
+     * 1. Busca o próximo paciente na fila de triagem.
+     * 2. Verifica se o paciente existe; caso contrário, lança uma exceção.
+     * 3. Solicita o CPF do enfermeiro responsável e verifica se ele está cadastrado.
+     * 4. Coleta informações sobre o peso e a temperatura do paciente.
+     * 5. Solicita a prioridade da triagem (Baixa, Média, Alta).
+     * 6. Cria um objeto Triagem com as informações coletadas e registra a data e hora da triagem.
+     * 7. Atualiza o status do atendimento do paciente para "Aguardando Consulta" e associa a triagem ao atendimento.
+     * 
+     * @throws Exception Se não houver pacientes aguardando triagem ou se o enfermeiro não for encontrado.
+     */
     public void realizarTriagemWizard() {
         System.out.println("\n--- Realizar Próxima Triagem ---");
 

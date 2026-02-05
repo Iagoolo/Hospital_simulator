@@ -8,6 +8,9 @@ import com.hospital.model.Sala;
 import com.hospital.service.SalaService;
 import com.hospital.utils.ConsoleUtil;
 
+/**
+ * Classe responsável pela interface de usuário para gerenciar salas.
+ */
 public class SalasUI extends BaseUI{
     
     private SalaService salaService;
@@ -62,7 +65,9 @@ public class SalasUI extends BaseUI{
         }
     }
     
-
+    /**
+     * Método para cadastrar uma nova sala.
+     */
     public void cadastrarSala(){
         System.out.println("\n -----Cadastro de Nova Sala--------");
 
@@ -87,6 +92,20 @@ public class SalasUI extends BaseUI{
         }
     }
 
+
+    /**
+     * Exibe uma lista formatada de todas as salas cadastradas no sistema.
+     * 
+     * Este método recupera todas as salas do banco de dados através do serviço
+     * e as exibe em um formato tabular com colunas para ID, Andar e Tipo de Sala.
+     * 
+     * Se nenhuma sala estiver cadastrada, uma mensagem informativa será exibida.
+     * Em caso de erro na conexão com o banco de dados, uma mensagem de erro será
+     * apresentada com detalhes da exceção.
+     * 
+     * @throws SQLException Capturada internamente, exibindo mensagem de erro ao usuário
+     *                      caso ocorra problema ao acessar o banco de dados
+     */
     public void listarTodasSalas() {
         System.out.println("\n-----Lista de todos as salas cadastradas-----");
         try{
@@ -102,8 +121,8 @@ public class SalasUI extends BaseUI{
 
             for (Sala sala : salas){
                 System.out.printf("%-15s | %-30s | %s%n",
-                    sala.getAndar(),
                     sala.getIdSala(),
+                    sala.getAndar(),
                     sala.getTipoSala());
             }
         } catch (SQLException e){
@@ -111,6 +130,20 @@ public class SalasUI extends BaseUI{
         }
     }
 
+    
+    /**
+     * Busca uma sala pelo ID fornecido pelo usuário.
+     * 
+     * Este método solicita ao usuário que insira o ID da sala e tenta 
+     * recuperar a sala correspondente através do serviço de sala. 
+     * Se a sala for encontrada, exibe o tipo da sala. Caso contrário, 
+     * informa que a sala não foi encontrada. 
+     * 
+     * Em caso de erro durante a busca, como problemas de conexão com 
+     * o banco de dados, uma mensagem de erro é exibida.
+     * 
+     * @throws SQLException Se ocorrer um erro ao buscar a sala no banco de dados.
+     */
     public void buscarSala(){
         System.out.println("\n---- Buscar Sala -----");
 
@@ -132,6 +165,18 @@ public class SalasUI extends BaseUI{
         }
     }
 
+
+    /**
+     * Atualiza os dados de uma sala existente no sistema.
+     * 
+     * Este método solicita ao usuário o ID da sala a ser atualizada, busca a sala
+     * no banco de dados e permite ao usuário informar novos dados para atualização.
+     * Se a sala não for encontrada, uma mensagem informativa é exibida.
+     * Em caso de erro durante a atualização, como problemas de conexão com o banco de dados,
+     * uma mensagem de erro é exibida com detalhes da exceção.
+     * 
+     * @throws SQLException Se ocorrer um erro ao atualizar a sala no banco de dados.
+     */
     public void atualizarSala(){
         System.out.println("\n---- Atualizar Sala -----");
         try{
@@ -162,6 +207,17 @@ public class SalasUI extends BaseUI{
         }
     }
 
+    /**
+     * Deleta uma sala do sistema com base no ID fornecido pelo usuário.
+     * 
+     * Este método solicita ao usuário que insira o ID da sala a ser deletada,
+     * verifica se a sala existe e pede confirmação antes de proceder com a
+     * exclusão. Se a sala não for encontrada, uma mensagem informativa é exibida.
+     * Em caso de erro durante a exclusão, como problemas de conexão com o banco
+     * de dados, uma mensagem de erro é exibida com detalhes da exceção.
+     * 
+     * @throws SQLException Se ocorrer um erro ao deletar a sala no banco de dados.
+     */
     public void deletarSala(){
         System.out.println("\n---- Deletar Sala -----");
         try {

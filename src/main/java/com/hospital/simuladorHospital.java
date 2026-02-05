@@ -8,6 +8,9 @@ import com.hospital.ui.*;
 import com.hospital.utils.ConnectionFactory;
 import com.hospital.utils.ConsoleUtil;
 
+/**
+ * Classe principal do simulador de atendimento hospitalar.
+ */
 public class simuladorHospital {
 
     private Scanner scanner;
@@ -20,6 +23,7 @@ public class simuladorHospital {
     private AtendimentoUI atendimentoUI;
     private TriagemUI triagemUI;
     private ConsultaUI consultaUI;
+    private MedicamentosUI medicamentosUI;
 
     public simuladorHospital(Connection connection) {
         this.scanner = new Scanner(System.in);
@@ -29,6 +33,7 @@ public class simuladorHospital {
         this.medicoUI = new MedicoUI(services.medicoService, scanner);
         this.enfermeirosUI = new EnfermeirosUI(services.enfermeiroService, scanner);
         this.salasUI = new SalasUI(services.salaService, scanner);
+        this.medicamentosUI = new MedicamentosUI(services.medicamentosService, scanner);
         this.triagemUI = new TriagemUI(scanner, 
             services.triagemService, 
             services.atendimentoService, 
@@ -47,6 +52,7 @@ public class simuladorHospital {
             services.historicoMedicoService
         );
 
+
         this.atendimentoUI = new AtendimentoUI(
             scanner, 
             services.atendimentoService,
@@ -59,6 +65,9 @@ public class simuladorHospital {
         );
     }
     
+    /**
+     * Ponto de entrada da aplicação.
+     */
     public static void main(String[] args) {
 
         try(Connection conn = ConnectionFactory.createConnection()){
@@ -70,6 +79,9 @@ public class simuladorHospital {
         }
     }
 
+    /**
+     * Executa o loop principal do simulador.
+     */
     public void run(){
         boolean execute = true;
         while(execute){
@@ -111,12 +123,19 @@ public class simuladorHospital {
                     break;
                 
                 case 5:
-                    atendimentoUI.exibirMenu();
+                    medicamentosUI.exibirMenu();
 
                     System.out.println("Pressione ENTER para continuar");
                     scanner.nextLine();
                     break;
                 
+                case 6:
+                    atendimentoUI.exibirMenu();
+
+                    System.out.println("Pressione ENTER para continuar");
+                    scanner.nextLine();
+                    break;
+
                 default:
                     break;
             }
@@ -125,13 +144,17 @@ public class simuladorHospital {
         System.out.println("Encerrando programa...");
     }
 
+    /**
+     * Exibe o menu principal do simulador.
+     */
     public void exibirMenuPrincipal(){
         System.out.println("-------Simulador de Atendimento Hospitalar--------");
         System.out.println("1. Gerenciar Pacientes");
         System.out.println("2. Gerenciar Médicos");
         System.out.println("3. Gerenciar Enfermeiros");
         System.out.println("4. Gerenciar Salas");
-        System.out.println("5. Iniciar Novo Atendimento");
+        System.out.println("5. Gerenciar Medicamentos");
+        System.out.println("6. Iniciar Novo Atendimento");
         System.out.println("0. Sair");
         System.out.println("Escolha uma opção: ");
     }

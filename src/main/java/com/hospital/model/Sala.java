@@ -15,7 +15,8 @@ public class Sala {
         this.andar = andar;
         this.tipoSala = tipoSala;
     }
-    
+
+    // Getters and Setters
     public int getIdSala() {
         return idSala;
     }
