@@ -134,6 +134,17 @@ public class EnfermeiroDAO extends PessoaDAO<Enfermeiro> {
         return enfermeiros;
     }
 
+    /**
+     * Deleta um enfermeiro do sistema com base no CPF fornecido.
+     *
+     * <p>Este método realiza a exclusão de um enfermeiro do banco de dados. Ele
+     * primeiro remove o registro correspondente na tabela 'enfermeiro' e, em seguida,
+     * remove o registro associado na tabela 'Pessoa'. Se o CPF fornecido não corresponder
+     * a nenhum registro, uma exceção será lançada.</p>
+     *
+     * @param cpf o CPF do enfermeiro a ser deletado
+     * @throws SQLException se ocorrer um erro durante a execução das operações SQL ou acesso ao banco de dados
+     */
     @Override
     public void deletar(String cpf) throws SQLException{
 
@@ -155,6 +166,17 @@ public class EnfermeiroDAO extends PessoaDAO<Enfermeiro> {
         }
     }
 
+    /**
+     * Atualiza as informações de um enfermeiro existente no sistema.
+     *
+     * <p>Este método realiza a atualização dos dados de um enfermeiro no banco de dados. Ele
+     * atualiza os campos relacionados à pessoa (nome, endereço, idade, nome do pai e mãe) na
+     * tabela 'Pessoa' com base no CPF do enfermeiro fornecido. Se o CPF não corresponder a
+     * nenhum registro existente, uma exceção será lançada.</p>
+     *
+     * @param enfermeiro o objeto {@link Enfermeiro} contendo os dados atualizados do enfermeiro
+     * @throws SQLException se ocorrer um erro durante a execução da operação SQL ou acesso ao banco de dados
+     */
     @Override
     public void atualizar(Enfermeiro enfermeiro) throws SQLException {
        

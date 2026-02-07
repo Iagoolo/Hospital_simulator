@@ -17,6 +17,16 @@ public class SalaDAO {
         this.connection = connection;
     }
 
+    /**
+     * Adiciona uma nova sala ao banco de dados.
+     * 
+     * <p>Este método insere um novo registro na tabela de salas, associando-o
+     * a um andar e tipo de sala específicos. O ID da sala é gerado automaticamente
+     * pelo banco de dados e atualizado no objeto Sala após a inserção.</p>
+     * 
+     * @param sala o objeto Sala contendo os detalhes da sala a ser adicionada. O campo idSala será atualizado com o ID gerado pelo banco de dados.
+     * @throws SQLException se ocorrer um erro durante a execução da inserção no banco de dados ou ao processar os resultados.
+     */
     public void add(Sala sala) throws SQLException {
         String sql = "INSERT INTO sala (andar, tipo_sala) VALUES (?, ?)";
 
@@ -32,6 +42,12 @@ public class SalaDAO {
         }
     }
 
+    /**
+     * Deleta uma sala do banco de dados pelo seu identificador.
+     *
+     * @param idSala o identificador único da sala a ser deletada
+     * @throws SQLException se ocorrer um erro durante a execução da operação no banco de dados
+     */
     public void deletar(int idSala) throws SQLException{
         String sql = "DELETE FROM sala WHERE id_sala = ?";
 
@@ -41,6 +57,16 @@ public class SalaDAO {
         }
     }
 
+    /**
+     * Atualiza os dados de uma sala no banco de dados.
+     * 
+     * @param sala objeto {@link Sala} contendo os dados a serem atualizados.
+     *             Deve conter: andar, tipoSala e idSala preenchidos.
+     * 
+     * @throws SQLException se ocorrer um erro ao executar a operação no banco de dados
+     * 
+     * @see Sala
+     */
     public void atualizar(Sala sala) throws SQLException{
         String sql = "UPDATE sala SET andar = ?, tipo_sala = ? WHERE id_sala = ?";
 
@@ -53,6 +79,13 @@ public class SalaDAO {
         }
     }
 
+    /**
+     * Lista todas as salas cadastradas no banco de dados.
+     * 
+     * @return uma {@link List} contendo todos os objetos {@link Sala} recuperados da tabela sala.
+     *         A lista pode estar vazia caso não existam salas cadastradas.
+     * @throws SQLException se ocorrer um erro ao executar a consulta SQL ou ao acessar o banco de dados
+     */
     public List<Sala> listar() throws SQLException{
         String sql = "SELECT * FROM sala";
 
@@ -72,6 +105,14 @@ public class SalaDAO {
         return salas;
     }
 
+    /**
+     * Busca uma sala no banco de dados pelo seu identificador.
+     *
+     * @param idSala o identificador único da sala a ser procurada
+     * @return uma instância de {@link Sala} contendo os dados da sala encontrada,
+     *         ou {@code null} caso nenhuma sala seja encontrada com o id fornecido
+     * @throws SQLException se ocorrer um erro ao executar a consulta no banco de dados
+     */
     public Sala buscarSala(int idSala) throws SQLException{
         String sql = "SELECT * FROM sala WHERE id_sala = ?";
 
@@ -92,6 +133,17 @@ public class SalaDAO {
         return sala;
     }
 
+    /**
+     * Verifica se uma sala está em uso no momento.
+     * 
+     * Este método consulta o banco de dados para determinar se a sala especificada
+     * está sendo utilizada em alguma consulta ou atendimento ativo.
+     * 
+     * @param idSala o identificador da sala a ser verificada
+     * @return {@code true} se a sala está em uso (existe consulta ou atendimento associado),
+     *         {@code false} caso contrário
+     * @throws SQLException se ocorrer um erro ao acessar o banco de dados
+     */
     public boolean isSalaEmUso(int idSala) throws SQLException {
         String sql = "SELECT 1 FROM consulta WHERE id_sala = ? UNION ALL SELECT 1 FROM atendimento WHERE id_sala = ? LIMIT 1";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {

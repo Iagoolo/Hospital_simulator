@@ -13,6 +13,22 @@ public class MedicoDAO extends PessoaDAO<Medico>{
         super(connection);
     }
 
+    /**
+     * Adiciona um novo médico ao banco de dados.
+     * 
+     * <p>Este método insere um médico no sistema através de três operações:
+     * <ul>
+     *   <li>Insere os dados pessoais na tabela Pessoa</li>
+     *   <li>Insere os dados específicos do médico na tabela Medico</li>
+     *   <li>Insere as especializações do médico na tabela Medico_Especializacao</li>
+     * </ul>
+     * </p>
+     * 
+     * @param medico o objeto {@link Medico} contendo os dados do médico a ser adicionado
+     * @throws SQLException se ocorrer um erro ao acessar ou modificar o banco de dados
+     * 
+     * @see Medico
+     */
     @Override
     public void add(Medico medico) throws SQLException {
         
@@ -46,6 +62,21 @@ public class MedicoDAO extends PessoaDAO<Medico>{
         }
     }
 
+    
+    /**
+     * Busca um médico no banco de dados pelo número de CPF.
+     * 
+     * <p>Este método realiza uma consulta que une as tabelas de médico, pessoa e
+     * especializações, retornando todas as informações do médico incluindo suas
+     * especialidades.</p>
+     * 
+     * @param cpf o número de CPF do médico a ser buscado
+     * @return um objeto {@link Medico} contendo os dados do médico e suas especialidades,
+     *         ou {@code null} se nenhum médico for encontrado com o CPF fornecido
+     * @throws SQLException se ocorrer um erro durante a execução da consulta no banco de dados
+     * 
+     * @see Medico
+     */
     @Override
     public Medico buscarPorCpf(String cpf) throws SQLException {
         String sql = 
@@ -92,6 +123,24 @@ public class MedicoDAO extends PessoaDAO<Medico>{
         return medicoMap.get(cpf);
     }
 
+    
+    /**
+     * Lista todos os médicos cadastrados no sistema.
+     * 
+     * <p>Este método recupera todos os médicos do banco de dados, juntamente com
+     * seus dados pessoais e especializações associadas. A consulta realiza:
+     * <ul>
+     *   <li>INNER JOIN com a tabela pessoa para obter dados pessoais</li>
+     *   <li>LEFT JOIN com a tabela medico_especializacao para obter especializações</li>
+     * </ul>
+     * 
+     * <p>O método utiliza um mapa para evitar duplicação de registros de médicos
+     * quando há múltiplas especializações associadas ao mesmo CPF.
+     * 
+     * @return uma lista contendo todos os médicos cadastrados com seus respectivos
+     *         dados pessoais e especializações
+     * @throws SQLException se ocorrer um erro ao executar a consulta no banco de dados
+     */
     @Override
     public List<Medico> listarTodos() throws SQLException {
         String sql = 
@@ -136,6 +185,27 @@ public class MedicoDAO extends PessoaDAO<Medico>{
         return new ArrayList<>(medicoMap.values());
     }
 
+    
+    /**
+     * Atualiza as informações de um médico no banco de dados.
+     * 
+     * Este método realiza a atualização de dados pessoais, informações específicas do médico
+     * e suas especializações. O processo é dividido em quatro etapas:
+     * <ol>
+     *   <li>Atualiza dados pessoais na tabela Pessoa (nome, endereço, idade, nomes dos pais)</li>
+     *   <li>Atualiza o turno na tabela Medico</li>
+     *   <li>Remove todas as especializações anteriores do médico</li>
+     *   <li>Insere as novas especializações em lote</li>
+     * </ol>
+     * 
+     * @param medico O objeto {@link Medico} contendo as informações atualizadas do médico.
+     *               Deve conter CPF válido para identificar o registro a ser atualizado.
+     * 
+     * @throws SQLException Se ocorrer um erro durante a execução de qualquer uma das
+     *                      operações no banco de dados.
+     * 
+     * @see Medico
+     */
     @Override
      public void atualizar(Medico medico) throws SQLException{
          
@@ -175,6 +245,18 @@ public class MedicoDAO extends PessoaDAO<Medico>{
         }
     }
 
+    /**
+     * Deleta um médico do sistema, removendo todas as suas associações.
+     * 
+     * Este método realiza a exclusão em cascata do médico especificado,
+     * removendo primeiro suas especializações, depois os dados do médico
+     * e por fim os dados pessoais.
+     * 
+     * @param cpfMedico o CPF do médico a ser deletado
+     * @throws SQLException se nenhum médico for encontrado com o CPF fornecido
+     *                      ou se ocorrer algum erro durante a operação de exclusão
+     *                      no banco de dados
+     */
     @Override
     public void deletar(String cpfMedico) throws SQLException {
         

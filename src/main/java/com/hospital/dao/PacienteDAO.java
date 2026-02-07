@@ -13,6 +13,32 @@ public class PacienteDAO extends PessoaDAO<Paciente> {
         super(connection);
     }
 
+    /**
+     * Adiciona um novo paciente ao banco de dados.
+     * 
+     * <p>Este método realiza a inserção de um paciente em três etapas:
+     * <ol>
+     *   <li>Insere os dados pessoais (nome, CPF, endereço, idade, etc.) na tabela Pessoa</li>
+     *   <li>Insere o registro do paciente na tabela Paciente, referenciando o CPF</li>
+     *   <li>Insere os sintomas associados ao paciente na tabela Paciente_sintomas</li>
+     * </ol>
+     * </p>
+     * 
+     * <p>A operação é executada em três prepared statements separados, cada um otimizado
+     * para sua função específica. Os sintomas são inseridos em lote (batch) para melhor
+     * desempenho quando há múltiplos sintomas a registrar.</p>
+     * 
+     * @param paciente o objeto Paciente contendo todos os dados a serem persistidos,
+     *                 incluindo informações pessoais (nome, CPF, endereço, idade, pais)
+     *                 e uma lista de sintomas
+     * 
+     * @throws SQLException se ocorrer um erro durante a execução de qualquer uma das
+     *                      operações SQL, como violação de constraints ou problemas
+     *                      de conexão com o banco de dados
+     * 
+     * @see Paciente
+     * @see PreparedStatement
+     */
     @Override
     public void add(Paciente paciente) throws SQLException {
         
@@ -45,6 +71,24 @@ public class PacienteDAO extends PessoaDAO<Paciente> {
         }
     }
 
+    /**
+     * Lista todos os pacientes registrados no sistema.
+     * 
+     * Este método recupera todos os pacientes do banco de dados, incluindo seus dados pessoais
+     * e os sintomas associados a cada paciente. A consulta realiza um INNER JOIN com a tabela
+     * de pessoas para obter as informações pessoais e um LEFT JOIN com a tabela de sintomas
+     * para associar os sintomas de cada paciente.
+     * 
+     * @return Uma lista contendo todos os {@link Paciente} registrados no sistema.
+     *         Cada paciente contém seus dados pessoais (nome, CPF, idade, endereço, etc.)
+     *         e uma coleção de sintomas associados.
+     * 
+     * @throws SQLException Se ocorrer um erro ao executar a consulta no banco de dados.
+     * 
+     * @note O método utiliza um HashMap para evitar a duplicação de pacientes ao processar
+     *       múltiplos registros de sintomas do mesmo paciente, garantindo que cada paciente
+     *       apareça apenas uma vez na lista retornada.
+     */
     @Override
     public List<Paciente> listarTodos() throws SQLException {
         String sql = 
@@ -89,6 +133,24 @@ public class PacienteDAO extends PessoaDAO<Paciente> {
         return new ArrayList<>(pacienteMap.values());
     }
 
+    /**
+     * Busca um paciente no banco de dados utilizando seu número de CPF.
+     * 
+     * <p>Este método realiza uma consulta que:
+     * <ul>
+     * <li>Obtém os dados pessoais do paciente a partir das tabelas paciente e pessoa</li>
+     * <li>Recupera todos os sintomas associados ao paciente através de um LEFT JOIN</li>
+     * <li>Agrupa os sintomas em uma única instância de Paciente</li>
+     * </ul>
+     * </p>
+     * 
+     * @param cpf o número de CPF do paciente a ser buscado
+     * @return um objeto {@link Paciente} contendo os dados pessoais e a lista de sintomas,
+     *         ou {@code null} caso nenhum paciente seja encontrado com o CPF informado
+     * @throws SQLException se ocorrer um erro durante a execução da consulta ao banco de dados
+     * 
+     * @since 1.0
+     */
     @Override
     public Paciente buscarPorCpf(String cpf) throws SQLException {
         String sql = """
@@ -132,6 +194,27 @@ public class PacienteDAO extends PessoaDAO<Paciente> {
         return pacienteMap.get(cpf);
     }
 
+    /**
+     * Atualiza as informações de um paciente no banco de dados.
+     * 
+     * Este método realiza a atualização dos dados pessoais do paciente e gerencia
+     * seus sintomas associados. O processo envolve três operações principais:
+     * <ol>
+     *   <li>Atualiza os dados pessoais na tabela Pessoa (nome, endereço, nome do pai e nome da mãe)</li>
+     *   <li>Remove todos os sintomas anteriormente associados ao paciente</li>
+     *   <li>Insere os novos sintomas do paciente usando operações em lote</li>
+     * </ol>
+     * 
+     * @param paciente O objeto {@link Paciente} contendo as informações atualizadas
+     *                 a serem persistidas no banco de dados
+     * 
+     * @throws SQLException Se ocorrer um erro durante a execução das operações
+     *                      no banco de dados, como falha de conexão, violação
+     *                      de restrições ou problemas de sintaxe SQL
+     * 
+     * @see Paciente
+     * @see PreparedStatement
+     */
     @Override
     public void atualizar(Paciente paciente) throws SQLException{
         
@@ -163,6 +246,17 @@ public class PacienteDAO extends PessoaDAO<Paciente> {
         }
     }
 
+    /**
+     * Deleta um paciente do banco de dados através do seu CPF.
+     * 
+     * <p>Este método remove o paciente em cascata, deletando primeiramente
+     * os registros de sintomas associados, depois o registro do paciente
+     * e finalmente o registro da pessoa.</p>
+     * 
+     * @param cpf o CPF do paciente a ser deletado
+     * @throws SQLException se o paciente não for encontrado ou se ocorrer
+     *                      um erro durante a execução das operações de deleção
+     */
     @Override
     public void deletar(String cpf) throws SQLException {
         

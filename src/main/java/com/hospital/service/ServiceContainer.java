@@ -2,6 +2,17 @@ package com.hospital.service;
 
 import java.sql.Connection;
 
+/**
+ * A classe ServiceContainer é responsável por instanciar e fornecer acesso a todos os serviços do sistema.
+ * Ela atua como um contêiner centralizado para gerenciar as dependências dos serviços, garantindo que
+ * cada serviço tenha acesso à conexão com o banco de dados necessária para suas operações.
+ *
+ * <p>Ao criar uma instância de ServiceContainer, é necessário fornecer uma conexão com o banco de dados,
+ * que será compartilhada entre todos os serviços. Isso facilita a gestão das conexões e promove a
+ * reutilização de recursos.</p>
+ *
+ * @author Iago Lô
+ */
 public class ServiceContainer {
     
     public final PacienteService pacienteService;
