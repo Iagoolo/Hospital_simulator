@@ -3,8 +3,10 @@ package com.hospital.utils;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+// Classe utilitária para leitura segura de entradas no console
 public class ConsoleUtil {
     
+    // Método para ler um número inteiro do console com tratamento de exceções
     public static int lerInt(Scanner scanner){
         while(true){
             try {
@@ -19,6 +21,7 @@ public class ConsoleUtil {
         }
     }
 
+    // Método para ler uma string não vazia do console
     public static String lerString(Scanner scanner){
         while(true){
             String texto = scanner.nextLine();

@@ -14,6 +14,17 @@ public class PacienteService {
         this.connection = connection;
     }
 
+    /**
+     * Cadastra um novo paciente no banco de dados.
+     * 
+     * Este método recebe um objeto {@link Paciente} contendo os detalhes do paciente a ser cadastrado.
+     * A operação de inserção é realizada dentro de uma transação SQL para garantir a integridade
+     * dos dados. Se a operação for bem-sucedida, a transação é confirmada; caso contrário, é
+     * realizada uma reversão (rollback) para manter o estado consistente do banco de dados.
+     * 
+     * @param paciente O objeto {@link Paciente} contendo os detalhes do paciente a ser cadastrado.
+     * @throws SQLException Se ocorrer um erro ao cadastrar o paciente no banco de dados.
+     */
     public void cadastrarPaciente(Paciente paciente) throws SQLException{
         PacienteDAO pacienteDAO = new PacienteDAO(connection);
 
@@ -36,6 +47,15 @@ public class PacienteService {
         }
     }
 
+    /**
+     * Atualiza os dados de um paciente no banco de dados.
+     * 
+     * Este método recebe um objeto {@link Paciente} com os dados atualizados e
+     * realiza a atualização no banco de dados utilizando a classe {@link PacienteDAO}.
+     * A operação é realizada dentro de uma transação SQL para garantir a integridade dos dados.
+     * @param paciente
+     * @throws SQLException
+     */
     public void atualizar(Paciente paciente) throws SQLException{
         PacienteDAO pacienteDAO = new PacienteDAO(connection);
 
@@ -58,6 +78,14 @@ public class PacienteService {
         }
     }
 
+    /**
+     * Deleta um paciente do banco de dados com base no CPF fornecido.
+     * 
+     * Este método realiza a exclusão do paciente utilizando a classe {@link PacienteDAO}.
+     * A operação é realizada dentro de uma transação SQL para garantir a integridade dos dados.
+     * @param cpf
+     * @throws SQLException
+     */
     public void deletarPaciente(String cpf) throws SQLException{
         PacienteDAO pacienteDAO = new PacienteDAO(connection);
 
@@ -79,11 +107,28 @@ public class PacienteService {
         }
     }
 
+    /**
+     * Busca um paciente no banco de dados pelo seu CPF.
+     * 
+     * Este método utiliza a classe {@link PacienteDAO} para buscar e retornar
+     * um objeto {@link Paciente} com base no CPF fornecido.
+     * @param cpf
+     * @return
+     * @throws SQLException
+     */
     public Paciente buscarPacienteCpf(String cpf) throws SQLException {
         PacienteDAO pacienteDAO = new PacienteDAO(connection);
         return pacienteDAO.buscarPorCpf(cpf);
     }
 
+    /**
+     * Lista todos os pacientes cadastrados no banco de dados.
+     * 
+     * Este método utiliza a classe {@link PacienteDAO} para buscar e retornar
+     * uma lista de todos os objetos {@link Paciente} cadastrados.
+     * @return
+     * @throws SQLException
+     */
     public List<Paciente> listarTodosPacientes() throws SQLException{
         PacienteDAO pacienteDAO = new PacienteDAO(connection);
         return pacienteDAO.listarTodos();
