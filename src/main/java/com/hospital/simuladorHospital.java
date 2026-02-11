@@ -154,7 +154,7 @@ public class simuladorHospital {
         System.out.println("3. Gerenciar Enfermeiros");
         System.out.println("4. Gerenciar Salas");
         System.out.println("5. Gerenciar Medicamentos");
-        System.out.println("6. Iniciar Novo Atendimento");
+        System.out.println("6. Gerenciar Atendimentos");
         System.out.println("0. Sair");
         System.out.println("Escolha uma opção: ");
     }
