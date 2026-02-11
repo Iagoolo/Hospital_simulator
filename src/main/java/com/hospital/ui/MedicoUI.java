@@ -136,6 +136,7 @@ public class MedicoUI extends BaseUI {
      */
     public void listarTodosMedicos() {
         System.out.println("\n-----Lista de todos os Médicos cadastrados-----");
+        
         try{
             List<Medico> medicos = medicoService.listarTodosMedicos();
 
@@ -215,6 +216,7 @@ public class MedicoUI extends BaseUI {
      */
     public void atualizarMedico(){
         System.out.println("\n---- Atualizar Medico -----");
+
         try{
             System.out.print("Digite o CPF do Medico a ser atualizado: ");
             String cpf = ConsoleUtil.lerString(scanner);
@@ -288,6 +290,7 @@ public class MedicoUI extends BaseUI {
      */
     public void deletarMedico(){
         System.out.println("\n---- Deletar Médico -----");
+
         try {
             System.out.print("Digite o CPF do médico: ");
             String cpf = ConsoleUtil.lerString(scanner);

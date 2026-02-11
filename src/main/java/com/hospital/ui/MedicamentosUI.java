@@ -57,6 +57,17 @@ public class MedicamentosUI extends BaseUI {
         }
     }
 
+    /** 
+     * Cadastra um novo medicamento no sistema.
+     * 
+     * Este método solicita ao usuário informações necessárias para o cadastro de um medicamento,
+     * incluindo nome comercial, fórmula/composição, forma farmacêutica e via de administração.
+     * Após coletar os dados, um objeto Medicamento é criado e preenchido com as informações fornecidas.
+     * Em seguida, o método chama o serviço de cadastro para persistir os dados no banco de dados.
+     * 
+     * Caso ocorra um erro durante o processo de cadastro, o método captura exceções específicas
+     * relacionadas ao banco de dados e outras exceções inesperadas, exibindo mensagens de erro apropriadas.
+     */
     public void cadastrarMedicamento() {
         System.out.println("--- Cadastrar Novo Medicamento ---");
         
@@ -84,6 +95,16 @@ public class MedicamentosUI extends BaseUI {
         }, "Medicamento cadastrado com sucesso!", "Erro ao cadastrar medicamento");
     }
 
+    /**
+     * Lista todos os medicamentos cadastrados no sistema.
+     * 
+     * Este método recupera a lista de medicamentos através do serviço de medicamentos
+     * e imprime suas informações no console. Se não houver medicamentos cadastrados,
+     * uma mensagem informando que nenhum medicamento está cadastrado será exibida.
+     * 
+     * Em caso de erro ao acessar o banco de dados, uma mensagem de erro será
+     * exibida no console.
+     */
     private void listarMedicamentos() {
         System.out.println("\n--- Estoque de Medicamentos ---");
 
@@ -113,6 +134,13 @@ public class MedicamentosUI extends BaseUI {
         }
     }
 
+    /** 
+     * Atualiza as informações de um medicamento existente.
+     * Este método solicita ao usuário o ID do medicamento que deseja atualizar e verifica se ele existe no sistema.
+     * Se o medicamento for encontrado, o usuário é solicitado a fornecer os novos dados para o medicamento, como nome, fórmula, forma farmacêutica e via de administração.
+     * O método então atualiza o objeto Medicamento com as novas informações e chama o serviço de atualização para persistir as mudanças no banco de dados.
+     * @throws Exception Se o medicamento com o ID fornecido não for encontrado ou se ocorrer um erro durante a atualização, uma mensagem de erro apropriada será exibida.
+     */
     private void atualizarMedicamento() {
         System.out.println("\n--- Atualizar Medicamento ---");
         
