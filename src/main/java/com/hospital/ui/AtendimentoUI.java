@@ -1,5 +1,6 @@
 package com.hospital.ui;
 
+import java.sql.SQLException;
 import java.util.Scanner;
 
 import com.hospital.model.Atendimento;
@@ -216,7 +217,8 @@ public class AtendimentoUI extends BaseUI {
                 consulta.getObservacao()
             );
 
-            historico.setObservacoes(historico.getObservacoes() + novoRegistroHistorico);
+            String textoAtual = historico.getObservacoes() == null ? "" : historico.getObservacoes();
+            historico.setObservacoes(textoAtual + novoRegistroHistorico);
 
             atendimentoService.finalizarAtendimento(idAtendimento);
             

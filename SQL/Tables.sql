@@ -1,4 +1,4 @@
--- Tabela base para todas as pessoas no sistema.
+-- 1. Tabelas Base (Sem dependências)
 CREATE TABLE Pessoa (
     CPF VARCHAR(11) PRIMARY KEY,
     Nome VARCHAR(150) NOT NULL,
@@ -8,52 +8,67 @@ CREATE TABLE Pessoa (
     Nome_mae VARCHAR(150) NOT NULL
 );
 
--- Especialização de Pessoa.
+CREATE TABLE Medicamentos (
+    id_medicamento SERIAL PRIMARY KEY,
+    Nome VARCHAR(100) NOT NULL,
+    Formula VARCHAR(255),
+    Forma VARCHAR(50),
+    Via_administracao VARCHAR(50)
+);
+
+CREATE TABLE Sala (
+    id_sala SERIAL PRIMARY KEY,
+    Andar INT,
+    Tipo_sala VARCHAR(50) 
+);
+
+-- 2. Especializações de Pessoa (Herança)
 CREATE TABLE Medico (
     CPF_medico VARCHAR(11) PRIMARY KEY,
     Turno VARCHAR(50),
-    CONSTRAINT fk_medico_pessoa FOREIGN KEY (CPF_medico) REFERENCES Pessoa(CPF)
+    CONSTRAINT fk_medico_pessoa FOREIGN KEY (CPF_medico) 
+        REFERENCES Pessoa(CPF) ON DELETE CASCADE
 );
 
--- Especialização de Pessoa.
 CREATE TABLE Enfermeiro (
     CPF_enfermeiro VARCHAR(11) PRIMARY KEY,
-    CONSTRAINT fk_enfermeiro_pessoa FOREIGN KEY (CPF_enfermeiro) REFERENCES Pessoa(CPF)
+    CONSTRAINT fk_enfermeiro_pessoa FOREIGN KEY (CPF_enfermeiro) 
+        REFERENCES Pessoa(CPF) ON DELETE CASCADE
 );
 
--- Especialização de Pessoa.
 CREATE TABLE Paciente (
     CPF_paciente VARCHAR(11) PRIMARY KEY,
-    CONSTRAINT fk_paciente_pessoa FOREIGN KEY (CPF_paciente) REFERENCES Pessoa(CPF)
+    CONSTRAINT fk_paciente_pessoa FOREIGN KEY (CPF_paciente) 
+        REFERENCES Pessoa(CPF) ON DELETE CASCADE
 );
 
--- Tabela para o relacionamento N:M entre Médico e Especialização
+-- 3. Tabelas Dependentes de Atendimento e Médicos
 CREATE TABLE Medico_Especializacao (
     CPF_medico VARCHAR(11) NOT NULL,
     Especializacao VARCHAR(100) NOT NULL,
     PRIMARY KEY (CPF_medico, Especializacao),
-    CONSTRAINT fk_med_esp_medico FOREIGN KEY (CPF_medico) REFERENCES Medico(CPF_medico)
+    CONSTRAINT fk_med_esp_medico FOREIGN KEY (CPF_medico) 
+        REFERENCES Medico(CPF_medico) ON DELETE CASCADE
 );
 
--- Tabela para registrar múltiplos sintomas por paciente
 CREATE TABLE Paciente_Sintomas (
     CPF_paciente VARCHAR(11) NOT NULL,
     Sintomas VARCHAR(255) NOT NULL,
     PRIMARY KEY (CPF_paciente, Sintomas),
-    CONSTRAINT fk_pac_sint_paciente FOREIGN KEY (CPF_paciente) REFERENCES Paciente(CPF_paciente)
+    CONSTRAINT fk_pac_sint_paciente FOREIGN KEY (CPF_paciente) 
+        REFERENCES Paciente(CPF_paciente) ON DELETE CASCADE
 );
 
--- Histórico médico é uma relação 1:1 com Paciente
 CREATE TABLE Historico_Medico (
     id_historico SERIAL PRIMARY KEY,
     CPF_paciente VARCHAR(11) NOT NULL UNIQUE,
     observacoes TEXT,
     ultima_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status_historico VARCHAR(20) DEFAULT 'Ativo',
-    CONSTRAINT fk_historico_paciente FOREIGN KEY (CPF_paciente) REFERENCES Paciente(CPF_paciente)
+    CONSTRAINT fk_historico_paciente FOREIGN KEY (CPF_paciente) 
+        REFERENCES Paciente(CPF_paciente) ON DELETE CASCADE
 );
 
--- Tabela para triagem de pacientes
 CREATE TABLE Triagem (
     id_triagem SERIAL PRIMARY KEY,
     Prioridade VARCHAR(50) NOT NULL,
@@ -63,11 +78,12 @@ CREATE TABLE Triagem (
     peso DECIMAL(5, 2),
     CPF_enfermeiro VARCHAR(11) NOT NULL,
     CPF_paciente VARCHAR(11) NOT NULL,
-    CONSTRAINT fk_triagem_enfermeiro FOREIGN KEY (CPF_enfermeiro) REFERENCES Enfermeiro(CPF_enfermeiro),
-    CONSTRAINT fk_triagem_paciente FOREIGN KEY (CPF_paciente) REFERENCES Paciente(CPF_paciente)
+    CONSTRAINT fk_triagem_enfermeiro FOREIGN KEY (CPF_enfermeiro) 
+        REFERENCES Enfermeiro(CPF_enfermeiro) ON DELETE CASCADE,
+    CONSTRAINT fk_triagem_paciente FOREIGN KEY (CPF_paciente) 
+        REFERENCES Paciente(CPF_paciente) ON DELETE CASCADE
 );
 
--- Tabela para consultas médicas
 CREATE TABLE Consulta (
     id_consulta SERIAL PRIMARY KEY,
     id_triagem INT,
@@ -78,28 +94,22 @@ CREATE TABLE Consulta (
     Diagnostico TEXT,
     CPF_paciente VARCHAR(11) NOT NULL,
     CPF_medico VARCHAR(11) NOT NULL,
-    CONSTRAINT fk_consulta_paciente FOREIGN KEY (CPF_paciente) REFERENCES Paciente(CPF_paciente),
-    CONSTRAINT fk_consulta_medico FOREIGN KEY (CPF_medico) REFERENCES Medico(CPF_medico),
-    CONSTRAINT fk_consulta_triagem FOREIGN KEY (id_triagem) REFERENCES Triagem(id_triagem)
+    CONSTRAINT fk_consulta_paciente FOREIGN KEY (CPF_paciente) 
+        REFERENCES Paciente(CPF_paciente) ON DELETE CASCADE,
+    CONSTRAINT fk_consulta_medico FOREIGN KEY (CPF_medico) 
+        REFERENCES Medico(CPF_medico) ON DELETE CASCADE,
+    CONSTRAINT fk_consulta_triagem FOREIGN KEY (id_triagem) 
+        REFERENCES Triagem(id_triagem) ON DELETE CASCADE
 );
 
--- Tabela para prescrições médicas
+-- 4. Tabelas de Acompanhamento (Nível mais baixo na hierarquia)
 CREATE TABLE Prescricao (
     id_prescricao SERIAL PRIMARY KEY,
     id_consulta INT NOT NULL,
-    CONSTRAINT fk_presc_consulta FOREIGN KEY (id_consulta) REFERENCES Consulta(id_consulta) ON DELETE CASCADE
+    CONSTRAINT fk_presc_consulta FOREIGN KEY (id_consulta) 
+        REFERENCES Consulta(id_consulta) ON DELETE CASCADE
 );
 
--- Tabela para medicamentos
-CREATE TABLE Medicamentos (
-    id_medicamento SERIAL PRIMARY KEY,
-    Nome VARCHAR(100) NOT NULL,
-    Formula VARCHAR(255),
-    Forma VARCHAR(50),
-    Via_administracao VARCHAR(50)
-);
-
--- Tabela para itens de prescrição
 CREATE TABLE Prescricao_Item (
     id_item SERIAL PRIMARY KEY,
     id_prescricao INT NOT NULL,
@@ -108,11 +118,12 @@ CREATE TABLE Prescricao_Item (
     frequencia VARCHAR(50),
     duracao VARCHAR(50),
     observacoes TEXT,
-    FOREIGN KEY (id_prescricao) REFERENCES Prescricao(id_prescricao) ON DELETE CASCADE,
-    FOREIGN KEY (id_medicamento) REFERENCES Medicamentos(id_medicamento)
+    CONSTRAINT fk_item_prescricao FOREIGN KEY (id_prescricao) 
+        REFERENCES Prescricao(id_prescricao) ON DELETE CASCADE,
+    CONSTRAINT fk_item_medicamento FOREIGN KEY (id_medicamento) 
+        REFERENCES Medicamentos(id_medicamento) ON DELETE CASCADE
 );
 
--- Tabela para exames
 CREATE TABLE Exames (
     id_exame SERIAL PRIMARY KEY,
     id_consulta INT NOT NULL,
@@ -122,17 +133,12 @@ CREATE TABLE Exames (
     Resultado TEXT,
     Data_resultado DATE,
     Status VARCHAR(50) DEFAULT 'Pendente',
-    CONSTRAINT fk_exames_consulta FOREIGN KEY (id_consulta) REFERENCES Consulta(id_consulta) ON DELETE CASCADE
+    CONSTRAINT fk_exames_consulta FOREIGN KEY (id_consulta) 
+        REFERENCES Consulta(id_consulta) ON DELETE CASCADE,
+    CONSTRAINT fk_exames_historico FOREIGN KEY (id_historico) 
+        REFERENCES Historico_Medico(id_historico) ON DELETE CASCADE
 );
 
--- Tabela para salas
-CREATE TABLE Sala (
-    id_sala SERIAL PRIMARY KEY,
-    Andar INT,
-    Tipo_sala VARCHAR(50) 
-);
-
--- Tabela para atendimentos
 CREATE TABLE Atendimento (
     id_atendimento SERIAL PRIMARY KEY,
     cpf_paciente VARCHAR(11) NOT NULL,
@@ -142,9 +148,12 @@ CREATE TABLE Atendimento (
     id_consulta INT,
     id_triagem INT,
     id_sala INT,
-    
-    CONSTRAINT fk_atendimento_consulta FOREIGN KEY (id_consulta) REFERENCES Consulta(id_consulta) ON DELETE CASCADE,
-    CONSTRAINT fk_atendimento_triagem FOREIGN KEY (id_triagem) REFERENCES Triagem(id_triagem),
-    CONSTRAINT fk_atendimento_sala FOREIGN KEY (id_sala) REFERENCES Sala(id_sala),
-    CONSTRAINT fk_atendimento_paciente FOREIGN KEY (cpf_paciente) REFERENCES Paciente(cpf_paciente)
+    CONSTRAINT fk_atendimento_consulta FOREIGN KEY (id_consulta) 
+        REFERENCES Consulta(id_consulta) ON DELETE CASCADE,
+    CONSTRAINT fk_atendimento_triagem FOREIGN KEY (id_triagem) 
+        REFERENCES Triagem(id_triagem) ON DELETE CASCADE,
+    CONSTRAINT fk_atendimento_sala FOREIGN KEY (id_sala) 
+        REFERENCES Sala(id_sala) ON DELETE CASCADE,
+    CONSTRAINT fk_atendimento_paciente FOREIGN KEY (cpf_paciente) 
+        REFERENCES Paciente(CPF_paciente) ON DELETE CASCADE
 );

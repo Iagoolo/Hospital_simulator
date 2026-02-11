@@ -29,7 +29,7 @@ public class simuladorHospital {
         this.scanner = new Scanner(System.in);
         this.services = new ServiceContainer(connection);
     
-        this.pacienteUI = new PacienteUI(services.pacienteService, scanner);
+        this.pacienteUI = new PacienteUI(services.pacienteService, services.historicoMedicoService, scanner);
         this.medicoUI = new MedicoUI(services.medicoService, scanner);
         this.enfermeirosUI = new EnfermeirosUI(services.enfermeiroService, scanner);
         this.salasUI = new SalasUI(services.salaService, scanner);

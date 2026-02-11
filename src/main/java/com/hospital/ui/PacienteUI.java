@@ -5,16 +5,22 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.hospital.model.Paciente;
+import com.hospital.model.HistoricoMedico;
+import com.hospital.model.Exames;
+import com.hospital.service.HistoricoMedicoService;
+
 import com.hospital.service.PacienteService;
 import com.hospital.utils.ConsoleUtil;
 
 public class PacienteUI extends BaseUI{
     
     private PacienteService pacienteService;
+    private HistoricoMedicoService historicoMedico;
 
-    public PacienteUI(PacienteService pacienteService, Scanner scanner){
+    public PacienteUI(PacienteService pacienteService, HistoricoMedicoService historicoMedico, Scanner scanner){
         super(scanner);
         this.pacienteService = pacienteService;
+        this.historicoMedico = historicoMedico;
     }
 
     @Override
@@ -29,6 +35,7 @@ public class PacienteUI extends BaseUI{
         System.out.println("3. Buscar Paciente");
         System.out.println("4. Deletar Paciente");
         System.out.println("5. Atualizar Paciente");
+        System.out.println("6. Exibir Histórico Médico");
         System.out.println("0. Voltar ao Menu Principal");
     }
 
@@ -58,6 +65,9 @@ public class PacienteUI extends BaseUI{
                 atualizarPaciente();
                 return true;
 
+            case 6:
+                exibirHistoricoMedico();
+                return true;
             default:
                 return true;
             }
@@ -212,6 +222,7 @@ public class PacienteUI extends BaseUI{
      */
     public void atualizarPaciente(){
         System.out.println("\n---- Atualizar Paciente -----");
+
         try{
             System.out.print("Digite o CPF do paciente a ser atualizado: ");
             String cpf = ConsoleUtil.lerString(scanner);
@@ -285,6 +296,7 @@ public class PacienteUI extends BaseUI{
      */
     public void deletarPaciente(){
         System.out.println("\n---- Deletar Paciente -----");
+
         try {
             System.out.print("Digite o CPF do paciente: ");
             String cpf = ConsoleUtil.lerString(scanner);
@@ -308,6 +320,66 @@ public class PacienteUI extends BaseUI{
 
         } catch (SQLException e){
             System.err.println("[ERRO] Não foi possível deletar paciente: " + e.getMessage());
+        }
+    }
+
+    private void exibirHistoricoMedico(){
+        System.out.println("------ Histórico Médico ------");
+
+        try{
+            System.out.print("Digite o CPF do paciente: ");
+            String cpf = ConsoleUtil.lerString(scanner);
+
+            Paciente paciente = pacienteService.buscarPacienteCpf(cpf);
+            if (paciente == null){
+                System.out.println("Paciente não existente!");
+                return;
+            }
+
+            HistoricoMedico historico = historicoMedico.buscarHistorico(cpf);
+
+            System.out.println("--------------------------------------------------");
+            System.out.println("Historico médico do paciente " + paciente.getNome());
+            
+            if (historico == null) {
+                System.out.println("Status: Sem histórico registrado.");
+                System.out.println("--------------------------------------------------");
+                System.out.println("(Este paciente ainda não possui consultas ou exames finalizados)");
+                return;
+            }
+
+            System.out.println("Última atualização: " + historico.getUltimaAtualizacao());
+            System.out.println("Status: " + historico.getStatusHistorico());
+
+            System.out.println();
+
+            System.out.println("Observações: " + historico.getObservacoes());
+
+            System.out.println();
+
+            System.out.println("Exames: ");
+            List<Exames> lista = historico.getExames();
+            if (lista == null){
+                System.out.println("Nenhum exame solicitado até o momento para o paciente!");
+            } else {
+
+                for(Exames e : historico.getExames()){
+                    System.out.println("Tipo de exame: " + e.getTipo());
+                    System.out.println("Data de solicitação: " + e.getSolicitadoEm());
+    
+                    String resultadoTexto = (e.getResultado() == null) ? "Aguardando Análise" : e.getResultado();
+                    System.out.println("Resultado: " + resultadoTexto);
+    
+                    String dataRes = (e.getDataResultado() == null) ? "--/--/----" : e.getDataResultado().toString();
+                    System.out.println("Data resultado: " + dataRes);
+    
+                    System.out.println("Status: " + e.getStatus());
+                    System.out.println();
+                }
+            }
+
+        } catch (SQLException e){
+            System.err.println("[ERRO] Não foi possível encontrar o histórico médico: " + e.getMessage());
         }
     }
 }

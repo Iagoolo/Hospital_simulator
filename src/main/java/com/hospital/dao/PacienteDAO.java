@@ -259,18 +259,6 @@ public class PacienteDAO extends PessoaDAO<Paciente> {
      */
     @Override
     public void deletar(String cpf) throws SQLException {
-        
-        String sqlSint = "DELETE FROM Paciente_sintomas WHERE CPF_paciente = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sqlSint)){
-            ps.setString(1, cpf);
-            ps.executeUpdate();
-        }
-
-        String sql = "DELETE FROM paciente WHERE cpf_paciente = ?";
-        try(PreparedStatement ps = connection.prepareStatement(sql)){
-            ps.setString(1, cpf);
-            ps.executeUpdate();
-        }
 
         String sqlPessoa = "DELETE FROM Pessoa WHERE CPF = ?";
         try (PreparedStatement ps = connection.prepareStatement(sqlPessoa)){
