@@ -33,7 +33,6 @@ public class TriagemService {
             triagemDAO.add(triagem);
             connection.commit();
 
-            System.out.println("Triagem realizada com sucesso!");
             return triagem;
         } catch (SQLException e) {
             connection.rollback();
@@ -86,7 +85,6 @@ public class TriagemService {
             triagemDAO.atualizar(triagem);
             connection.commit();
 
-            System.out.println("Triagem atualizada com sucesso");
         } catch (SQLException e) {
             connection.rollback();
             throw new SQLException("Erro ao atualizar triagem.");
@@ -115,7 +113,6 @@ public class TriagemService {
             triagemDAO.deletar(idTriagem);
             connection.commit();
 
-            System.out.println("Triagem deletada com sucesso!");
         } catch (SQLException e){
             connection.rollback();
 

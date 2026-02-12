@@ -4,8 +4,6 @@ import java.sql.SQLException;
 import java.util.Scanner;
 
 import com.hospital.model.Atendimento;
-import com.hospital.model.Consulta;
-import com.hospital.model.HistoricoMedico;
 import com.hospital.service.AtendimentoService;
 import com.hospital.service.ConsultaService;
 import com.hospital.service.HistoricoMedicoService;
@@ -17,9 +15,6 @@ public class AtendimentoUI extends BaseUI {
     
     private AtendimentoService atendimentoService;
     private PacienteService pacienteService;
-    private ConsultaService consultaService;
-    private HistoricoMedicoService historicoMedicoService;
-    private MedicoService medicoService;
 
     private TriagemUI triagemUI;
     private ConsultaUI consultaUI;
@@ -36,9 +31,6 @@ public class AtendimentoUI extends BaseUI {
         super(scanner); 
         this.atendimentoService = as;
         this.pacienteService = ps;
-        this.consultaService = cs;
-        this.historicoMedicoService = hs;
-        this.medicoService = ms;
         this.triagemUI = tUI;
         this.consultaUI = cUI;
     }
@@ -72,9 +64,6 @@ public class AtendimentoUI extends BaseUI {
                 break;
             case 4:
                 consultaUI.registrarPosConsulta();
-                break;
-            case 5:
-                finalizarAtendimento();
                 break;
             case 0:
                 return false;
@@ -127,107 +116,5 @@ public class AtendimentoUI extends BaseUI {
             atendimentoService.realizarAtendimento(atendimento);
 
         }, "Ficha de atendimento aberta com sucesso!", "Erro ao registrar chegada");
-    }
-
-    /**
-     * Finaliza um atendimento e atualiza o histórico médico do paciente.
-     * 
-     * <p>Este método realiza as seguintes operações:</p>
-     * <ul>
-     *   <li>Solicita ao usuário o ID do atendimento a ser finalizado</li>
-     *   <li>Valida se o atendimento existe e seu status atual</li>
-     *   <li>Verifica se existe uma consulta associada ao atendimento</li>
-     *   <li>Confirma se a consulta possui diagnóstico registrado</li>
-     *   <li>Busca ou cria um novo histórico médico para o paciente</li>
-     *   <li>Registra os dados da consulta no histórico (médico, diagnóstico, observações e data)</li>
-     *   <li>Atualiza o status do atendimento para "Finalizado"</li>
-     *   <li>Persiste as alterações no histórico médico no banco de dados</li>
-     * </ul>
-     * 
-     * <p><strong>Validações realizadas:</strong></p>
-     * <ul>
-     *   <li>O atendimento deve existir no sistema</li>
-     *   <li>O atendimento não pode já estar finalizado</li>
-     *   <li>O atendimento deve possuir uma consulta associada</li>
-     *   <li>A consulta deve ter um diagnóstico registrado</li>
-     * </ul>
-     * 
-     * <p><strong>Comportamento:</strong></p>
-     * <p>Se o paciente não possui histórico anterior, um novo será criado.
-     * Caso contrário, o histórico existente será atualizado com os novos dados da consulta.
-     * Todas as operações são envolvidas por tratamento de exceções que exibe mensagens
-     * apropriadas em caso de erro.</p>
-     * 
-     * @see Atendimento
-     * @see Consulta
-     * @see HistoricoMedico
-     * @see AtendimentoService
-     * @see ConsultaService
-     * @see HistoricoMedicoService
-     * @see MedicoService
-     */
-    private void finalizarAtendimento() {
-        System.out.println("\n--- 5. Finalizar Atendimento e Atualizar Histórico ---");
-        
-        System.out.print("Digite o ID do Atendimento que deseja finalizar: ");
-        int idAtendimento = ConsoleUtil.lerInt(scanner);
-
-        executarAcao(() -> {
-            Atendimento atendimento = atendimentoService.buscarAtendimentoPorId(idAtendimento);
-
-            if (atendimento == null) {
-                 throw new Exception("Atendimento não encontrado.");
-            }
-            if ("Finalizado".equals(atendimento.getStatus())) {
-                throw new Exception("Este atendimento já foi finalizado.");
-            }
-            
-            if (atendimento.getIdConsulta() == null || atendimento.getIdConsulta() == 0) {
-                throw new Exception("Este atendimento não pode ser finalizado pois não possui uma consulta registrada.");
-            }
-
-            Consulta consulta = consultaService.procurarConsultaId(atendimento.getIdConsulta());
-            if (consulta == null) {
-                throw new Exception("Erro: Consulta associada ao atendimento não encontrada.");
-            }
-            if (consulta.getDiagnostico() == null || consulta.getDiagnostico().isEmpty()) {
-                throw new Exception("A consulta ainda não possui diagnóstico. Registre o pós-consulta primeiro.");
-            }
-
-            HistoricoMedico historico = historicoMedicoService.buscarHistorico(consulta.getCpfPaciente());
-            boolean historicoNovo = false;
-            if (historico == null) {
-                historico = new HistoricoMedico();
-                historico.setCpfPaciente(consulta.getCpfPaciente());
-                historico.setStatusHistorico("Ativo");
-                historico.setObservacoes("");
-                historicoNovo = true;
-            }
-
-            String novoRegistroHistorico = String.format(
-                "\n--- REGISTRO DE CONSULTA %s ---" +
-                "\nMédico: %s (CPF: %s)" +
-                "\nDiagnóstico: %s" +
-                "\nObservações: %s" +
-                "\n-------------------------------------",
-                consulta.getDataConsulta(),
-                medicoService.buscarMedicoCpf(consulta.getCpfMedico()).getNome(),
-                consulta.getCpfMedico(),
-                consulta.getDiagnostico(),
-                consulta.getObservacao()
-            );
-
-            String textoAtual = historico.getObservacoes() == null ? "" : historico.getObservacoes();
-            historico.setObservacoes(textoAtual + novoRegistroHistorico);
-
-            atendimentoService.finalizarAtendimento(idAtendimento);
-            
-            if (historicoNovo) {
-                historicoMedicoService.cadastrarHistorico(historico);
-            } else {
-                historicoMedicoService.atualizarHistorico(historico.getIdHistorico(), historico.getObservacoes());
-            }
-
-        }, "Atendimento finalizado e histórico atualizado com sucesso!", "Erro ao finalizar atendimento");
     }
 }

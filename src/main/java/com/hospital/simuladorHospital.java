@@ -49,7 +49,8 @@ public class simuladorHospital {
             services.prescricaoService,
             services.examesService,
             services.medicamentosService,
-            services.historicoMedicoService
+            services.historicoMedicoService,
+            services.pacienteService
         );
 
 

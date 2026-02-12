@@ -135,6 +135,7 @@ public class AtendimentoDAO {
      */
     public Atendimento buscarPorId(int idAtendimento) throws SQLException {
         String sql = "SELECT * FROM atendimento WHERE id_atendimento = ?";
+
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, idAtendimento);
             try (ResultSet rs = ps.executeQuery()) {
@@ -150,6 +151,28 @@ public class AtendimentoDAO {
                 }
             }
         }
+        return null;
+    }
+
+    public Atendimento buscarPorConsulta(int idConsulta) throws SQLException {
+        String sql = "SELECT * FROM atendimento WHERE id_consulta = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, idConsulta);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Atendimento atendimento = new Atendimento();
+                    atendimento.setIdAtendimento(rs.getInt("id_atendimento"));
+                    atendimento.setCpfPaciente(rs.getString("cpf_paciente"));
+                    atendimento.setStatus(rs.getString("status"));
+                    atendimento.setIdTriagem((Integer) rs.getObject("id_triagem"));
+                    atendimento.setIdConsulta((Integer) rs.getObject("id_consulta"));
+                    atendimento.setIdSala((Integer) rs.getObject("id_sala"));
+                    return atendimento;
+                }
+            }
+        }
+
         return null;
     }
 }

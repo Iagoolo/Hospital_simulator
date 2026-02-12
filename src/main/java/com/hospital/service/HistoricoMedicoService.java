@@ -32,7 +32,6 @@ public class HistoricoMedicoService {
             historicoMedicoDAO.add(historico);
             connection.commit();
 
-            System.out.println("Histórico médico cadastrado com sucesso!");
             return historico;
         } catch (SQLException e){
             connection.rollback();
@@ -59,7 +58,6 @@ public class HistoricoMedicoService {
             historicoMedicoDAO.deletar(cpfPaciente);
             connection.commit();
 
-            System.out.println("Histórico deletado com sucesso!");
         } catch (SQLException e){
             connection.rollback();
             throw new SQLException("Erro ao deletar histórico: " + e.getMessage());
@@ -85,7 +83,6 @@ public class HistoricoMedicoService {
             historicoMedicoDAO.atualizarObservacoes(idHistorico, observacoes);
             connection.commit();
 
-            System.out.println("Histórico atualizado com sucesso");
         } catch (SQLException e) {
             connection.rollback();
             throw new SQLException("Erro ao atualizar histórico: " + e.getMessage());
