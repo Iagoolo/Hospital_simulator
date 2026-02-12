@@ -49,8 +49,6 @@ public class AtendimentoService {
             atendimentoDAO.add(atendimento);
             connection.commit();
 
-            System.out.println("Atendimento realizado com sucesso!");
-
             return atendimento;
         } catch (SQLException e) {
             connection.rollback();
@@ -117,7 +115,6 @@ public class AtendimentoService {
             atendimentoDAO.finalizarAtendimento(idAtendimento);
             connection.commit();
 
-            System.out.println("Atendimento finalizado com sucesso!");
         } catch (SQLException e){
             connection.rollback();
 
@@ -177,10 +174,12 @@ public class AtendimentoService {
      * @throws Exception se o atendimento com o ID especificado não for encontrado
      */
     public Atendimento buscarAtendimentoPorId(int idAtendimento) throws SQLException, Exception {
-        Atendimento atendimento = new AtendimentoDAO(connection).buscarPorId(idAtendimento);
-        if (atendimento == null) {
-            throw new Exception("Atendimento com ID " + idAtendimento + " não encontrado.");
-        }
-        return atendimento;
+        AtendimentoDAO atendimentoDAO = new AtendimentoDAO(connection);
+        return atendimentoDAO.buscarPorConsulta(idAtendimento);
+    }
+
+    public Atendimento buscarAtendimentoPorConsulta(int idConsulta) throws SQLException{
+        AtendimentoDAO atendimentoDAO = new AtendimentoDAO(connection);
+        return atendimentoDAO.buscarPorConsulta(idConsulta);
     }
 }

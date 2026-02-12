@@ -118,7 +118,7 @@ public class EnfermeiroDAO extends PessoaDAO<Enfermeiro> {
                 INNER JOIN pessoa ON enfermeiro.cpf_enfermeiro = pessoa.cpf
                 """;
         
-                List<Enfermeiro> enfermeiros = new java.util.ArrayList<>();
+        List<Enfermeiro> enfermeiros = new java.util.ArrayList<>();
         try (PreparedStatement ps = connection.prepareStatement(sql)){
             ResultSet rs = ps.executeQuery();
 

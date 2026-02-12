@@ -15,6 +15,7 @@ public class ConsultaUI extends BaseUI {
     private ConsultaService consultaService;
     private AtendimentoService atendimentoService;
     private MedicoService medicoService;
+    private PacienteService pacienteService;
     private SalaService salaService;
     private MedicamentosService medicamentosService;
     private PrescricaoService prescricaoService;
@@ -29,11 +30,13 @@ public class ConsultaUI extends BaseUI {
                       PrescricaoService ps,      
                       ExamesService es,            
                       MedicamentosService meds,    
-                      HistoricoMedicoService hs) { 
+                      HistoricoMedicoService hs,
+                      PacienteService pas) { 
         super(scanner);
         this.consultaService = cs;
         this.atendimentoService = as;
         this.medicoService = ms;
+        this.pacienteService = pas;
         this.salaService = ss;
         this.prescricaoService = ps;     
         this.examesService = es;        
@@ -121,13 +124,15 @@ public class ConsultaUI extends BaseUI {
             if (pendentes.isEmpty()) {
                 System.out.println("[Aviso] Não há consultas pendentes no momento.");
             } else {
-                System.out.printf("%-5s | %-15s | %-15s%n", "ID", "Paciente (CPF)", "Médico (CPF)");
-                System.out.println("-".repeat(45));
+                System.out.printf("%-5s | %-30s | %-30s%n", "ID", "Paciente", "Médico");
+                System.out.println("-".repeat(75));
                 for (Consulta c : pendentes) {
-                    System.out.printf("%-5d | %-15s | %-15s%n", 
-                        c.getIdConsulta(), c.getCpfPaciente(), c.getCpfMedico());
+                    Medico medico = medicoService.buscarMedicoCpf(c.getCpfMedico());
+                    Paciente paciente = pacienteService.buscarPacienteCpf(c.getCpfPaciente());
+                    System.out.printf("%-5d | %-30s | %-30s%n", 
+                        c.getIdConsulta(), paciente.getNome(), medico.getNome());
                 }
-                System.out.println("-".repeat(45));
+                System.out.println("-".repeat(75)); 
             }
 
             System.out.print("Digite o ID da Consulta para registrar o Pós-Consulta: ");
@@ -143,7 +148,7 @@ public class ConsultaUI extends BaseUI {
             System.out.print("Diagnóstico: ");
             String diagnostico = ConsoleUtil.lerString(scanner);
             System.out.print("Observações Adicionais: ");
-            String observacoes = scanner.nextLine(); // Permite observações em branco
+            String observacoes = scanner.nextLine();
 
             consulta.setDiagnostico(diagnostico);
             consulta.setObservacao(observacoes);
@@ -169,6 +174,7 @@ public class ConsultaUI extends BaseUI {
                         adicionarExame(consulta);
                         break;
                     case 0:
+                        concluirAtendimento(consulta);
                         concluido = true;
                         break;
                     default:
@@ -260,6 +266,8 @@ public class ConsultaUI extends BaseUI {
                 novoHistorico.setStatusHistorico("Ativo");
                 novoHistorico.setObservacoes("Histórico criado em " + LocalDate.now());
                 historico = historicoMedicoService.cadastrarHistorico(novoHistorico);
+
+                System.out.println("Histórico criado com sucesso!!");
             }
 
             System.out.print("Tipo do Exame (ex: Raio-X de Tórax, Hemograma Completo): ");
@@ -275,6 +283,53 @@ public class ConsultaUI extends BaseUI {
             examesService.cadastrarExame(novoExame);
 
         }, "Exame solicitado com sucesso!", "Erro ao solicitar exame");
+    }
+
+    private void concluirAtendimento(Consulta consulta){
+        System.out.println("Processando finalização do atendimento...");
+
+        try {
+            HistoricoMedico historico = historicoMedicoService.buscarHistorico(consulta.getCpfPaciente());
+            boolean novoHistorico = false;
+
+            if (historico == null) {
+                historico = new HistoricoMedico();
+                historico.setCpfPaciente(consulta.getCpfPaciente());
+                historico.setStatusHistorico("Ativo");
+                historico.setObservacoes(""); 
+                novoHistorico = true;
+            }
+
+            String registro = String.format(
+                "\n[CONSULTA %s]\nMédico: %s\nDiagnóstico: %s\nObservações: %s\n---------------------------------",
+                java.time.LocalDate.now(),
+                consulta.getCpfMedico(),
+                consulta.getDiagnostico(),
+                consulta.getObservacao()
+            );
+
+            String textoAtual = historico.getObservacoes() == null ? "" : historico.getObservacoes();
+            historico.setObservacoes(textoAtual + registro);
+
+            if (novoHistorico) {
+                historicoMedicoService.cadastrarHistorico(historico);
+            } else {
+                historicoMedicoService.atualizarHistorico(historico.getIdHistorico(), historico.getObservacoes());
+            }
+            System.out.println("Histórico do paciente atualizado.");
+
+            Atendimento atendimento = atendimentoService.buscarAtendimentoPorConsulta(consulta.getIdConsulta());
+            
+            if (atendimento != null) {
+                atendimentoService.finalizarAtendimento(atendimento.getIdAtendimento());
+                System.out.println("Status do Atendimento definido como 'Finalizado'.");
+            } else {
+                System.out.println("Aviso: Atendimento vinculado não encontrado (Status não alterado).");
+            }
+
+        } catch (Exception e) {
+            System.err.println("[ERRO] ao concluir atendimento: " + e.getMessage());
+        }
     }
 
     @Override protected String obterTituloMenu() { return "Módulo de Consultas"; }
