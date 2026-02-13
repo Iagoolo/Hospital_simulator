@@ -34,33 +34,21 @@ public class simuladorHospital {
         this.enfermeirosUI = new EnfermeirosUI(services.enfermeiroService, scanner);
         this.salasUI = new SalasUI(services.salaService, scanner);
         this.medicamentosUI = new MedicamentosUI(services.medicamentosService, scanner);
-        this.triagemUI = new TriagemUI(scanner, 
-            services.triagemService, 
-            services.atendimentoService, 
-            services.enfermeiroService
+        this.triagemUI = new TriagemUI(
+            scanner, 
+            this.services
         );
         
         this.consultaUI = new ConsultaUI(
             scanner,
-            services.consultaService,
-            services.atendimentoService,
-            services.medicoService,
-            services.salaService,
-            services.prescricaoService,
-            services.examesService,
-            services.medicamentosService,
-            services.historicoMedicoService,
-            services.pacienteService
+            this.services,
+            this.salasUI
         );
 
 
         this.atendimentoUI = new AtendimentoUI(
             scanner, 
-            services.atendimentoService,
-            services.pacienteService,
-            services.consultaService,
-            services.historicoMedicoService,
-            services.medicoService,
+            this.services,
             triagemUI, 
             consultaUI
         );

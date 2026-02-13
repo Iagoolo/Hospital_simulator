@@ -104,4 +104,14 @@ public class SalaService {
         SalaDAO salaDAO = new SalaDAO(connection);
         return salaDAO.buscarSala(idSala);
     }
+
+    /**
+     * Lista todas as salas livres para uso
+     * @return lista de salas
+     * @throws SQLException
+     */
+    public List<Sala> salasLivres() throws SQLException{
+        SalaDAO salaDAO = new SalaDAO(connection);
+        return salaDAO.todasLivreSalas();
+    }
 }

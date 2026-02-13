@@ -154,4 +154,39 @@ public class SalaDAO {
             }
         }
     }
+
+    /**
+     * Método responsável por verificado no BD salas que não possuêm status de finalizado ou cancelado
+     * - salas livres
+     * 
+     * @return Lista com todas as salas disponíveis para atendimento
+     * @throws SQLException
+     */
+    public List<Sala> todasLivreSalas() throws SQLException{
+        String sql = """
+                SELECT s.id_sala, s.Andar, s.Tipo_sala
+                FROM Sala s
+                LEFT JOIN Atendimento a
+                    ON s.id_sala = a.id_sala
+                    AND a.status NOT IN ('Finalizado', 'Cancelado')
+                WHERE a.id_atendimento IS NULL
+                ORDER BY s.Andar, s.id_sala
+                """;
+
+        List<Sala> salas = new ArrayList<>();
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next()){
+                salas.add(new Sala(
+                    rs.getInt("id_sala"),
+                    rs.getInt("Andar"),
+                    rs.getString("Tipo_sala")
+                ));
+            }
+
+        }
+        
+        return salas;
+    }
 }
