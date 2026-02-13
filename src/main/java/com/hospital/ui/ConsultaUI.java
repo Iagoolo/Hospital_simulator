@@ -12,36 +12,15 @@ import com.hospital.utils.ConsoleUtil;
 
 public class ConsultaUI extends BaseUI {
 
-    private ConsultaService consultaService;
-    private AtendimentoService atendimentoService;
-    private MedicoService medicoService;
-    private PacienteService pacienteService;
-    private SalaService salaService;
-    private MedicamentosService medicamentosService;
-    private PrescricaoService prescricaoService;
-    private HistoricoMedicoService historicoMedicoService;
-    private ExamesService examesService;
+    private ServiceContainer services;
+    private SalasUI salasUI;
 
     public ConsultaUI(Scanner scanner, 
-                      ConsultaService cs, 
-                      AtendimentoService as, 
-                      MedicoService ms, 
-                      SalaService ss,
-                      PrescricaoService ps,      
-                      ExamesService es,            
-                      MedicamentosService meds,    
-                      HistoricoMedicoService hs,
-                      PacienteService pas) { 
+                      ServiceContainer services,
+                      SalasUI sUi) { 
         super(scanner);
-        this.consultaService = cs;
-        this.atendimentoService = as;
-        this.medicoService = ms;
-        this.pacienteService = pas;
-        this.salaService = ss;
-        this.prescricaoService = ps;     
-        this.examesService = es;        
-        this.medicamentosService = meds; 
-        this.historicoMedicoService = hs; 
+        this.services = services;
+        this.salasUI = sUi;
     }
 
     /**
@@ -58,22 +37,31 @@ public class ConsultaUI extends BaseUI {
         System.out.println("\n--- Iniciar Próxima Consulta ---");
         
         executarAcao(() -> {
-            Atendimento atendimento = atendimentoService.buscarProximoParaConsulta();
+
+            Atendimento atendimento = services.atendimentoService.buscarProximoParaConsulta();
             if (atendimento == null) {
-                throw new Exception("Nenhum paciente aguardando consulta");
-            }
-            System.out.println("Chamando paciente (CPF): " + atendimento.getCpfPaciente());
-
-            System.out.print("CPF do Médico: ");
-            String cpfMedico = ConsoleUtil.lerString(scanner);
-            if (medicoService.buscarMedicoCpf(cpfMedico) == null){
-                throw new Exception("Médico com CPF " + cpfMedico + " não encontrado.");
+                throw new Exception("Fila vazia! Não há pacientes esperando por consulta!");
             }
 
-            System.out.print("ID da Sala: ");
+            if (!salasUI.salasLivres()){
+                throw new Exception("Não é possível realizar consulta! Todas as salas estão ocupadas!");
+            }
+
+            System.out.println("\nChamando paciente (CPF): " + atendimento.getCpfPaciente());
+
+            
+            
+            System.out.println("Selecione o ID da sala: ");
             int idSala = ConsoleUtil.lerInt(scanner);
-            if (salaService.buscarSala(idSala) == null){
-               throw new Exception("Sala com ID " + idSala + " não encontrada.");
+            
+            if (services.salaService.buscarSala(idSala) == null){
+                throw new Exception("Sala com ID " + idSala + " não encontrada.");
+            }
+            
+            System.out.print("Digite o CPF do médico responsável: ");
+            String cpfMedico = ConsoleUtil.lerString(scanner);
+            if (services.medicoService.buscarMedicoCpf(cpfMedico) == null){
+                throw new Exception("Médico não cadastrado! Por favor, verifique se o CPF está correto!");
             }
 
             Consulta consulta = new Consulta();
@@ -84,13 +72,13 @@ public class ConsultaUI extends BaseUI {
             consulta.setDataConsulta(LocalDate.now());
             consulta.setHoraConsulta(LocalTime.now());
 
-            Consulta consultaSalva = consultaService.criarConsulta(consulta);
+            Consulta consultaSalva = services.consultaService.criarConsulta(consulta);
 
             atendimento.setStatus("Em Consulta");
             atendimento.setIdConsulta(consultaSalva.getIdConsulta());
             atendimento.setIdSala(idSala);
 
-            atendimentoService.atualizarAtendimento(atendimento);
+            services.atendimentoService.atualizarAtendimento(atendimento);
 
         }, "Consulta iniciada! Paciente encaminhado para a sala.", "Erro ao iniciar consulta");
     }
@@ -119,7 +107,7 @@ public class ConsultaUI extends BaseUI {
         try {
 
             System.out.println("Consultas em Andamento (Sem Diagnóstico):");
-            List<Consulta> pendentes = consultaService.listarConsultasPendentes();
+            List<Consulta> pendentes = services.consultaService.listarConsultasPendentes();
             
             if (pendentes.isEmpty()) {
                 System.out.println("[Aviso] Não há consultas pendentes no momento.");
@@ -127,8 +115,8 @@ public class ConsultaUI extends BaseUI {
                 System.out.printf("%-5s | %-30s | %-30s%n", "ID", "Paciente", "Médico");
                 System.out.println("-".repeat(75));
                 for (Consulta c : pendentes) {
-                    Medico medico = medicoService.buscarMedicoCpf(c.getCpfMedico());
-                    Paciente paciente = pacienteService.buscarPacienteCpf(c.getCpfPaciente());
+                    Medico medico = services.medicoService.buscarMedicoCpf(c.getCpfMedico());
+                    Paciente paciente = services.pacienteService.buscarPacienteCpf(c.getCpfPaciente());
                     System.out.printf("%-5d | %-30s | %-30s%n", 
                         c.getIdConsulta(), paciente.getNome(), medico.getNome());
                 }
@@ -138,7 +126,7 @@ public class ConsultaUI extends BaseUI {
             System.out.print("Digite o ID da Consulta para registrar o Pós-Consulta: ");
             int idConsulta = ConsoleUtil.lerInt(scanner);
 
-            Consulta consulta = consultaService.procurarConsultaId(idConsulta);
+            Consulta consulta = services.consultaService.procurarConsultaId(idConsulta);
             if (consulta == null) {
                 System.out.println("Consulta não encontrada.");
                 return;
@@ -154,7 +142,7 @@ public class ConsultaUI extends BaseUI {
             consulta.setObservacao(observacoes);
 
             executarAcao(() -> {
-                consultaService.atualizarConsulta(consulta);
+                services.consultaService.atualizarConsulta(consulta);
             }, "Diagnóstico salvo com sucesso.", "Erro ao salvar diagnóstico");
 
             boolean concluido = false;
@@ -213,7 +201,7 @@ public class ConsultaUI extends BaseUI {
                     break;
                 }
                 
-                Medicamento med = medicamentosService.buscarMedicamento(idMedicamento);
+                Medicamento med = services.medicamentosService.buscarMedicamento(idMedicamento);
                 if (med == null) {
                     System.out.println("Medicamento com ID " + idMedicamento + " não encontrado.");
                     continue;
@@ -236,7 +224,7 @@ public class ConsultaUI extends BaseUI {
                 return;
             }
 
-            prescricaoService.criarPrescricao(novaPrescricao);
+            services.prescricaoService.criarPrescricao(novaPrescricao);
 
         }, "Prescrição salva com sucesso!", "Erro ao salvar prescrição");
     }
@@ -258,14 +246,14 @@ public class ConsultaUI extends BaseUI {
 
         executarAcao(() -> {
 
-            HistoricoMedico historico = historicoMedicoService.buscarHistorico(consulta.getCpfPaciente());
+            HistoricoMedico historico = services.historicoMedicoService.buscarHistorico(consulta.getCpfPaciente());
             if (historico == null) {
                 System.out.println("Criando novo histórico médico para o paciente...");
                 HistoricoMedico novoHistorico = new HistoricoMedico();
                 novoHistorico.setCpfPaciente(consulta.getCpfPaciente());
                 novoHistorico.setStatusHistorico("Ativo");
                 novoHistorico.setObservacoes("Histórico criado em " + LocalDate.now());
-                historico = historicoMedicoService.cadastrarHistorico(novoHistorico);
+                historico = services.historicoMedicoService.cadastrarHistorico(novoHistorico);
 
                 System.out.println("Histórico criado com sucesso!!");
             }
@@ -280,7 +268,7 @@ public class ConsultaUI extends BaseUI {
             novoExame.setSolicitadoEm(java.sql.Date.valueOf(LocalDate.now()));
             novoExame.setStatus("Pendente");
 
-            examesService.cadastrarExame(novoExame);
+            services.examesService.cadastrarExame(novoExame);
 
         }, "Exame solicitado com sucesso!", "Erro ao solicitar exame");
     }
@@ -289,7 +277,7 @@ public class ConsultaUI extends BaseUI {
         System.out.println("Processando finalização do atendimento...");
 
         try {
-            HistoricoMedico historico = historicoMedicoService.buscarHistorico(consulta.getCpfPaciente());
+            HistoricoMedico historico = services.historicoMedicoService.buscarHistorico(consulta.getCpfPaciente());
             boolean novoHistorico = false;
 
             if (historico == null) {
@@ -312,16 +300,16 @@ public class ConsultaUI extends BaseUI {
             historico.setObservacoes(textoAtual + registro);
 
             if (novoHistorico) {
-                historicoMedicoService.cadastrarHistorico(historico);
+                services.historicoMedicoService.cadastrarHistorico(historico);
             } else {
-                historicoMedicoService.atualizarHistorico(historico.getIdHistorico(), historico.getObservacoes());
+                services.historicoMedicoService.atualizarHistorico(historico.getIdHistorico(), historico.getObservacoes());
             }
             System.out.println("Histórico do paciente atualizado.");
 
-            Atendimento atendimento = atendimentoService.buscarAtendimentoPorConsulta(consulta.getIdConsulta());
+            Atendimento atendimento = services.atendimentoService.buscarAtendimentoPorConsulta(consulta.getIdConsulta());
             
             if (atendimento != null) {
-                atendimentoService.finalizarAtendimento(atendimento.getIdAtendimento());
+                services.atendimentoService.finalizarAtendimento(atendimento.getIdAtendimento());
                 System.out.println("Status do Atendimento definido como 'Finalizado'.");
             } else {
                 System.out.println("Aviso: Atendimento vinculado não encontrado (Status não alterado).");

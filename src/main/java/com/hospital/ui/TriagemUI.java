@@ -6,22 +6,16 @@ import java.util.Scanner;
 
 import com.hospital.model.Atendimento;
 import com.hospital.model.Triagem;
-import com.hospital.service.AtendimentoService;
-import com.hospital.service.EnfermeiroService;
-import com.hospital.service.TriagemService;
+import com.hospital.service.ServiceContainer;
 import com.hospital.utils.ConsoleUtil;
 
 public class TriagemUI extends BaseUI {
 
-    private TriagemService triagemService;
-    private AtendimentoService atendimentoService;
-    private EnfermeiroService enfermeiroService;
+    private ServiceContainer services;
 
-    public TriagemUI(Scanner scanner, TriagemService ts, AtendimentoService as, EnfermeiroService es) {
+    public TriagemUI(Scanner scanner, ServiceContainer services) {
         super(scanner);
-        this.triagemService = ts;
-        this.atendimentoService = as;
-        this.enfermeiroService = es;
+        this.services = services;
     }
 
     /**
@@ -45,7 +39,7 @@ public class TriagemUI extends BaseUI {
 
         executarAcao(() -> {
     
-            Atendimento atendimento = atendimentoService.buscarProximoPaciente();
+            Atendimento atendimento = services.atendimentoService.buscarProximoPaciente();
             
             if (atendimento == null) {
                 throw new Exception("Não há pacientes esperando por uma triagem");
@@ -56,7 +50,7 @@ public class TriagemUI extends BaseUI {
             System.out.print("CPF do Enfermeiro responsável: ");
             String cpfEnf = ConsoleUtil.lerString(scanner);
 
-            if (enfermeiroService.buscarEnfermeiroCpf(cpfEnf) == null){
+            if (services.enfermeiroService.buscarEnfermeiroCpf(cpfEnf) == null){
                 throw new Exception("Enfermeiro com CPF " + cpfEnf + " não encontrado.");
             }
 
@@ -78,12 +72,12 @@ public class TriagemUI extends BaseUI {
             triagem.setDataTriagem(LocalDate.now());
             triagem.setHoraTriagem(LocalTime.now());
 
-            Triagem triagemSalva = triagemService.realizarTriagem(triagem);
+            Triagem triagemSalva = services.triagemService.realizarTriagem(triagem);
 
             atendimento.setStatus("Aguardando Consulta");
             atendimento.setIdTriagem(triagemSalva.getIdTriagem());
             
-            atendimentoService.atualizarAtendimento(atendimento);
+            services.atendimentoService.atualizarAtendimento(atendimento);
 
         }, "Triagem finalizada com sucesso! Paciente encaminhado para consulta.", "Erro na triagem");
     }

@@ -157,3 +157,6 @@ CREATE TABLE Atendimento (
     CONSTRAINT fk_atendimento_paciente FOREIGN KEY (cpf_paciente) 
         REFERENCES Paciente(CPF_paciente) ON DELETE CASCADE
 );
+
+-- Índices para otimizar consultas
+CREATE INDEX idx_status_atendimento ON Atendimento (status);

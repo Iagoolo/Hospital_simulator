@@ -5,32 +5,24 @@ import java.util.Scanner;
 
 import com.hospital.model.Atendimento;
 import com.hospital.service.AtendimentoService;
-import com.hospital.service.ConsultaService;
-import com.hospital.service.HistoricoMedicoService;
-import com.hospital.service.MedicoService;
 import com.hospital.service.PacienteService;
+import com.hospital.service.ServiceContainer;
 import com.hospital.utils.ConsoleUtil;
 
 public class AtendimentoUI extends BaseUI {
     
-    private AtendimentoService atendimentoService;
-    private PacienteService pacienteService;
+    private ServiceContainer services;
 
     private TriagemUI triagemUI;
     private ConsultaUI consultaUI;
 
     public AtendimentoUI(Scanner scanner, 
-                         AtendimentoService as, 
-                         PacienteService ps, 
-                         ConsultaService cs,
-                         HistoricoMedicoService hs,
-                         MedicoService ms,
+                         ServiceContainer services,
                          TriagemUI tUI, 
                          ConsultaUI cUI) {
         
         super(scanner); 
-        this.atendimentoService = as;
-        this.pacienteService = ps;
+        this.services = services;
         this.triagemUI = tUI;
         this.consultaUI = cUI;
     }
@@ -46,7 +38,6 @@ public class AtendimentoUI extends BaseUI {
         System.out.println("2. Realizar Triagem");
         System.out.println("3. Iniciar Consulta");
         System.out.println("4. Registrar Pós-Consulta");
-        System.out.println("5. Finalizar Atendimento");
         System.out.println("0. Voltar ao Menu Principal");
     }
 
@@ -103,7 +94,7 @@ public class AtendimentoUI extends BaseUI {
         String cpf = ConsoleUtil.lerString(scanner);
 
         executarAcao(() -> { 
-            if (pacienteService.buscarPacienteCpf(cpf) == null) {
+            if (services.pacienteService.buscarPacienteCpf(cpf) == null) {
                 throw new Exception("Paciente não cadastrado. Cadastre-o primeiro."); 
             }
 
@@ -113,7 +104,7 @@ public class AtendimentoUI extends BaseUI {
             atendimento.setHoraAtendimento(java.sql.Time.valueOf(java.time.LocalTime.now()));
             atendimento.setSenha("P-" + (int)(Math.random() * 1000));
 
-            atendimentoService.realizarAtendimento(atendimento);
+            services.atendimentoService.realizarAtendimento(atendimento);
 
         }, "Ficha de atendimento aberta com sucesso!", "Erro ao registrar chegada");
     }

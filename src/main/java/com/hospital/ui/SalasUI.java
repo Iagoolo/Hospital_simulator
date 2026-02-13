@@ -249,5 +249,37 @@ public class SalasUI extends BaseUI{
             System.err.println("[ERRO] Não foi possível deletar sala: " + e.getMessage());
         }
     }
+
+    public boolean salasLivres(){
+        System.out.println("----- Salas lives para consulta ------");
+
+        try {
+            List<Sala> salas = salaService.salasLivres();
+            if (salas == null || salas.isEmpty()){
+                System.out.println("Nenhuma sala livre, por favor tentar novamente mais tarde");
+                return false;
+            }
+
+            System.out.printf("%-5s | %-10s | %-20s%n", "ID", "ANDAR", "TIPO DA SALA");
+
+            System.out.println("-".repeat(45));
+
+
+            for (Sala s : salas){
+                System.out.printf("%-5d | %-10d | %-20s%n",
+                s.getIdSala(),
+                s.getAndar(),
+                s.getTipoSala()
+                );
+            }
+
+            System.out.println("-".repeat(45));
+            return true;
+        } catch (SQLException e){
+            System.err.println("[ERRO] Não foi possível listar todas as salas livres: " + e.getMessage());
+            return false;
+        }
+
+    }
 }
 
