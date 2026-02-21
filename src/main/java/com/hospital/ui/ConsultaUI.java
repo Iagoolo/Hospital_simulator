@@ -47,9 +47,9 @@ public class ConsultaUI extends BaseUI {
                 throw new Exception("Não é possível realizar consulta! Todas as salas estão ocupadas!");
             }
 
-            System.out.println("\nChamando paciente (CPF): " + atendimento.getCpfPaciente());
-
-            
+            Paciente paciente = services.pacienteService.buscarPacienteCpf(atendimento.getCpfPaciente());
+            String nomePaciente = (paciente != null) ? paciente.getNome() : "Paciente não encontrado (CPF: " + atendimento.getCpfPaciente() + ")";
+            System.out.println("Chamando paciente: " + nomePaciente);
             
             System.out.println("Selecione o ID da sala: ");
             int idSala = ConsoleUtil.lerInt(scanner);

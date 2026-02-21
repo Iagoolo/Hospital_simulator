@@ -110,7 +110,22 @@ public class AtendimentoDAO {
      * @throws SQLException Se ocorrer um erro ao acessar o banco de dados.
      */
     public Atendimento buscarProximoParaConsulta() throws SQLException {
-        String sql = "SELECT * FROM atendimento WHERE status = 'Aguardando Consulta' ORDER BY hora_atendimento ASC LIMIT 1";
+        String sql = 
+                """
+                    SELECT a.*
+                    FROM atendimento a
+                    LEFT JOIN 
+                    triagem t ON a.id_triagem = t.id_triagem
+                    WHERE a.status = 'Aguardando Consulta'
+                    ORDER BY
+                        CASE
+                            WHEN t.Prioridade = 'Alta' THEN 1
+                            WHEN t.Prioridade = 'Média' THEN 2
+                            WHEN t.Prioridade = 'Baixa' THEN 3
+                            ELSE 4
+                        END ASC,
+                        a.hora_atendimento ASC LIMIT 1;
+                """;
         
         try (PreparedStatement ps = connection.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
