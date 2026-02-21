@@ -197,6 +197,7 @@ public class TriagemDAO {
                         consulta 
                     WHERE id_triagem = ? LIMIT 1
                     """;
+                    
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
             ps.setInt(2, id);

@@ -5,6 +5,7 @@ import java.time.LocalTime;
 import java.util.Scanner;
 
 import com.hospital.model.Atendimento;
+import com.hospital.model.Paciente;
 import com.hospital.model.Triagem;
 import com.hospital.service.ServiceContainer;
 import com.hospital.utils.ConsoleUtil;
@@ -45,7 +46,10 @@ public class TriagemUI extends BaseUI {
                 throw new Exception("Não há pacientes esperando por uma triagem");
             }
             
-            System.out.println("Chamando paciente (CPF): " + atendimento.getCpfPaciente());
+            Paciente paciente = services.pacienteService.buscarPacienteCpf(atendimento.getCpfPaciente());
+            String nomePaciente = (paciente != null) ? paciente.getNome() : "Paciente não encontrado (CPF: " + atendimento.getCpfPaciente() + ")";
+            
+            System.out.println("Chamando paciente: " + nomePaciente);
 
             System.out.print("CPF do Enfermeiro responsável: ");
             String cpfEnf = ConsoleUtil.lerString(scanner);
@@ -58,10 +62,10 @@ public class TriagemUI extends BaseUI {
             double peso = Double.parseDouble(ConsoleUtil.lerString(scanner));
 
             System.out.print("Temperatura (C): ");
-            double temp = Double.parseDouble(ConsoleUtil.lerString(scanner));
+            String tempSt = ConsoleUtil.lerString(scanner).replace(",", ".");
+            double temp = Double.parseDouble(tempSt);
 
-            System.out.print("Prioridade (Baixa, Média, Alta): ");
-            String prioridade = ConsoleUtil.lerString(scanner);
+            String prioridade = priority();
 
             Triagem triagem = new Triagem();
             triagem.setCpfPaciente(atendimento.getCpfPaciente());
@@ -80,6 +84,38 @@ public class TriagemUI extends BaseUI {
             services.atendimentoService.atualizarAtendimento(atendimento);
 
         }, "Triagem finalizada com sucesso! Paciente encaminhado para consulta.", "Erro na triagem");
+    }
+
+    /***
+     * Função responsável por ler a prioridade de atendimento do paciente, transformando um valor passado de forma inteiro e retornando
+     * como uma string: Alta, média, alta
+     * @return string da prioridade
+     */
+    private String priority(){
+
+        System.out.println("Digite a prioridade de atendimento de acordo com a tabela");
+        while(true){
+            System.out.println("1. Alta");
+            System.out.println("2. Média");
+            System.out.println("3. Baixa");
+            
+            int temp = ConsoleUtil.lerInt(scanner);
+
+            switch (temp) {
+                case 1:
+                    return "Alta";
+                
+                case 2:
+                    return "Média";
+                
+                case 3:
+                    return "Baixa";
+            
+                default:
+                    System.out.println("Valor inválido. Tente novamente");
+                    break;
+            }
+        }
     }
 
     @Override protected String obterTituloMenu() { return "Módulo de Triagem"; }
