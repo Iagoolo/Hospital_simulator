@@ -11,7 +11,7 @@ import com.hospital.utils.ConsoleUtil;
 /**
  * Classe principal do simulador de atendimento hospitalar.
  */
-public class simuladorHospital {
+public class SimuladorHospital {
 
     private Scanner scanner;
     private ServiceContainer services;
@@ -25,7 +25,7 @@ public class simuladorHospital {
     private ConsultaUI consultaUI;
     private MedicamentosUI medicamentosUI;
 
-    public simuladorHospital(Connection connection) {
+    public SimuladorHospital(Connection connection) {
         this.scanner = new Scanner(System.in);
         this.services = new ServiceContainer(connection);
     
@@ -60,7 +60,7 @@ public class simuladorHospital {
     public static void main(String[] args) {
 
         try(Connection conn = ConnectionFactory.createConnection()){
-            simuladorHospital simulador = new simuladorHospital(conn);
+            SimuladorHospital simulador = new SimuladorHospital(conn);
             simulador.run();
         } catch (Exception e){
             System.err.println("Erro fatal na aplicação: " + e.getMessage());
